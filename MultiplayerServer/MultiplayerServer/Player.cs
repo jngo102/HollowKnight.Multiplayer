@@ -35,7 +35,6 @@ namespace MultiplayerServer
         
         public void SetAnimation(string animation)
         {
-            Log("Setting Animation...");
             this.animation = animation;
 
             ServerSend.PlayerAnimation(this);

@@ -19,8 +19,6 @@ namespace MultiplayerClient.Canvas
         {
             if (!GameObject.Find("MultiplayerClient Canvas"))
             {
-                Log("Building Canvas");
-                
                 LoadResources();
                 
                 canvas = new GameObject("MultiplayerClient Canvas");

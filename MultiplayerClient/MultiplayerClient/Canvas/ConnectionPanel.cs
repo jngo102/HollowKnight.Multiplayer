@@ -131,7 +131,7 @@ namespace MultiplayerClient.Canvas
         {
             if (!Client.Instance.isConnected)
             {
-                Log("Connecting to Server");
+                Log("Connecting to Server...");
                 
                 if (_ipInput.GetText() != "") Client.Instance.ip = _ipInput.GetText();
                 if (_portInput.GetText() != "") Client.Instance.port = int.Parse(_portInput.GetText());

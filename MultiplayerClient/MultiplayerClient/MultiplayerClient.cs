@@ -50,10 +50,8 @@ namespace MultiplayerClient
         
         private void OnSceneChanged(Scene prevScene, Scene nextScene)
         {
-            Log("isConnected: " + Client.Instance.isConnected);
             if (Client.Instance.isConnected)
             {
-                Log("Is Connected and Changing Scene.");
                 ClientSend.SceneChanged(nextScene.name);
             }
         }

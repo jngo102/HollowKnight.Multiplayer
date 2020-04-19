@@ -32,16 +32,15 @@ namespace MultiplayerClient
         public void SpawnPlayer(int id, string username, Vector3 position, Vector3 scale)
         {
             GameObject player = Instantiate(playerPrefab);
+            DontDestroyOnLoad(player);
 
             player.SetActive(true);
             // This component needs to be enabled to run past Awake for whatever reason
             player.GetComponent<PlayerController>().enabled = true;
 
             player.transform.SetPosition2D(position);
-            Log("Position: " + position);
             player.transform.localScale = scale;
-            Log("Scale: " + scale);
-            
+
             PlayerManager playerManager = player.GetComponent<PlayerManager>();
             playerManager.id = id;
             playerManager.username = username;

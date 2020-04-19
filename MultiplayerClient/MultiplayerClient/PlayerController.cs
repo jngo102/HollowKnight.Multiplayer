@@ -9,7 +9,6 @@ namespace MultiplayerClient
         
         private void Awake()
         {
-            Log("Assigning Fields");
             _hero = HeroController.instance.gameObject;
             /*var collider = gameObject.GetComponent<BoxCollider2D>();
             var _heroCollider = _hero.GetComponent<BoxCollider2D>();
@@ -53,7 +52,6 @@ namespace MultiplayerClient
 
         private void Start()
         {
-            Log("Start");
             GetComponent<tk2dSpriteAnimator>().Play("Idle");
         }
         
@@ -79,7 +77,6 @@ namespace MultiplayerClient
             string currentClip = _hero.GetComponent<tk2dSpriteAnimator>().CurrentClip.name;
             if (currentClip != _storedClip)
             {
-                Log("Playing Animation " + currentClip);
                 ClientSend.PlayerAnimation(currentClip);
                 _storedClip = currentClip;
             }

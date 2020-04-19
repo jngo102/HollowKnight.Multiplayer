@@ -23,7 +23,6 @@ namespace MultiplayerServer
             {
                 if (Server.clients[i].player != null)
                 {
-                    Log("Sending to Player " + i);
                     Server.clients[i].tcp.SendData(packet);   
                 }
             }
@@ -38,7 +37,6 @@ namespace MultiplayerServer
                 {
                     if (Server.clients[i].player != null)
                     {
-                        Log("Sending to Player " + i);
                         Server.clients[i].tcp.SendData(packet);   
                     }
                 }
@@ -92,9 +90,6 @@ namespace MultiplayerServer
                 packet.Write(player.position);
                 packet.Write(player.scale);
                 
-                Log("Player Position: " + player.position);
-                Log("Player Scale: " + player.scale);
-
                 SendTCPData(toClient, packet);
             }
         }
@@ -138,7 +133,6 @@ namespace MultiplayerServer
                 packet.Write(player.id);
                 packet.Write(player.animation);
                 
-                Log("Sending Animation to All");
                 SendUDPDataToAll(player.id, packet);
             }
         }

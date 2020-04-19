@@ -22,16 +22,11 @@ namespace MultiplayerClient
 
         public static void SpawnPlayer(Packet packet)
         {
-            Log("Reading SpawnPlayer packet");
             int id = packet.ReadInt();
             string username = packet.ReadString();
             Vector3 position = packet.ReadVector3();
             Vector3 scale = packet.ReadVector3();
             
-            Log("Got Position: " + position);
-            Log("Got Scale: " + scale);
-
-            Log($"Spawning instance of Player {id} at {position}.");
             GameManager.Instance.SpawnPlayer(id, username, position, scale);
         }
 
@@ -39,8 +34,6 @@ namespace MultiplayerClient
         {
             int clientToDestroy = packet.ReadInt();
 
-            Log("Destroying Player " + clientToDestroy);
-            
             GameManager.Instance.Destroy(clientToDestroy);
         }
 
@@ -62,19 +55,10 @@ namespace MultiplayerClient
         
         public static void PlayerAnimation(Packet packet)
         {
-            Log("Reading animation packet...");
             int id = packet.ReadInt();
             string animation = packet.ReadString();
             
-            Log($"Playing animation {animation} on Player {id}");
-            if (GameManager.Players[id] != null)
-            {
-                GameManager.Players[id].gameObject.GetComponent<tk2dSpriteAnimator>().Play(animation);
-            }
-            else
-            {
-                Log($"Could not play animation {animation} on Player {id}, Player null! ");
-            }    
+            GameManager.Players[id].gameObject.GetComponent<tk2dSpriteAnimator>().Play(animation);
         }
 
         public static void PlayerDisconnected(Packet packet)
@@ -91,7 +75,6 @@ namespace MultiplayerClient
                 Log($"Player {id} has disconnected from the server.");    
             }
             
-            Log("Destroying GameManager Player of ID " + id);
             GameManager.Instance.Destroy(id);
         }
         

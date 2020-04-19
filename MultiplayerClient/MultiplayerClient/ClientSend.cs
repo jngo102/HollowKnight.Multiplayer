@@ -35,9 +35,6 @@ namespace MultiplayerClient
                 packet.Write(Client.Instance.activeScene);
                 packet.Write(heroTransform.position);
                 packet.Write(heroTransform.localScale);
-                
-                Log("Hero Position: " + heroTransform.position);
-                Log("Hero Scale: " + heroTransform.localScale);
 
                 SendTCPData(packet);
             }
@@ -69,7 +66,6 @@ namespace MultiplayerClient
             {
                 packet.Write(animation);
                 
-                Log($"Sending animation {animation} to Server...");
                 SendUDPData(packet);
             }
         }
@@ -79,8 +75,7 @@ namespace MultiplayerClient
             using (Packet packet = new Packet((int) ClientPackets.SceneChanged))
             {
                 packet.Write(sceneName);
-
-                Log("Sending Scene Changed Packet: " + sceneName);
+                
                 SendTCPData(packet);
             }
         }

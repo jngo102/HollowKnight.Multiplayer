@@ -14,14 +14,6 @@ namespace MultiplayerServer
 
             GameObject playerPrefab = new GameObject(
                 "PlayerPrefab",
-                /*typeof(MeshFilter),
-                typeof(MeshRenderer),
-                typeof(NonBouncer),
-                typeof(Player),
-                typeof(SpriteFlash),
-                typeof(tk2dSprite),
-                typeof(tk2dSpriteAnimator)*/
-                typeof(SpriteRenderer),
                 typeof(Player)
             )
             {

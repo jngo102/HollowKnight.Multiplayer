@@ -13,9 +13,6 @@ namespace MultiplayerServer
             string activeScene = packet.ReadString();
             Vector3 position = packet.ReadVector3();
             Vector3 scale = packet.ReadVector3();
-            
-            Log("Received Position: " + position);
-            Log("Received Scale: " + scale);
 
             Server.clients[fromClient].SendIntoGame(username, position, scale);
             SceneChanged(fromClient, activeScene);
@@ -42,8 +39,7 @@ namespace MultiplayerServer
         }
         
         public static void PlayerAnimation(int fromClient, Packet packet)
-        { 
-            Log("Reading Animation Packet...");
+        {
             string animation = packet.ReadString();
             
             Server.clients[fromClient].player.SetAnimation(animation);
@@ -69,16 +65,12 @@ namespace MultiplayerServer
                 {
                     if (Server.clients[i].player.activeScene == sceneName)
                     {
-                        Log($"Spawning Player {i} on client {fromClient}");
                         ServerSend.SpawnPlayer(fromClient, Server.clients[i].player);
-                        Log($"Spawning Player {fromClient} on client {i}");
                         ServerSend.SpawnPlayer(i, Server.clients[fromClient].player);
                     }
                     else
                     {
-                        Log($"Destroying Player {i} on client {fromClient}");
                         ServerSend.DestroyPlayer(fromClient, i);
-                        Log($"Destroying Player {fromClient} on client {i}");
                         ServerSend.DestroyPlayer(i, fromClient);
                     }
                 }
@@ -95,9 +87,7 @@ namespace MultiplayerServer
                 {
                     if (Server.clients[i].player.activeScene == sceneName)
                     {
-                        Log("Same Scene: Spawning Players");
                         ServerSend.SpawnPlayer(fromClient, Server.clients[i].player);
-                        
                         ServerSend.SpawnPlayer(Server.clients[i].player.id, Server.clients[fromClient].player);
                     }
                 }
