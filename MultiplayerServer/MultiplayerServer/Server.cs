@@ -99,7 +99,6 @@ namespace MultiplayerServer
             {
                 if (clientEndPoint != null)
                 {
-                    Log($"_udpListener.BeginSend() to {clientEndPoint}");
                     _udpListener.BeginSend(packet.ToArray(), packet.Length(), clientEndPoint, null, null);
                 }
 
@@ -122,7 +121,6 @@ namespace MultiplayerServer
             PacketHandlers = new Dictionary<int, PacketHandler>
             {
                 { (int) ClientPackets.WelcomeReceived, ServerHandle.WelcomeReceived },
-                { (int) ClientPackets.SpawnPlayer, ServerHandle.SpawnPlayer },
                 { (int) ClientPackets.PlayerPosition, ServerHandle.PlayerPosition },
                 { (int) ClientPackets.PlayerScale, ServerHandle.PlayerScale },
                 { (int) ClientPackets.PlayerAnimation, ServerHandle.PlayerAnimation },

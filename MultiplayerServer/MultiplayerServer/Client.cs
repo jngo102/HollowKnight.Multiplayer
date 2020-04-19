@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using On.HutongGames.PlayMaker.Actions;
 using UnityEngine;
 
 namespace MultiplayerServer
@@ -102,7 +103,7 @@ namespace MultiplayerServer
             }
             
             /// <summary>Prepares received data to be used by the appropriate packet handler methods.</summary>
-            /// <param name="data">The recieved data.</param>
+            /// <param name="data">The received data.</param>
             private bool HandleData(byte[] data)
             {
                 int packetLength = 0;
@@ -184,12 +185,11 @@ namespace MultiplayerServer
             /// <param name="packet">The packet to send.</param>
             public void SendData(Packet packet)
             {
-                Log("Server.SendUDPData(endPoint, packet)");
                 Server.SendUDPData(endPoint, packet);
             }
 
             /// <summary>Prepares received data to be used by the appropriate packet handler methods.</summary>
-            /// <param name="packetData">The packet containing the recieved data.</param>
+            /// <param name="packetData">The packet containing the received data.</param>
             public void HandleData(Packet packetData)
             {
                 int packetLength = packetData.ReadInt();
@@ -222,22 +222,7 @@ namespace MultiplayerServer
             player = NetworkManager.Instance.InstantiatePlayer(position, scale);
             player.Initialize(id, username);
 
-            foreach (Client client in Server.clients.Values)
-            {
-                if (client.player != null)
-                {
-                    if (client.id != id)
-                    {
-                        // Send existing player to the new client
-                        Log($"Send existing player {client.player.username} to the new client {id}");
-                        ServerSend.SpawnPlayer(id, client.player);
-                        
-                        // Send the new player to the existing client
-                        Log($"Send the new player {player.username} to the existing client {client.id}");
-                        ServerSend.SpawnPlayer(client.id, player);
-                    }
-                }
-            }
+            UnityEngine.Object.DontDestroyOnLoad(player);
         }
 
         /// <summary>Disconnects the client and stops all network traffic.</summary>

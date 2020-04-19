@@ -136,6 +136,9 @@ namespace MultiplayerClient.Canvas
                 if (_ipInput.GetText() != "") Client.Instance.ip = _ipInput.GetText();
                 if (_portInput.GetText() != "") Client.Instance.port = int.Parse(_portInput.GetText());
                 if (_usernameInput.GetText() != "") Client.Instance.username = _usernameInput.GetText();
+
+                Client.Instance.activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+                
                 Client.Instance.ConnectToServer();
 
                 Log("Connected to Server!");
@@ -150,6 +153,7 @@ namespace MultiplayerClient.Canvas
         {
             Log("Disconnecting from Server...");
             ClientSend.PlayerDisconnected(Client.Instance.myId);
+            Client.Instance.Disconnect();
         }
         
         public static void Update()

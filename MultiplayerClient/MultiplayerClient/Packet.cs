@@ -10,10 +10,10 @@ namespace MultiplayerClient
     {
         Welcome = 1,
         SpawnPlayer,
+        DestroyPlayer,
         PlayerPosition,
         PlayerScale,
         PlayerAnimation,
-        CheckSameScene,
         PlayerDisconnected,
     }
 
@@ -21,7 +21,6 @@ namespace MultiplayerClient
     public enum ClientPackets
     {
         WelcomeReceived = 1,
-        SpawnPlayer,
         PlayerPosition,
         PlayerScale,
         PlayerAnimation,

@@ -16,6 +16,8 @@ namespace MultiplayerClient
             Client.Instance.myId = myId;
 
             ClientSend.WelcomeReceived();
+            
+            Client.Instance.udp.Connect(((IPEndPoint) Client.Instance.tcp.socket.Client.LocalEndPoint).Port);
         }
 
         public static void SpawnPlayer(Packet packet)
@@ -25,8 +27,21 @@ namespace MultiplayerClient
             string username = packet.ReadString();
             Vector3 position = packet.ReadVector3();
             Vector3 scale = packet.ReadVector3();
+            
+            Log("Got Position: " + position);
+            Log("Got Scale: " + scale);
 
+            Log($"Spawning instance of Player {id} at {position}.");
             GameManager.Instance.SpawnPlayer(id, username, position, scale);
+        }
+
+        public static void DestroyPlayer(Packet packet)
+        {
+            int clientToDestroy = packet.ReadInt();
+
+            Log("Destroying Player " + clientToDestroy);
+            
+            GameManager.Instance.Destroy(clientToDestroy);
         }
 
         public static void PlayerPosition(Packet packet)
@@ -47,26 +62,21 @@ namespace MultiplayerClient
         
         public static void PlayerAnimation(Packet packet)
         {
+            Log("Reading animation packet...");
             int id = packet.ReadInt();
             string animation = packet.ReadString();
             
-            Log($"Playing animation {animation} on Player {id}...");
-            GameManager.Players[id].gameObject.GetComponent<tk2dSpriteAnimator>().Play(animation);
-        }
-
-        public static void CheckSameScene(Packet packet)
-        {
-            int id = packet.ReadInt();
-            string sceneName = packet.ReadString();
-
-            Transform heroTransform = HeroController.instance.gameObject.transform;
-            
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == sceneName)
+            Log($"Playing animation {animation} on Player {id}");
+            if (GameManager.Players[id] != null)
             {
-                ClientSend.SpawnPlayer(Client.Instance.myId, id, Client.Instance.username, heroTransform.position, heroTransform.localScale);
+                GameManager.Players[id].gameObject.GetComponent<tk2dSpriteAnimator>().Play(animation);
             }
+            else
+            {
+                Log($"Could not play animation {animation} on Player {id}, Player null! ");
+            }    
         }
-        
+
         public static void PlayerDisconnected(Packet packet)
         {
             int id = packet.ReadInt();
@@ -74,6 +84,7 @@ namespace MultiplayerClient
             if (Client.Instance.myId == id)
             {
                 Log("You have disconnected from the server.");
+                Client.Instance.Disconnect();
             }
             else
             {
@@ -81,9 +92,7 @@ namespace MultiplayerClient
             }
             
             Log("Destroying GameManager Player of ID " + id);
-            Destroy(GameManager.Players[id].gameObject);
-            Client.Instance.Disconnect();
-            GameManager.Players.Remove(id);
+            GameManager.Instance.Destroy(id);
         }
         
         private static void Log(object message) => Modding.Logger.Log("[Client Handle] " + message);

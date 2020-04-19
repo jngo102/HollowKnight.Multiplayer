@@ -23,6 +23,7 @@ namespace MultiplayerServer
             {
                 if (Server.clients[i].player != null)
                 {
+                    Log("Sending to Player " + i);
                     Server.clients[i].tcp.SendData(packet);   
                 }
             }
@@ -37,6 +38,7 @@ namespace MultiplayerServer
                 {
                     if (Server.clients[i].player != null)
                     {
+                        Log("Sending to Player " + i);
                         Server.clients[i].tcp.SendData(packet);   
                     }
                 }
@@ -46,12 +48,10 @@ namespace MultiplayerServer
         private static void SendUDPDataToAll(Packet packet)
         {
             packet.WriteLength();
-            Log("Sending UDP data to all clients");
             for (int i = 1; i <= Server.MaxPlayers; i++)
             {
                 if (Server.clients[i].player != null)
                 {
-                    Log($"Server.clients[{i}].udp.SendData(packet)");
                     Server.clients[i].udp.SendData(packet);
                 }
             }
@@ -89,19 +89,32 @@ namespace MultiplayerServer
             {
                 packet.Write(player.id);
                 packet.Write(player.username);
-                packet.Write(player.transform.position);
-                packet.Write(player.transform.localScale);
+                packet.Write(player.position);
+                packet.Write(player.scale);
+                
+                Log("Player Position: " + player.position);
+                Log("Player Scale: " + player.scale);
 
                 SendTCPData(toClient, packet);
             }
-        }    
+        }
 
+        public static void DestroyPlayer(int toClient, int clientToDestroy)
+        {
+            using (Packet packet = new Packet((int) ServerPackets.DestroyPlayer))
+            {
+                packet.Write(clientToDestroy);
+
+                SendTCPData(toClient, packet);
+            }
+        }
+        
         public static void PlayerPosition(Player player)
         {
             using (Packet packet = new Packet((int) ServerPackets.PlayerPosition))
             {
                 packet.Write(player.id);
-                packet.Write(player.transform.position);
+                packet.Write(player.position);
 
                 SendUDPDataToAll(player.id, packet);
             }
@@ -112,7 +125,7 @@ namespace MultiplayerServer
             using (Packet packet = new Packet((int) ServerPackets.PlayerScale))
             {
                 packet.Write(player.id);
-                packet.Write(player.transform.localScale);
+                packet.Write(player.scale);
 
                 SendUDPDataToAll(player.id, packet);
             }
@@ -125,22 +138,11 @@ namespace MultiplayerServer
                 packet.Write(player.id);
                 packet.Write(player.animation);
                 
-                Log("SendUDPDataToAll(packet)");
+                Log("Sending Animation to All");
                 SendUDPDataToAll(player.id, packet);
             }
         }
 
-        public static void CheckSameScene(int playerId, string sceneName)
-        {
-            using (Packet packet = new Packet((int) ServerPackets.CheckSameScene))
-            {
-                packet.Write(playerId);
-                packet.Write(sceneName);
-                
-                SendTCPDataToAll(playerId, packet);
-            }
-        }
-        
         public static void PlayerDisconnected(int playerId)
         {
             using (Packet packet = new Packet((int) ServerPackets.PlayerDisconnected))

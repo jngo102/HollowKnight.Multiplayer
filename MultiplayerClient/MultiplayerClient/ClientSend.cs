@@ -18,7 +18,6 @@ namespace MultiplayerClient
         private static void SendUDPData(Packet packet)
         {
             packet.WriteLength();
-            Log("Client.Instance.udp.SendData(packet)");
             Client.Instance.udp.SendData(packet);
         }
         
@@ -33,13 +32,17 @@ namespace MultiplayerClient
                 
                 packet.Write(Client.Instance.myId);
                 packet.Write(Client.Instance.username);
+                packet.Write(Client.Instance.activeScene);
                 packet.Write(heroTransform.position);
                 packet.Write(heroTransform.localScale);
+                
+                Log("Hero Position: " + heroTransform.position);
+                Log("Hero Scale: " + heroTransform.localScale);
 
                 SendTCPData(packet);
             }
         }
-        
+
         public static void PlayerPosition(Vector3 position)
         {
             using (Packet packet = new Packet((int) ClientPackets.PlayerPosition))
@@ -66,7 +69,7 @@ namespace MultiplayerClient
             {
                 packet.Write(animation);
                 
-                Log("PlayerAnimation.SendUDPData(packet)");
+                Log($"Sending animation {animation} to Server...");
                 SendUDPData(packet);
             }
         }
@@ -77,24 +80,11 @@ namespace MultiplayerClient
             {
                 packet.Write(sceneName);
 
+                Log("Sending Scene Changed Packet: " + sceneName);
                 SendTCPData(packet);
             }
         }
 
-        public static void SpawnPlayer(int sourceId, int targetId, string username, Vector3 position, Vector3 scale)
-        {
-            using (Packet packet = new Packet((int) ClientPackets.SpawnPlayer))
-            {
-                packet.Write(sourceId);
-                packet.Write(targetId);
-                packet.Write(username);
-                packet.Write(position);
-                packet.Write(scale);
-
-                SendTCPData(packet);
-            }
-        }
-        
         public static void PlayerDisconnected(int id)
         {
             using (Packet packet = new Packet((int) ClientPackets.PlayerDisconnected))
