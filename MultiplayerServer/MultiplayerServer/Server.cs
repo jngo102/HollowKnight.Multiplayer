@@ -125,6 +125,7 @@ namespace MultiplayerServer
                 { (int) ClientPackets.PlayerScale, ServerHandle.PlayerScale },
                 { (int) ClientPackets.PlayerAnimation, ServerHandle.PlayerAnimation },
                 { (int) ClientPackets.SceneChanged, ServerHandle.SceneChanged },
+                { (int) ClientPackets.CharmsUpdated, ServerHandle.CharmsUpdated },
                 { (int) ClientPackets.PlayerDisconnected, ServerHandle.PlayerDisconnected },
             };
             

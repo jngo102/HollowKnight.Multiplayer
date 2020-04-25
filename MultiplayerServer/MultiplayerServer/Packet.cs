@@ -11,9 +11,11 @@ namespace MultiplayerServer
         Welcome = 1,
         SpawnPlayer,
         DestroyPlayer,
+        PvPEnabled,
         PlayerPosition,
         PlayerScale,
         PlayerAnimation,
+        CharmsUpdated,
         PlayerDisconnected,
     }
 
@@ -25,6 +27,7 @@ namespace MultiplayerServer
         PlayerScale,
         PlayerAnimation,
         SceneChanged,
+        CharmsUpdated,
         PlayerDisconnected,
     }
 

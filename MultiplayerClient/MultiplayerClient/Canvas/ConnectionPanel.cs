@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections;
-using System.IO;
-using HutongGames.PlayMaker.Actions;
+using System.Collections.Generic;
+using IL.HutongGames.PlayMaker.Actions;
 using ModCommon;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Networking;
-using UnityEngine.UI;
-using Random = UnityEngine.Random;
+using Object = UnityEngine.Object;
 
 namespace MultiplayerClient.Canvas
 {
     public class ConnectionPanel
     {
         public static CanvasPanel Panel;
-        
-        private static float y;
 
         private static CanvasInput _ipInput;
         private static CanvasInput _portInput;
@@ -23,26 +19,31 @@ namespace MultiplayerClient.Canvas
 
         public static void BuildMenu(GameObject canvas)
         {
-            y = 30.0f;
-
-            GameObject eventSystemObj = new GameObject("EventSystem");
-            
-            EventSystem eventSystem = eventSystemObj.AddComponent<EventSystem>();
-            eventSystem.sendNavigationEvents = true;
-            eventSystem.pixelDragThreshold = 10;
-            
-            eventSystemObj.AddComponent<StandaloneInputModule>();
-
-            UnityEngine.Object.DontDestroyOnLoad(eventSystemObj);
-
             Texture2D buttonImg = GUIController.Instance.images["Button_BG"];
             Texture2D inputImg = GUIController.Instance.images["Input_BG"];
             Texture2D panelImg = GUIController.Instance.images["Panel_BG"];
             
+            float x = Screen.width / 2.0f - inputImg.width / 2.0f - 30.0f;
+            float y = 30.0f;
+
+            EventSystem eventSystem = null;
+            if (!GameObject.Find("EventSystem"))
+            {
+                GameObject eventSystemObj = new GameObject("EventSystem");
+
+                eventSystem = eventSystemObj.AddComponent<EventSystem>();
+                eventSystem.sendNavigationEvents = true;
+                eventSystem.pixelDragThreshold = 10;
+
+                eventSystemObj.AddComponent<StandaloneInputModule>();
+
+                Object.DontDestroyOnLoad(eventSystemObj);
+            }
+
             Panel = new CanvasPanel(
                 canvas,
                 panelImg,
-                new Vector2(0, y), 
+                new Vector2(x, y), 
                 Vector2.zero,
                 new Rect(0, 0, panelImg.width, panelImg.height)
             );
@@ -50,19 +51,19 @@ namespace MultiplayerClient.Canvas
             Panel.AddText(
                 "Connection Text",
                 "Connection",
-                new Vector2(0, y),
+                new Vector2(x, y),
                 new Vector2(buttonImg.width, buttonImg.height), 
                 GUIController.Instance.trajanNormal,
                 24,
                 FontStyle.Bold,
                 TextAnchor.MiddleCenter
             );
-            y += buttonImg.height;
+            y += buttonImg.height + 10;
 
             _ipInput = Panel.AddInput(
                 "IP Input",
                 inputImg,
-                new Vector2(0, y),
+                new Vector2(x, y),
                 Vector2.zero,
                 new Rect(0, y, inputImg.width, inputImg.height),
                 GUIController.Instance.trajanNormal,
@@ -70,12 +71,12 @@ namespace MultiplayerClient.Canvas
                 "IP Address",
                 16
             );
-            y += inputImg.height;
+            y += inputImg.height + 5;
 
             _portInput = Panel.AddInput(
                 "Port Input",
                 inputImg,
-                new Vector2(0, y),
+                new Vector2(x, y),
                 Vector2.zero,
                 new Rect(0, y, inputImg.width, inputImg.height),
                 GUIController.Instance.trajanNormal,
@@ -83,12 +84,12 @@ namespace MultiplayerClient.Canvas
                 "Port",
                 16
             );
-            y += inputImg.height;
+            y += inputImg.height + 5;
 
             _usernameInput = Panel.AddInput(
                 "Username Input",
                 inputImg,
-                new Vector2(0, y),
+                new Vector2(x, y),
                 Vector2.zero,
                 new Rect(0, y, inputImg.width, inputImg.height),
                 GUIController.Instance.trajanNormal,
@@ -96,12 +97,12 @@ namespace MultiplayerClient.Canvas
                 "Username",
                 16
             );
-            y += inputImg.height;
+            y += inputImg.height + 5;
             
             Panel.AddButton(
                 "Connect Button",
                 buttonImg,
-                new Vector2(0, y),
+                new Vector2(x, y),
                 Vector2.zero,
                 ConnectToServer,
                 new Rect(0, y, buttonImg.width, buttonImg.height),
@@ -114,7 +115,7 @@ namespace MultiplayerClient.Canvas
             Panel.AddButton(
                 "Disconnect Button",
                 buttonImg,
-                new Vector2(0, y),
+                new Vector2(x, y),
                 Vector2.zero,
                 DisconnectFromServer,
                 new Rect(0, y, buttonImg.width, buttonImg.height),
@@ -124,7 +125,10 @@ namespace MultiplayerClient.Canvas
             );
             y += buttonImg.height;
 
-            eventSystem.firstSelectedGameObject = _ipInput.InputObject;
+            if (eventSystem != null)
+            {
+                eventSystem.firstSelectedGameObject = _ipInput.InputObject;
+            }
         }
 
         private static void ConnectToServer(string buttonName)
@@ -137,9 +141,9 @@ namespace MultiplayerClient.Canvas
                 if (_portInput.GetText() != "") Client.Instance.port = int.Parse(_portInput.GetText());
                 if (_usernameInput.GetText() != "") Client.Instance.username = _usernameInput.GetText();
 
-                Client.Instance.activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-                
-                Client.Instance.ConnectToServer();
+                PlayerManager.activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+                Client.Instance.StartCoroutine(ConnectThenReconnect());
 
                 Log("Connected to Server!");
             }
@@ -149,11 +153,27 @@ namespace MultiplayerClient.Canvas
             }
         }
 
+        private static IEnumerator ConnectThenReconnect()
+        {
+            Client.Instance.ConnectToServer();
+
+            int time = DateTime.Now.Millisecond;
+            
+            yield return new WaitWhile(() => Client.Instance.isConnected && DateTime.Now.Millisecond - time <= 500);
+            
+            if (!Client.Instance.isConnected)
+            {
+                Client.Instance.ConnectToServer();
+            }
+        }
+
         private static void DisconnectFromServer(string buttonName)
         {
             Log("Disconnecting from Server...");
             ClientSend.PlayerDisconnected(Client.Instance.myId);
             Client.Instance.Disconnect();
+
+            Log("You have disconnected from the server.");
         }
         
         public static void Update()

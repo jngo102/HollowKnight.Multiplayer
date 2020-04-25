@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
 
-namespace MultiplayerClient.Canvas
+namespace MultiplayerServer.Canvas
 {
     public class CanvasPanel
     {
@@ -86,10 +85,11 @@ namespace MultiplayerClient.Canvas
             return input;
         }
 
-        public CanvasToggle AddToggle(string name, Texture2D bgTexture, Texture2D checkTexture, Vector2 pos, Vector2 sz, Vector2 bgPos, Rect labelRect, Font font = null, string labelText = "", int fontSize = 13)
+        public CanvasToggle AddToggle(string name, Texture2D bgTexture, Texture2D checkTexture, Vector2 pos, Vector2 sz, Vector2 bgPos, Rect labelRect, UnityAction<bool> toggleAction, Font font = null, string labelText = "", int fontSize = 13)
         {
             CanvasToggle toggle = new CanvasToggle(canvas, name, bgTexture, checkTexture, position + pos, sz, bgPos, labelRect, font, labelText, fontSize);
-
+            toggle.AddToggleEvent(toggleAction);
+            
             toggles.Add(name, toggle);
 
             return toggle;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
@@ -16,7 +17,6 @@ namespace MultiplayerClient
         public string ip = "127.0.0.1";
         public int port = 26950;
         public string username = "Default";
-        public string activeScene;
         public int myId;
         public TCP tcp;
         public UDP udp;
@@ -125,7 +125,10 @@ namespace MultiplayerClient
                     if (byteLength <= 0)
                     {
                         Log("Byte Length <= 0: Disconnecting!!!!");
-                        Instance.Disconnect();
+                        if (Instance.isConnected)
+                        {
+                            Instance.Disconnect();
+                        }
                         return;
                     }
 
@@ -191,9 +194,12 @@ namespace MultiplayerClient
             }
 
             /// <summary>Disconnects from the server and cleans up the TCP connection.</summary>
-            private void Disconnect()
+            public void Disconnect()
             {
-                Instance.Disconnect();
+                if (Instance.isConnected)
+                {
+                    Instance.Disconnect();
+                }
 
                 stream = null;
                 receivedData = null;
@@ -236,12 +242,17 @@ namespace MultiplayerClient
                     packet.InsertInt(Instance.myId);
                     if (socket != null)
                     {
-                        if (!socket.Client.Connected && endPoint == null)
+                        if (endPoint == null)
                         {
                             endPoint = new IPEndPoint(IPAddress.Parse(Instance.ip), Instance.port);
+                        }
+                        
+                        if (!socket.Client.Connected)
+                        {
                             socket.Connect(endPoint);
                             socket.BeginReceive(ReceiveCallback, null);
                         }
+
 
                         socket.BeginSend(packet.ToArray(), packet.Length(), null, null);
                     }
@@ -259,10 +270,13 @@ namespace MultiplayerClient
                 {
                     byte[] data = socket.EndReceive(result, ref endPoint);
                     socket.BeginReceive(ReceiveCallback, null);
-
+                    
                     if (data.Length < 4)
                     {
-                        Instance.Disconnect();
+                        if (Instance.isConnected)
+                        {
+                            Instance.Disconnect();
+                        }
                         return;
                     }
 
@@ -296,10 +310,13 @@ namespace MultiplayerClient
             }
 
             /// <summary>Disconnects from the server and cleans up the UDP connection.</summary>
-            private void Disconnect()
+            public void Disconnect()
             {
-                Instance.Disconnect();
-
+                if (Instance.isConnected)
+                {
+                    Instance.Disconnect();
+                }
+                
                 endPoint = null;
                 socket = null;
             }
@@ -313,9 +330,11 @@ namespace MultiplayerClient
                 { (int) ServerPackets.Welcome, ClientHandle.Welcome },
                 { (int) ServerPackets.SpawnPlayer, ClientHandle.SpawnPlayer },
                 { (int) ServerPackets.DestroyPlayer, ClientHandle.DestroyPlayer },
+                { (int) ServerPackets.PvPEnabled, ClientHandle.PvPEnabled },
                 { (int) ServerPackets.PlayerPosition, ClientHandle.PlayerPosition },
                 { (int) ServerPackets.PlayerScale, ClientHandle.PlayerScale },
                 { (int) ServerPackets.PlayerAnimation, ClientHandle.PlayerAnimation },
+                { (int) ServerPackets.CharmsUpdated, ClientHandle.CharmsUpdated },
                 { (int) ServerPackets.PlayerDisconnected, ClientHandle.PlayerDisconnected },
             };
             Log("Initialized Packets.");
@@ -324,7 +343,6 @@ namespace MultiplayerClient
         /// <summary>Disconnects from the server and stops all network traffic.</summary>
         public void Disconnect()
         {
-            Log("Disconnecting from Server...");
             if (isConnected)
             {
                 isConnected = false;
@@ -333,8 +351,15 @@ namespace MultiplayerClient
 
                 Log("You have been disconnected from the server.");
             }
+            
+            foreach (KeyValuePair<int, PlayerManager> pair in GameManager.Players)
+            {
+                int playerId = pair.Key;
+                Log($"Destroying Player {playerId} in GameManager");
+                GameManager.Instance.Destroy(playerId);
+            }
         }
-        
+
         private static void Log(object message) => Modding.Logger.Log("[Client] (Client) " + message);
     }
 }

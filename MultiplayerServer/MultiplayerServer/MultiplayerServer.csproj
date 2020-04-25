@@ -51,6 +51,9 @@
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.InputModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.InputModule.dll</HintPath>
     </Reference>
@@ -60,10 +63,28 @@
     <Reference Include="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.Physics2DModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Canvas\CanvasButton.cs" />
+    <Compile Include="Canvas\CanvasImage.cs" />
+    <Compile Include="Canvas\CanvasInput.cs" />
+    <Compile Include="Canvas\CanvasPanel.cs" />
+    <Compile Include="Canvas\CanvasText.cs" />
+    <Compile Include="Canvas\CanvasToggle.cs" />
+    <Compile Include="Canvas\GUIController.cs" />
+    <Compile Include="Canvas\OptionsPanel.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="GlobalSettings.cs" />
     <Compile Include="MPServer.cs" />
     <Compile Include="MultiplayerServer.cs" />
     <Compile Include="NetworkManager.cs" />
@@ -74,6 +95,13 @@
     <Compile Include="ServerHandle.cs" />
     <Compile Include="ServerSend.cs" />
     <Compile Include="ThreadManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\Checkmark.png" />
+    <EmbeddedResource Include="Images\Toggle_BG.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Images\Panel_BG.png" />
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="@echo on" />

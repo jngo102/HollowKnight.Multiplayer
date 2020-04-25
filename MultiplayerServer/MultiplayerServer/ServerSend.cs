@@ -1,4 +1,5 @@
 ﻿using System;
+using ModCommon.Util;
 
 namespace MultiplayerServer
 {
@@ -76,7 +77,7 @@ namespace MultiplayerServer
             {
                 packet.Write(toClient);
                 packet.Write(msg);
-
+                
                 SendTCPData(toClient, packet);
             }
         }
@@ -89,7 +90,14 @@ namespace MultiplayerServer
                 packet.Write(player.username);
                 packet.Write(player.position);
                 packet.Write(player.scale);
-                
+                packet.Write(player.animation);
+                for (int charmNum = 1; charmNum <= 40; charmNum++)
+                {
+                    packet.Write(player.GetAttr<Player, bool>("equippedCharm_" + charmNum));
+                }
+                packet.Write(GlobalSettings.PvPEnabled);
+
+                Log($"Spawning Player {player.id} on Client {toClient} with Charms");
                 SendTCPData(toClient, packet);
             }
         }
@@ -101,6 +109,16 @@ namespace MultiplayerServer
                 packet.Write(clientToDestroy);
 
                 SendTCPData(toClient, packet);
+            }
+        }
+
+        public static void PvPEnabled(bool enabled)
+        {
+            using (Packet packet = new Packet((int) ServerPackets.PvPEnabled))
+            {
+                packet.Write(enabled);
+                
+                SendTCPDataToAll(packet);    
             }
         }
         
@@ -137,13 +155,29 @@ namespace MultiplayerServer
             }
         }
 
+        public static void CharmsUpdated(int fromClient, Player player)
+        {
+            using (Packet packet = new Packet((int) ServerPackets.CharmsUpdated))
+            {
+                packet.Write(fromClient);
+                for (int charmNum = 1; charmNum <= 40; charmNum++)
+                {
+                    packet.Write(player.GetAttr<Player, bool>("equippedCharm_" + charmNum));
+                }
+
+                Log("Sending CharmsUpdate packet from Server");
+                SendTCPDataToAll(fromClient, packet);
+            }
+        }
+
         public static void PlayerDisconnected(int playerId)
         {
             using (Packet packet = new Packet((int) ServerPackets.PlayerDisconnected))
             {
                 packet.Write(playerId);
 
-                SendTCPDataToAll(packet);    
+                Log("Sending Disconnect Packet to all clients but " + playerId);
+                SendTCPDataToAll(playerId, packet); 
             }
         }
 

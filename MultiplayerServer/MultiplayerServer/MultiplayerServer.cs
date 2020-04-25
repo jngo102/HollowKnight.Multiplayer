@@ -1,4 +1,5 @@
 ﻿using Modding;
+using MultiplayerServer.Canvas;
 
 namespace MultiplayerServer
 {
@@ -12,6 +13,7 @@ namespace MultiplayerServer
         public override void Initialize()
         {
             GameManager.instance.gameObject.AddComponent<MPServer>();
+            GUIController.Instance.BuildMenus();
         }
     }
 }

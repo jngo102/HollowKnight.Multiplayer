@@ -6,9 +6,9 @@ namespace MultiplayerServer
 {
     public class ThreadManager : MonoBehaviour
     {
-        private static readonly List<Action> executeOnMainThread = new List<Action>();
-        private static readonly List<Action> executeCopiedOnMainThread = new List<Action>();
-        private static bool actionToExecuteOnMainThread = false;
+        private static readonly List<Action> ToExecuteOnMainThread = new List<Action>();
+        private static readonly List<Action> ExecuteCopiedOnMainThread = new List<Action>();
+        private static bool _actionToExecuteOnMainThread;
 
         private void FixedUpdate()
         {
@@ -16,38 +16,38 @@ namespace MultiplayerServer
         }
         
         /// <summary>Sets an action to be executed on the main thread.</summary>
-        /// <param name="_action">The action to be executed on the main thread.</param>
-        public static void ExecuteOnMainThread(Action _action)
+        /// <param name="action">The action to be executed on the main thread.</param>
+        public static void ExecuteOnMainThread(Action action)
         {
-            if (_action == null)
+            if (action == null)
             {
                 Log("No action to execute on main thread!");
                 return;
             }
 
-            lock (executeOnMainThread)
+            lock (ToExecuteOnMainThread)
             {
-                executeOnMainThread.Add(_action);
-                actionToExecuteOnMainThread = true;
+                ToExecuteOnMainThread.Add(action);
+                _actionToExecuteOnMainThread = true;
             }
         }
 
         /// <summary>Executes all code meant to run on the main thread. NOTE: Call this ONLY from the main thread.</summary>
         public static void UpdateMain()
         {
-            if (actionToExecuteOnMainThread)
+            if (_actionToExecuteOnMainThread)
             {
-                executeCopiedOnMainThread.Clear();
-                lock (executeOnMainThread)
+                ExecuteCopiedOnMainThread.Clear();
+                lock (ToExecuteOnMainThread)
                 {
-                    executeCopiedOnMainThread.AddRange(executeOnMainThread);
-                    executeOnMainThread.Clear();
-                    actionToExecuteOnMainThread = false;
+                    ExecuteCopiedOnMainThread.AddRange(ToExecuteOnMainThread);
+                    ToExecuteOnMainThread.Clear();
+                    _actionToExecuteOnMainThread = false;
                 }
 
-                for (int i = 0; i < executeCopiedOnMainThread.Count; i++)
+                for (int i = 0; i < ExecuteCopiedOnMainThread.Count; i++)
                 {
-                    executeCopiedOnMainThread[i]();
+                    ExecuteCopiedOnMainThread[i]();
                 }
             }
         }

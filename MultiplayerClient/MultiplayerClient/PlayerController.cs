@@ -1,4 +1,5 @@
 ﻿using System;
+using ModCommon.Util;
 using UnityEngine;
 
 namespace MultiplayerClient
@@ -6,22 +7,11 @@ namespace MultiplayerClient
     public class PlayerController : MonoBehaviour
     {
         private GameObject _hero;
-        
+
         private void Awake()
         {
             _hero = HeroController.instance.gameObject;
-            /*var collider = gameObject.GetComponent<BoxCollider2D>();
-            var _heroCollider = _hero.GetComponent<BoxCollider2D>();
 
-            collider.size = _heroCollider.size;
-            collider.offset = _heroCollider.offset;
-            collider.enabled = false;
-
-            Bounds bounds = collider.bounds;
-            Bounds _heroBounds = _heroCollider.bounds;
-            bounds.min = _heroBounds.min;
-            bounds.max = _heroBounds.max;*/
-            
             var mFilter = gameObject.GetComponent<MeshFilter>();
             
             Mesh mesh = mFilter.mesh;
@@ -50,11 +40,6 @@ namespace MultiplayerClient
             anim.Library = _hero.GetComponent<tk2dSpriteAnimator>().Library;
         }
 
-        private void Start()
-        {
-            GetComponent<tk2dSpriteAnimator>().Play("Idle");
-        }
-        
         private string _storedClip = "";
         private Vector3 _storedPosition = Vector3.zero;
         private Vector3 _storedScale = Vector3.zero;
@@ -74,12 +59,18 @@ namespace MultiplayerClient
                 _storedScale = heroScale;
             }
 
-            string currentClip = _hero.GetComponent<tk2dSpriteAnimator>().CurrentClip.name;
-            if (currentClip != _storedClip)
+            /*var anim = _hero.GetComponent<tk2dSpriteAnimator>();
+            tk2dSpriteAnimationFrame frame = anim.CurrentClip.frames[0];
+            tk2dSpriteAnimationClip currentClip = anim.CurrentClip;
+            string clipName = currentClip.name;
+            if (currentFrame == 0 && currentClip.wrapMode == tk2dSpriteAnimationClip.WrapMode.Once ||
+                currentFrame == 0 && currentClip.wrapMode == tk2dSpriteAnimationClip.WrapMode.Loop && clipName != _storedClip ||
+                currentFrame == 0 && currentClip.wrapMode == tk2dSpriteAnimationClip.WrapMode.LoopSection && clipName != _storedClip)
             {
-                ClientSend.PlayerAnimation(currentClip);
-                _storedClip = currentClip;
-            }
+                _storedClip = clipName;
+                Log("Sending Animation: " + clipName);
+                ClientSend.PlayerAnimation(clipName);
+            }*/
         }
 
         private void Log(object message) => Modding.Logger.Log("[Player Controller] " + message);

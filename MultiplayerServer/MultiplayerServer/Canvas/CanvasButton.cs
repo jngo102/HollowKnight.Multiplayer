@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace MultiplayerClient.Canvas
+namespace MultiplayerServer.Canvas
 { 
     public class CanvasButton
     {
@@ -79,7 +79,10 @@ namespace MultiplayerClient.Canvas
 
         private void ButtonClicked()
         {
-            if (clicked != null && buttonName != null) clicked(buttonName);
+            if (clicked != null && buttonName != null)
+            {
+                clicked(buttonName);
+            }
         }
 
         public void UpdateText(string text)

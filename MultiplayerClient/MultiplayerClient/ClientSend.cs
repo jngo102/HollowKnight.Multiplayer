@@ -1,4 +1,5 @@
-﻿using MultiplayerClient.Canvas;
+﻿using ModCommon.Util;
+using MultiplayerClient.Canvas;
 using UnityEngine;
 
 namespace MultiplayerClient
@@ -32,9 +33,17 @@ namespace MultiplayerClient
                 
                 packet.Write(Client.Instance.myId);
                 packet.Write(Client.Instance.username);
-                packet.Write(Client.Instance.activeScene);
+                packet.Write(HeroController.instance.GetComponent<tk2dSpriteAnimator>().CurrentClip.name);
+                packet.Write(PlayerManager.activeScene);
                 packet.Write(heroTransform.position);
                 packet.Write(heroTransform.localScale);
+
+                for (int charmNum = 1; charmNum <= 40; charmNum++)
+                {
+                    packet.Write(PlayerData.instance.GetAttr<PlayerData, bool>("equippedCharm_" + charmNum));
+                }
+                
+                Log("Welcome Received Packet Length: " + packet.Length());
 
                 SendTCPData(packet);
             }
@@ -80,6 +89,21 @@ namespace MultiplayerClient
             }
         }
 
+        public static void CharmsUpdated(PlayerData pd)
+        {
+            using (Packet packet = new Packet((int) ClientPackets.CharmsUpdated))
+            {
+                for (int i = 1; i <= 40; i++)
+                {
+                    packet.Write(pd.GetBool("equippedCharm_" + i));
+                }
+
+                Log("Packet Length: " + packet.Length());
+                Log("Sending CharmsUpdated Packet from Client");
+                SendTCPData(packet);
+            }
+        }
+        
         public static void PlayerDisconnected(int id)
         {
             using (Packet packet = new Packet((int) ClientPackets.PlayerDisconnected))

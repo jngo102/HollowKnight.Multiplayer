@@ -11,9 +11,11 @@ namespace MultiplayerClient
         Welcome = 1,
         SpawnPlayer,
         DestroyPlayer,
+        PvPEnabled,
         PlayerPosition,
         PlayerScale,
         PlayerAnimation,
+        CharmsUpdated,
         PlayerDisconnected,
     }
 
@@ -25,6 +27,7 @@ namespace MultiplayerClient
         PlayerScale,
         PlayerAnimation,
         SceneChanged,
+        CharmsUpdated,
         PlayerDisconnected,
     }
 
@@ -228,8 +231,10 @@ namespace MultiplayerClient
             }
             else
             {
-                throw new Exception("Could not read value of type 'byte[]'!");
+                //throw new Exception("Could not read value of type 'byte[]'!");
             }
+
+            return null;
         }
 
         /// <summary>Reads a short from the packet.</summary>
@@ -270,8 +275,10 @@ namespace MultiplayerClient
             }
             else
             {
-                throw new Exception("Could not read value of type 'int'!");
+                //throw new Exception("Could not read value of type 'int'!");
             }
+
+            return 1;
         }
 
         /// <summary>Reads a long from the packet.</summary>
@@ -312,8 +319,10 @@ namespace MultiplayerClient
             }
             else
             {
-                throw new Exception("Could not read value of type 'float'!");
+                //throw new Exception("Could not read value of type 'float'!");
             }
+
+            return 1;
         }
 
         /// <summary>Reads a bool from the packet.</summary>
@@ -333,8 +342,10 @@ namespace MultiplayerClient
             }
             else
             {
-                throw new Exception("Could not read value of type 'bool'!");
+                //throw new Exception("Could not read value of type 'bool'!");
             }
+
+            return false;
         }
 
         /// <summary>Reads a string from the packet.</summary>

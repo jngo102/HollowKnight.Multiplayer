@@ -29,7 +29,6 @@ namespace MultiplayerServer
         private void Start()
         {
             QualitySettings.vSyncCount = 0;
-            //Application.targetFrameRate = Constants.MS_PER_TICK;
 
             Server.Start(MaxPlayers, Port);
         }
@@ -42,9 +41,9 @@ namespace MultiplayerServer
         public Player InstantiatePlayer(Vector3 position, Vector3 scale)
         {
             GameObject playerObj = Instantiate(playerPrefab);
-            playerObj.transform.SetPosition2D(position);
-            playerObj.transform.localScale = scale;
             Player playerComponent = playerObj.GetComponent<Player>();
+            playerComponent.position = position;
+            playerComponent.scale = scale;
             return playerComponent;
         }
         

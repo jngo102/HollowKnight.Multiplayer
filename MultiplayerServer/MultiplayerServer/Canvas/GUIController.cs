@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace MultiplayerClient.Canvas
+namespace MultiplayerServer.Canvas
 {
     public class GUIController : MonoBehaviour
     {
@@ -17,18 +17,19 @@ namespace MultiplayerClient.Canvas
         
         public void BuildMenus()
         {
-            if (!GameObject.Find("MultiplayerClient Canvas"))
+            if (!GameObject.Find("MultiplayerServer Canvas"))
             {
                 LoadResources();
                 
-                canvas = new GameObject("MultiplayerClient Canvas");
+                canvas = new GameObject("MultiplayerServer Canvas");
                 canvas.AddComponent<UnityEngine.Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
                 CanvasScaler scaler = canvas.AddComponent<CanvasScaler>();
                 scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
                 scaler.referenceResolution = new Vector2(Screen.width, Screen.height);
                 canvas.AddComponent<GraphicRaycaster>();
 
-                ConnectionPanel.BuildMenu(canvas);
+                Log("Building MultiplayerServer Canvas Menus");
+                OptionsPanel.BuildMenu(canvas);
 
                 DontDestroyOnLoad(canvas);
             }
@@ -36,7 +37,7 @@ namespace MultiplayerClient.Canvas
 
         public void Update()
         {
-            ConnectionPanel.Update();
+            OptionsPanel.Update();
         }
 
         public static GUIController Instance
@@ -48,12 +49,14 @@ namespace MultiplayerClient.Canvas
                     _instance = FindObjectOfType<GUIController>();
                     if (_instance == null)
                     {
-                        Modding.Logger.LogWarn("[Multiplayer Client] Couldn't find GUIController");
+                        Modding.Logger.LogWarn("[Multiplayer Server] Couldn't find GUIController");
 
-                        GameObject GUIController = new GameObject("GUIController Client");
+                        GameObject GUIController = new GameObject("GUIController Server");
                         _instance = GUIController.AddComponent<GUIController>();
                         DontDestroyOnLoad(GUIController);
                     }
+
+                    Modding.Logger.Log("GUI Controller instance attached to:  " + _instance.gameObject.name);
                 }
                 return _instance;
             }
@@ -98,7 +101,7 @@ namespace MultiplayerClient.Canvas
             
             foreach (string res in asm.GetManifestResourceNames())
             {
-                if (!res.StartsWith("MultiplayerClient.Images.")) continue;
+                if (!res.StartsWith("MultiplayerServer.Images.")) continue;
                 
                 try
                 {

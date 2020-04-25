@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using ModCommon.Util;
 using On.HutongGames.PlayMaker.Actions;
 using UnityEngine;
 
@@ -62,10 +64,7 @@ namespace MultiplayerServer
             {
                 try
                 {
-                    if (socket != null)
-                    {
-                        stream.BeginWrite(packet.ToArray(), 0, packet.Length(), null, null);
-                    }
+                    stream.BeginWrite(packet.ToArray(), 0, packet.Length(), null, null);
                 }
                 catch (Exception e)
                 {    
@@ -78,22 +77,25 @@ namespace MultiplayerServer
             {
                 try
                 {
-                    int byteLength = stream.EndRead(result);
-                    if (byteLength <= 0)
+                    if (stream != null)
                     {
-                        Log("Byte length is less than 0, disconnecting...");
-                        Server.clients[id].Disconnect();
-                        
-                        return;
+                        int byteLength = stream.EndRead(result);
+                        if (byteLength <= 0)
+                        {
+                            Log("Byte length is less than 0, disconnecting...");
+                            Server.clients[id].Disconnect();
+
+                            return;
+                        }
+
+                        byte[] data = new byte[byteLength];
+                        Array.Copy(receiveBuffer, data, byteLength);
+
+                        receivedData.Reset(HandleData(data));
+
+                        stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
                     }
-
-                    byte[] data = new byte[byteLength];
-                    Array.Copy(receiveBuffer, data, byteLength);
-
-                    receivedData.Reset(HandleData(data));
-                    
-                    stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
-                }
+                } 
                 catch (Exception e)
                 {
                     Log(e);
@@ -217,16 +219,23 @@ namespace MultiplayerServer
         /// <param name="username">The username of the new player.</param>
         /// <param name="position">The spawn position of the new player.</param>
         /// <param name="scale">The spawn scale of the new player.</param>
-        public void SendIntoGame(string username, Vector3 position, Vector3 scale)
+        /// <param name="animation">The animation that the new player starts in.</param>
+        /// <param name="charmsData">The equipped charms of the new player.</param>
+        public void SendIntoGame(string username, Vector3 position, Vector3 scale, string animation, List<bool> charmsData)
         {
             player = NetworkManager.Instance.InstantiatePlayer(position, scale);
-            player.Initialize(id, username);
-
+            player.Initialize(id, username, animation);
+            
+            for (int charmNum = 1; charmNum <= 40; charmNum++)
+            {
+                player.SetAttr("equippedCharm_" + charmNum, charmsData[charmNum - 1]);
+            }
+            
             UnityEngine.Object.DontDestroyOnLoad(player);
         }
 
         /// <summary>Disconnects the client and stops all network traffic.</summary>
-        private void Disconnect()
+        public void Disconnect()
         {
             Log($"{tcp.socket.Client.RemoteEndPoint} has disconnected from the server.");
 
@@ -240,6 +249,7 @@ namespace MultiplayerServer
             udp.Disconnect();
             
             ServerSend.PlayerDisconnected(id);
+            Log("Disconnected on Server Side.");
         }
         
         private static void Log(object message) => Modding.Logger.Log("[Client] (Server) " + message);

@@ -1,59 +1,36 @@
-﻿using Modding;
+﻿using System.Collections.Generic;
+using Modding;
 using MultiplayerClient.Canvas;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace MultiplayerClient
 {
     public class MultiplayerClient : Mod
     {
+        public static readonly Dictionary<string, GameObject> GameObjects = new Dictionary<string, GameObject>();
+        
         public override string GetVersion()
         {
             return "0.0.1";
         }
         
-        public override void Initialize()
+        public override List<(string, string)> GetPreloadNames()
         {
-            GUIController.Instance.BuildMenus();
-            
-            GameObject clientManager = new GameObject("ClientManager");
-            clientManager.AddComponent<Client>();
-            clientManager.AddComponent<ThreadManager>();
-
-            GameObject playerPrefab = new GameObject(
-                "PlayerPrefab",
-                typeof(MeshFilter),
-                typeof(MeshRenderer),
-                typeof(NonBouncer),
-                typeof(SpriteFlash),
-                typeof(tk2dSprite),
-                typeof(tk2dSpriteAnimator),
-                typeof(PlayerController),
-                typeof(PlayerManager)
-            )
+            return new List<(string, string)>
             {
-                layer = 9,
+                ("GG_Hive_Knight", "Battle Scene/Globs/Hive Knight Glob"),
+                ("GG_Hive_Knight", "Battle Scene/Hive Knight/Slash 1"),
             };
-
-            playerPrefab.SetActive(false);
-
-            GameObject gameManager = new GameObject("Game Manager");
-            GameManager gm = gameManager.AddComponent<GameManager>();
-            gm.playerPrefab = playerPrefab;
-            
-            Object.DontDestroyOnLoad(clientManager);
-            Object.DontDestroyOnLoad(playerPrefab);
-            Object.DontDestroyOnLoad(gameManager);
-
-            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
         }
-        
-        private void OnSceneChanged(Scene prevScene, Scene nextScene)
+
+        public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
-            if (Client.Instance.isConnected)
-            {
-                ClientSend.SceneChanged(nextScene.name);
-            }
+            GameObjects.Add("Glob", preloadedObjects["GG_Hive_Knight"]["Battle Scene/Globs/Hive Knight Glob"]);
+            GameObjects.Add("Slash", preloadedObjects["GG_Hive_Knight"]["Battle Scene/Hive Knight/Slash 1"]);
+
+            GUIController.Instance.BuildMenus();
+
+            global::GameManager.instance.gameObject.AddComponent<MPClient>();
         }
     }
 }
