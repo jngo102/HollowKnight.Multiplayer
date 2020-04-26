@@ -352,12 +352,7 @@ namespace MultiplayerClient
                 Log("You have been disconnected from the server.");
             }
             
-            foreach (KeyValuePair<int, PlayerManager> pair in GameManager.Players)
-            {
-                int playerId = pair.Key;
-                Log($"Destroying Player {playerId} in GameManager");
-                GameManager.Instance.Destroy(playerId);
-            }
+            GameManager.Instance.DestroyAllPlayers();
         }
 
         private static void Log(object message) => Modding.Logger.Log("[Client] (Client) " + message);

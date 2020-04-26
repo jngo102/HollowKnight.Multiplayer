@@ -75,7 +75,7 @@ namespace MultiplayerServer
                     {
                         Log("Different Scene, Destroying Players");
                         ServerSend.DestroyPlayer(i, fromClient);
-                        ServerSend.DestroyPlayer(fromClient, i);
+                        //ServerSend.DestroyPlayer(fromClient, i);
                     }
                 }
             }
@@ -94,12 +94,6 @@ namespace MultiplayerServer
                 {
                     if (Server.clients[i].player.activeScene == sceneName)
                     {
-                        List<bool> playerCharmsData = new List<bool>();
-                        for (int charmNum = 1; charmNum <= 40; charmNum++)
-                        {
-                            playerCharmsData.Add(Server.clients[i].player.GetAttr<Player, bool>("equippedCharm_" + charmNum));
-                        }
-
                         Log("Same Scene, Spawning Players First Pass");
                         ServerSend.SpawnPlayer(fromClient, Server.clients[i].player);
                         ServerSend.SpawnPlayer(Server.clients[i].player.id, Server.clients[fromClient].player);

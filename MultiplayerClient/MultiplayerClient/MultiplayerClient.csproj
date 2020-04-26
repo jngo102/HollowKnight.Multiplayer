@@ -96,6 +96,7 @@
     <Compile Include="PlayerController.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SaveSettings.cs" />
     <Compile Include="ThreadManager.cs" />
     <Compile Include="TinkSound.cs" />
   </ItemGroup>

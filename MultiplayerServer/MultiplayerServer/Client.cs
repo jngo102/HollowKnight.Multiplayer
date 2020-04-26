@@ -251,7 +251,7 @@ namespace MultiplayerServer
             ServerSend.PlayerDisconnected(id);
             Log("Disconnected on Server Side.");
         }
-        
+
         private static void Log(object message) => Modding.Logger.Log("[Client] (Server) " + message);
     }
 }

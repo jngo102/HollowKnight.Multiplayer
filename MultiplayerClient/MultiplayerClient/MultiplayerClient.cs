@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using Modding;
 using MultiplayerClient.Canvas;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MultiplayerClient
 {
-    public class MultiplayerClient : Mod
+    public class MultiplayerClient : Mod<SaveSettings>
     {
         public static readonly Dictionary<string, GameObject> GameObjects = new Dictionary<string, GameObject>();
         
@@ -31,6 +34,104 @@ namespace MultiplayerClient
             GUIController.Instance.BuildMenus();
 
             global::GameManager.instance.gameObject.AddComponent<MPClient>();
+
+            Unload();
+            
+            ModHooks.Instance.BeforeSavegameSaveHook += BeforeSaveGameSave;
+            ModHooks.Instance.CharmUpdateHook += OnCharmUpdate;
+            //On.SceneLoad.BeginRoutine += OnBeginRoutine;
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
+            
         }
+        
+        private void BeforeSaveGameSave(SaveGameData data)
+        {
+            PlayerData playerData = data.playerData;
+            string respawnMarkerName = "";
+            foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
+            {
+                if (go.name.Contains("RestBench") || 
+                    go.name.Contains("WhiteBench") ||
+                    go.name.Contains("Death Respawn"))
+                {
+                    playerData.respawnScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+                    playerData.respawnMarkerName = go.name;
+                }
+            }
+        }
+        
+        private void OnCharmUpdate(PlayerData pd, HeroController hc)
+        {
+            if (Client.Instance != null && Client.Instance.isConnected && pd != null && hc != null)
+            {
+                ClientSend.CharmsUpdated(pd);
+            }
+        }
+
+        private static IEnumerator OnBeginRoutine(On.SceneLoad.orig_BeginRoutine orig, SceneLoad self)
+        {
+            Log("Target Scene Name: " + self.TargetSceneName);
+            yield return null;
+            try
+            {
+                orig(self);
+            }
+            catch (Exception e)
+            {
+                Log(e);
+            }
+        }
+        
+        private void Unload()
+        {
+            ModHooks.Instance.BeforeSavegameSaveHook -= BeforeSaveGameSave;
+            ModHooks.Instance.CharmUpdateHook -= OnCharmUpdate;
+            //On.SceneLoad.BeginRoutine -= OnBeginRoutine;
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnSceneChanged;
+        }
+
+        public static List<string> NonGameplayScenes = new List<string>
+        {
+            "BetaEnd",
+            "Cinematic_Stag_travel",
+            "Cinematic_Ending_A",
+            "Cinematic_Ending_B",
+            "Cinematic_Ending_C",
+            "Cinematic_Ending_D",
+            "Cinematic_Ending_E",
+            "Cinematic_MrMushroom",
+            "Cutscene_Boss_Door",
+            "End_Credits",
+            "End_Game_Completion",
+            "GG_Boss_Door_Entrance",
+            "GG_End_Sequence",
+            "GG_Entrance_Cutscene",
+            "GG_Unlock",
+            "Intro_Cutscene",
+            "Intro_Cutscene_Prologue",
+            "Knight Pickup",
+            "Menu_Title",
+            "Menu_Credits",
+            "Opening_Sequence",
+            "PermaDeath_Unlock",
+            "Pre_Menu_Intro",
+            "PermaDeath",
+            "Prologue_Excerpt",
+        };
+        private void OnSceneChanged(Scene prevScene, Scene nextScene)
+        {
+            if (Client.Instance.isConnected)
+            {
+                if (!NonGameplayScenes.Contains(nextScene.name))
+                {
+                    Log("Is Gameplay Scene");
+                    ClientSend.SceneChanged(nextScene.name);
+                }
+            }
+            
+            GameManager.Instance.DestroyAllPlayers();
+        }
+        
+        private static void Log(object message) => Modding.Logger.Log("[Multiplayer Client] " + message);
     }
 }

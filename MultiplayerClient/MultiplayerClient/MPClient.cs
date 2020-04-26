@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using GlobalEnums;
 using HutongGames.PlayMaker.Actions;
 using ModCommon;
 using ModCommon.Util;
@@ -15,12 +16,11 @@ namespace MultiplayerClient
     {
         public static MPClient Instance;
 
-        public string activeScene;
-
         private static GameObject _hero;
         private static HeroController _hc;
         private static GameObject _playerPrefab;
         private static PlayMakerFSM _spellControl;
+        private string _savedScene;
 
         private void Awake()
         {
@@ -33,52 +33,7 @@ namespace MultiplayerClient
                 Log("Instance already exists, destroying object.");
                 Destroy(this);
             }
-
-            ModHooks.Instance.CharmUpdateHook += OnCharmUpdate;
-            ModHooks.Instance.SavegameSaveHook += OnSavegameSave;
-            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
         }
-
-        private void OnSavegameSave(int id)
-        {
-            Log("Saved Game.");
-            string respawnScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-            GameObject[] sceneGameObjects = FindObjectsOfType<GameObject>();
-            string respawnMarkerName = null;
-            foreach (GameObject go in sceneGameObjects)
-            {
-                if (go.name.Contains("RestBench") || go.name.Contains("WhiteBench"))
-                {
-                    Log("Found bench.");
-                    respawnMarkerName = go.name;
-                }
-            }
-
-            if (respawnMarkerName != null)
-            {
-                Log("Setting respawnScene and respawnMarkerName");
-                PlayerData.instance.respawnScene = respawnScene;
-                PlayerData.instance.respawnMarkerName = respawnMarkerName;
-            }
-        }
-
-        // Animations that apparently play many times a second even though they should only play once
-        private List<string> _dumbAnimations = new List<string>
-        {
-            "Slash",
-            "SlashAlt",
-            "UpSlash",
-            "DownSlash",
-            "Wall Slash",
-            "Dash",
-            "Shadow Dash",
-            "Shadow Dash Sharp",
-            "Shadow Dash Down Sharp",
-            "Double Jump",
-            "Walljump",
-            "Recoil",
-            "HardLand",
-        };
 
         private IEnumerator Start()
         {
@@ -123,6 +78,8 @@ namespace MultiplayerClient
             
             _playerPrefab = new GameObject(
                 "PlayerPrefab",
+                typeof(BoxCollider2D),
+                typeof(DamageHero),
                 typeof(MeshFilter),
                 typeof(MeshRenderer),
                 typeof(NonBouncer),
@@ -164,6 +121,13 @@ namespace MultiplayerClient
             _playerPrefab.PrintSceneHierarchyTree();
             
             GameManager.Instance.playerPrefab = _playerPrefab;
+            
+            HeroController.instance.OnDeath += HeroDeath;
+        }
+
+        private void HeroDeath()
+        {
+            Log("Hero Death");
         }
 
         private string _storedClip;
@@ -181,26 +145,10 @@ namespace MultiplayerClient
             }
             
         }
-        
-        private void OnCharmUpdate(PlayerData pd, HeroController hc)
-        {
-            if (Client.Instance != null && Client.Instance.isConnected && pd != null && hc != null)
-            {
-                ClientSend.CharmsUpdated(pd);
-            }
-        }
-        
-        private void OnSceneChanged(Scene prevScene, Scene nextScene)
-        {
-            if (Client.Instance.isConnected)
-            {
-                ClientSend.SceneChanged(nextScene.name);
-            }
-        }
 
         public IEnumerator PlayAnimation(int id, string animation)
         {
-            GameObject player = GameManager.Players[id].gameObject;
+            GameObject player = GameManager.Instance.Players[id].gameObject;
             GameObject attacks = player.FindGameObjectInChildren("Attacks");
             GameObject effects = player.FindGameObjectInChildren("Effects");
             GameObject spells = player.FindGameObjectInChildren("Spells");
@@ -223,22 +171,21 @@ namespace MultiplayerClient
                     //trailAnim.Play("SD Trail End");
                     break;
                 case "Slash":
-                    Log("Slash");
                     GameObject slash = Instantiate(_hc.slashPrefab, attacks.transform);
                     slash.SetActive(true);
                     NailSlash nailSlash = slash.GetComponent<NailSlash>();
-                    nailSlash.SetMantis(GameManager.Players[id].equippedCharm_13);
-                    if (GameManager.Players[id].equippedCharm_18 && GameManager.Players[id].equippedCharm_13)
+                    nailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
+                    if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
                     {
                         nailSlash.transform.localScale = new Vector3(nailSlash.scale.x * 1.4f, nailSlash.scale.y * 1.4f,
                             nailSlash.scale.z);
                     }
-                    else if (GameManager.Players[id].equippedCharm_13)
+                    else if (GameManager.Instance.Players[id].equippedCharm_13)
                     {
                         nailSlash.transform.localScale = new Vector3(nailSlash.scale.x * 1.25f,
                             nailSlash.scale.y * 1.25f, nailSlash.scale.z);
                     }
-                    else if (GameManager.Players[id].equippedCharm_18)
+                    else if (GameManager.Instance.Players[id].equippedCharm_18)
                     {
                         nailSlash.transform.localScale = new Vector3(nailSlash.scale.x * 1.15f,
                             nailSlash.scale.y * 1.15f, nailSlash.scale.z);
@@ -263,18 +210,18 @@ namespace MultiplayerClient
                     GameObject altSlash = Instantiate(_hc.slashAltPrefab, attacks.transform);
                     altSlash.SetActive(true);
                     var altNailSlash = altSlash.GetComponent<NailSlash>();
-                    altNailSlash.SetMantis(GameManager.Players[id].equippedCharm_13);
-                    if (GameManager.Players[id].equippedCharm_18 && GameManager.Players[id].equippedCharm_13)
+                    altNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
+                    if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
                     {
                         altNailSlash.transform.localScale = new Vector3(altNailSlash.scale.x * 1.4f,
                             altNailSlash.scale.y * 1.4f, altNailSlash.scale.z);
                     }
-                    else if (GameManager.Players[id].equippedCharm_13)
+                    else if (GameManager.Instance.Players[id].equippedCharm_13)
                     {
                         altNailSlash.transform.localScale = new Vector3(altNailSlash.scale.x * 1.25f,
                             altNailSlash.scale.y * 1.25f, altNailSlash.scale.z);
                     }
-                    else if (GameManager.Players[id].equippedCharm_18)
+                    else if (GameManager.Instance.Players[id].equippedCharm_18)
                     {
                         altNailSlash.transform.localScale = new Vector3(altNailSlash.scale.x * 1.15f,
                             altNailSlash.scale.y * 1.15f, altNailSlash.scale.z);
@@ -301,18 +248,18 @@ namespace MultiplayerClient
                     GameObject downSlash = Instantiate(_hc.downSlashPrefab, attacks.transform);
                     downSlash.SetActive(true);
                     var downNailSlash = downSlash.GetComponent<NailSlash>();
-                    downNailSlash.SetMantis(GameManager.Players[id].equippedCharm_13);
-                    if (GameManager.Players[id].equippedCharm_18 && GameManager.Players[id].equippedCharm_13)
+                    downNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
+                    if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
                     {
                         downNailSlash.transform.localScale = new Vector3(downNailSlash.scale.x * 1.4f,
                             downNailSlash.scale.y * 1.4f, downNailSlash.scale.z);
                     }
-                    else if (GameManager.Players[id].equippedCharm_13)
+                    else if (GameManager.Instance.Players[id].equippedCharm_13)
                     {
                         downNailSlash.transform.localScale = new Vector3(downNailSlash.scale.x * 1.25f,
                             downNailSlash.scale.y * 1.25f, downNailSlash.scale.z);
                     }
-                    else if (GameManager.Players[id].equippedCharm_18)
+                    else if (GameManager.Instance.Players[id].equippedCharm_18)
                     {
                         downNailSlash.transform.localScale = new Vector3(downNailSlash.scale.x * 1.15f,
                             downNailSlash.scale.y * 1.15f, downNailSlash.scale.z);
@@ -339,18 +286,18 @@ namespace MultiplayerClient
                     GameObject upSlash = Instantiate(_hc.upSlashPrefab, attacks.transform);
                     upSlash.SetActive(true);
                     var upNailSlash = upSlash.GetComponent<NailSlash>();
-                    upNailSlash.SetMantis(GameManager.Players[id].equippedCharm_13);
-                    if (GameManager.Players[id].equippedCharm_18 && GameManager.Players[id].equippedCharm_13)
+                    upNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
+                    if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
                     {
                         upNailSlash.transform.localScale = new Vector3(upNailSlash.scale.x * 1.4f,
                             upNailSlash.scale.y * 1.4f, upNailSlash.scale.z);
                     }
-                    else if (GameManager.Players[id].equippedCharm_13)
+                    else if (GameManager.Instance.Players[id].equippedCharm_13)
                     {
                         upNailSlash.transform.localScale = new Vector3(upNailSlash.scale.x * 1.25f,
                             upNailSlash.scale.y * 1.25f, upNailSlash.scale.z);
                     }
-                    else if (GameManager.Players[id].equippedCharm_18)
+                    else if (GameManager.Instance.Players[id].equippedCharm_18)
                     {
                         upNailSlash.transform.localScale = new Vector3(upNailSlash.scale.x * 1.15f,
                             upNailSlash.scale.y * 1.15f, upNailSlash.scale.z);
@@ -377,7 +324,7 @@ namespace MultiplayerClient
                     GameObject wallSlash = Instantiate(_hc.wallSlashPrefab, attacks.transform);
                     wallSlash.SetActive(true);
                     var wallNailSlash = wallSlash.GetComponent<NailSlash>();
-                    wallNailSlash.SetMantis(GameManager.Players[id].equippedCharm_13);
+                    wallNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
 
                     wallNailSlash.StartSlash();
 
@@ -400,11 +347,11 @@ namespace MultiplayerClient
                     GameObject fireballParent = _spellControl.GetAction<SpawnObjectFromGlobalPool>("Fireball 2", 3).gameObject.Value;
                     PlayMakerFSM fireballCast = fireballParent.LocateMyFSM("Fireball Cast");
                     AudioClip castClip;
-                    if (GameManager.Players[id].equippedCharm_11)
+                    if (GameManager.Instance.Players[id].equippedCharm_11)
                     {
                         castClip = (AudioClip) fireballCast.GetAction<AudioPlayerOneShotSingle>("Fluke R", 0).audioClip
                             .Value;
-                        if (GameManager.Players[id].equippedCharm_10)
+                        if (GameManager.Instance.Players[id].equippedCharm_10)
                         {
                             GameObject dungFlukeObj = fireballCast.GetAction<SpawnObjectFromGlobalPool>("Dung R", 0)
                                 .gameObject.Value;
@@ -512,7 +459,7 @@ namespace MultiplayerClient
                     GameObject scrHeadsObj = _hero.transform.Find("Spells").Find("Scr Heads 2").gameObject;
                     GameObject screamHeads = Instantiate(scrHeadsObj, spells.transform);
                     screamHeads.SetActive(true);
-                    screamHeads.name = "Scream Heads Player " + GameManager.Players[id].username;
+                    screamHeads.name = "Scream Heads Player " + GameManager.Instance.Players[id].username;
                     Destroy(screamHeads.LocateMyFSM("Deactivate on Hit"));
                     
                     GameObject screamHitL = screamHeads.FindGameObjectInChildren("Hit L");
@@ -574,7 +521,7 @@ namespace MultiplayerClient
                     GameObject cycloneSlash = Instantiate(cycloneObj, attacks.transform);
                     cycloneSlash.SetActive(true);
                     cycloneSlash.layer = 22;
-                    cycloneSlash.name = "Cyclone Slash " + GameManager.Players[id].username;
+                    cycloneSlash.name = "Cyclone Slash " + GameManager.Instance.Players[id].username;
                     cycloneSlash.LocateMyFSM("Control Collider").SetState("Init");
                     GameObject hitL = cycloneSlash.FindGameObjectInChildren("Hit L");
                     GameObject hitR = cycloneSlash.FindGameObjectInChildren("Hit R");
@@ -614,9 +561,9 @@ namespace MultiplayerClient
                     // So that this animation isn't included in default and immediately destroys the Cyclone Slash
                     break;
                 case "NA Cyclone End":
-                    if (GameObject.Find("Cyclone Slash " + GameManager.Players[id].username))
+                    if (GameObject.Find("Cyclone Slash " + GameManager.Instance.Players[id].username))
                     {
-                        Destroy(GameObject.Find("Cyclone Slash " + GameManager.Players[id].username));
+                        Destroy(GameObject.Find("Cyclone Slash " + GameManager.Instance.Players[id].username));
                     }
 
                     break;
@@ -685,13 +632,6 @@ namespace MultiplayerClient
 
                     break;
             }
-        }
-
-        private void OnDestroy()
-        {
-            ModHooks.Instance.CharmUpdateHook -= OnCharmUpdate;
-            ModHooks.Instance.SavegameSaveHook -= OnSavegameSave;
-            UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnSceneChanged;
         }
 
         private static void Log(object message) => Modding.Logger.Log("[MP Client] " + message);

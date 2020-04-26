@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ModCommon.Util;
 using TMPro;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace MultiplayerClient
         public static GameManager Instance;
         public bool pvpEnabled;
 
-        public static Dictionary<int, PlayerManager> Players = new Dictionary<int,PlayerManager>();
+        public Dictionary<int, PlayerManager> Players = new Dictionary<int,PlayerManager>();
 
         public GameObject playerPrefab;
 
@@ -39,6 +40,12 @@ namespace MultiplayerClient
         /// <param name="animation">The starting animation of the spawned player.</param>
         public void SpawnPlayer(int id, string username, Vector3 position, Vector3 scale, string animation, List<bool> charmsData, bool pvp)
         {
+            // Prevent duplication of same player, leaving one idle
+            if (Players.ContainsKey(id))
+            {
+                DestroyPlayer(id);
+            }
+            
             GameObject player = Instantiate(playerPrefab);
 
             if (Instance.pvpEnabled)
@@ -47,22 +54,7 @@ namespace MultiplayerClient
 
                 player.layer = 11;
 
-                GameObject hero = HeroController.instance.gameObject;
-
-                BoxCollider2D collider = player.AddComponent<BoxCollider2D>();
-                var heroCollider = hero.GetComponent<BoxCollider2D>();
-
-                collider.isTrigger = true;
-                collider.offset = heroCollider.offset;
-                collider.size = heroCollider.size;
-                collider.enabled = true;
-
-                Bounds bounds = collider.bounds;
-                Bounds heroBounds = heroCollider.bounds;
-                bounds.min = heroBounds.min;
-                bounds.max = heroBounds.max;
-
-                player.AddComponent<DamageHero>();
+                player.GetComponent<DamageHero>().enabled = true;
             }
 
             player.SetActive(true);
@@ -102,13 +94,22 @@ namespace MultiplayerClient
         }
         
 
-        public void Destroy(int playerId)
+        public void DestroyPlayer(int playerId)
         {
             Log("Destroying Player " + playerId);
             Destroy(Players[playerId].gameObject);
             Players.Remove(playerId);
         }
-        
+
+        public void DestroyAllPlayers()
+        {
+            List<int> playerIds = new List<int>(Players.Keys);
+            foreach (int playerId in playerIds)
+            {
+                DestroyPlayer(playerId);
+            }
+        }
+
         private static void Log(object message) => Modding.Logger.Log("[Game Manager] " + message);
     }
 }
