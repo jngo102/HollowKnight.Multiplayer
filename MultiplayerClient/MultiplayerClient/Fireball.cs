@@ -22,7 +22,7 @@ namespace MultiplayerClient
         {
             _anim.PlayFromFrame(0);
             _rb.velocity = Vector2.right * FireballSpeed * xDir;
-            if (GameManager.Instance.pvpEnabled)
+            if (GameManager.Instance.PvPEnabled)
             {
                 gameObject.AddComponent<DamageHero>();
             }

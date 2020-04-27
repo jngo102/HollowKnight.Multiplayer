@@ -8,13 +8,13 @@ using UnityEngine.SceneManagement;
 
 namespace MultiplayerClient
 {
-    public class MultiplayerClient : Mod<SaveSettings>
+    public class MultiplayerClient : Mod
     {
         public static readonly Dictionary<string, GameObject> GameObjects = new Dictionary<string, GameObject>();
         
         public override string GetVersion()
         {
-            return "0.0.1";
+            return "0.0.2";
         }
         
         public override List<(string, string)> GetPreloadNames()
@@ -37,17 +37,15 @@ namespace MultiplayerClient
 
             Unload();
             
-            ModHooks.Instance.BeforeSavegameSaveHook += BeforeSaveGameSave;
+            ModHooks.Instance.BeforeSavegameSaveHook += RespawnFix;
             ModHooks.Instance.CharmUpdateHook += OnCharmUpdate;
-            //On.SceneLoad.BeginRoutine += OnBeginRoutine;
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
             
         }
         
-        private void BeforeSaveGameSave(SaveGameData data)
+        private void RespawnFix(SaveGameData data)
         {
             PlayerData playerData = data.playerData;
-            string respawnMarkerName = "";
             foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
             {
                 if (go.name.Contains("RestBench") || 
@@ -56,6 +54,8 @@ namespace MultiplayerClient
                 {
                     playerData.respawnScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
                     playerData.respawnMarkerName = go.name;
+
+                    break;
                 }
             }
         }
@@ -68,25 +68,10 @@ namespace MultiplayerClient
             }
         }
 
-        private static IEnumerator OnBeginRoutine(On.SceneLoad.orig_BeginRoutine orig, SceneLoad self)
-        {
-            Log("Target Scene Name: " + self.TargetSceneName);
-            yield return null;
-            try
-            {
-                orig(self);
-            }
-            catch (Exception e)
-            {
-                Log(e);
-            }
-        }
-        
         private void Unload()
         {
-            ModHooks.Instance.BeforeSavegameSaveHook -= BeforeSaveGameSave;
+            ModHooks.Instance.BeforeSavegameSaveHook -= RespawnFix;
             ModHooks.Instance.CharmUpdateHook -= OnCharmUpdate;
-            //On.SceneLoad.BeginRoutine -= OnBeginRoutine;
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnSceneChanged;
         }
 
@@ -124,7 +109,6 @@ namespace MultiplayerClient
             {
                 if (!NonGameplayScenes.Contains(nextScene.name))
                 {
-                    Log("Is Gameplay Scene");
                     ClientSend.SceneChanged(nextScene.name);
                 }
             }

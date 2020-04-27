@@ -71,13 +71,13 @@ namespace MultiplayerServer.Canvas
             if (toggleValue)
             {
                 Log("PvP Enabled");
-                GlobalSettings.PvPEnabled = true;
+                ServerSettings.PvPEnabled = true;
                 ServerSend.PvPEnabled(true);
             }
             else
             {
                 Log("PvP Disabled");
-                GlobalSettings.PvPEnabled = false;
+                ServerSettings.PvPEnabled = false;
                 ServerSend.PvPEnabled(false);
             }
         }

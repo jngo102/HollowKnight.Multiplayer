@@ -12,7 +12,7 @@ namespace MultiplayerClient
         {
             _hero = HeroController.instance.gameObject;
 
-            BoxCollider2D collider = gameObject.AddComponent<BoxCollider2D>();
+            BoxCollider2D collider = gameObject.GetComponent<BoxCollider2D>();
             var heroCollider = _hero.GetComponent<BoxCollider2D>();
 
             collider.isTrigger = true;
@@ -46,25 +46,6 @@ namespace MultiplayerClient
 
             var anim = gameObject.GetComponent<tk2dSpriteAnimator>();
             anim.Library = _hero.GetComponent<tk2dSpriteAnimator>().Library;
-        }
-        
-        private Vector3 _storedPosition = Vector3.zero;
-        private Vector3 _storedScale = Vector3.zero;
-        private void FixedUpdate()
-        {
-            Vector3 heroPos = _hero.transform.position;
-            if (heroPos != _storedPosition)
-            {
-                ClientSend.PlayerPosition(heroPos);
-                _storedPosition = heroPos;
-            }
-
-            Vector3 heroScale = _hero.transform.localScale;
-            if (heroScale != _storedScale)
-            {
-                ClientSend.PlayerScale(heroScale);
-                _storedScale = heroScale;
-            }
         }
 
         private void Log(object message) => Modding.Logger.Log("[Player Controller] " + message);

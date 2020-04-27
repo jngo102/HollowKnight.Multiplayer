@@ -11,7 +11,7 @@ namespace MultiplayerClient
     public class GameManager : MonoBehaviour
     {
         public static GameManager Instance;
-        public bool pvpEnabled;
+        public bool PvPEnabled;
 
         public Dictionary<int, PlayerManager> Players = new Dictionary<int,PlayerManager>();
 
@@ -38,7 +38,7 @@ namespace MultiplayerClient
         /// <param name="charmsData">List of bools containing charms equipped.</param>
         /// <param name="pvp">Whether PvP is enabled.</param>
         /// <param name="animation">The starting animation of the spawned player.</param>
-        public void SpawnPlayer(int id, string username, Vector3 position, Vector3 scale, string animation, List<bool> charmsData, bool pvp)
+        public void SpawnPlayer(int id, string username, Vector3 position, Vector3 scale, string animation, List<bool> charmsData)
         {
             // Prevent duplication of same player, leaving one idle
             if (Players.ContainsKey(id))
@@ -48,7 +48,7 @@ namespace MultiplayerClient
             
             GameObject player = Instantiate(playerPrefab);
 
-            if (Instance.pvpEnabled)
+            if (PvPEnabled)
             {
                 Log("Adding PvP Collider");
 
@@ -77,7 +77,7 @@ namespace MultiplayerClient
             nameText.alignment = TextAlignmentOptions.Center;
             nameText.fontSize = 24;
             nameText.outlineColor = Color.black;
-            nameText.outlineWidth = 25.0f;
+            nameText.outlineWidth = 0.1f;
             nameObj.AddComponent<KeepWorldScalePositive>();
 
             DontDestroyOnLoad(player);
@@ -92,8 +92,27 @@ namespace MultiplayerClient
 
             Players.Add(id, playerManager);
         }
-        
 
+        public void EnablePvP(bool enable = true)
+        {
+            PvPEnabled = enable;
+            foreach (KeyValuePair<int, PlayerManager> pair in Players)
+            {
+                Log($"Getting Player {pair.Key}");
+                GameObject player = pair.Value.gameObject;
+                Log("Changing Player Layer");
+                player.layer = enable ? 11 : 9;
+                Log("Enabling DamageHero");
+                player.GetComponent<DamageHero>().enabled = enable;
+                Log("Done.");
+            }
+        }
+        
+        void Update()
+        {
+            //Log("PvP Enabled: " + PvPEnabled);
+        }
+        
         public void DestroyPlayer(int playerId)
         {
             Log("Destroying Player " + playerId);

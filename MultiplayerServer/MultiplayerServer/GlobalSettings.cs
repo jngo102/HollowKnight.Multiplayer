@@ -1,6 +1,6 @@
 namespace MultiplayerServer
 {
-    public class GlobalSettings
+    public class ServerSettings
     {
         public static bool PvPEnabled = false;
     }

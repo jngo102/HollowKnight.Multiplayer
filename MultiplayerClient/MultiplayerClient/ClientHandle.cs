@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using ModCommon;
 using ModCommon.Util;
 using UnityEngine;
 
@@ -35,11 +36,8 @@ namespace MultiplayerClient
                 {
                     charmsData.Add(packet.ReadBool());
                 }
-
-                bool pvpEnabled = packet.ReadBool();
-
-                Log($"Spawning Player {username} at {position}");
-                GameManager.Instance.SpawnPlayer(id, username, position, scale, animation, charmsData, pvpEnabled);
+                
+                GameManager.Instance.SpawnPlayer(id, username, position, scale, animation, charmsData);
             }
         }
 
@@ -52,17 +50,11 @@ namespace MultiplayerClient
 
         public static void PvPEnabled(Packet packet)
         {
-            bool enabled = packet.ReadBool();
+            bool enablePvP = packet.ReadBool();
 
             Log("Enabling PvP on Client Side");
-            
-            GameManager.Instance.pvpEnabled = enabled;
-            for (int playerNum = 0; playerNum <= GameManager.Instance.Players.Count; playerNum++)
-            {
-                GameObject player = GameManager.Instance.Players[playerNum].gameObject;
-                player.layer = enabled ? 11 : 9;
-                player.GetComponent<DamageHero>().enabled = enabled;
-            }
+
+            GameManager.Instance.EnablePvP(enablePvP);
         }
             
         public static void PlayerPosition(Packet packet)
@@ -108,7 +100,6 @@ namespace MultiplayerClient
             for (int charmNum = 1; charmNum <= 40; charmNum++)
             {
                 bool equippedCharm = packet.ReadBool();
-                Log($"Setting equippedCharm_{charmNum} of client {fromClient} to {equippedCharm}");
                 GameManager.Instance.Players[fromClient].SetAttr("equippedCharm_" + charmNum, equippedCharm);
             }
             Log("Finished Modifying equippedCharm bools");

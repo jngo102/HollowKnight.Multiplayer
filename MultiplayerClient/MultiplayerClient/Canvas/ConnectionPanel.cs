@@ -131,6 +131,7 @@ namespace MultiplayerClient.Canvas
             }
         }
 
+        private static Coroutine _connectRoutine;
         private static void ConnectToServer(string buttonName)
         {
             if (!Client.Instance.isConnected)
@@ -143,7 +144,7 @@ namespace MultiplayerClient.Canvas
 
                 PlayerManager.activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
-                Client.Instance.StartCoroutine(ConnectThenReconnect());
+                _connectRoutine = Client.Instance.StartCoroutine(Connect());
 
                 Log("Connected to Server!");
             }
@@ -153,23 +154,34 @@ namespace MultiplayerClient.Canvas
             }
         }
 
-        private static IEnumerator ConnectThenReconnect()
+        private static IEnumerator Connect()
         {
-            Client.Instance.ConnectToServer();
-
+            int waitTime = 2000;
             int time = DateTime.Now.Millisecond;
-            
-            yield return new WaitWhile(() => Client.Instance.isConnected && DateTime.Now.Millisecond - time <= 500);
-            
-            if (!Client.Instance.isConnected)
+            // 5 connection attempts before giving up 
+            for (int attempt = 1; attempt <= 5; attempt++)
             {
-                Client.Instance.ConnectToServer();
+                Log("Connection Attempt: " + attempt);
+                if (!Client.Instance.isConnected)
+                {
+                    Client.Instance.ConnectToServer();
+                }
+                else
+                {
+                    Log("Connected to Server!");
+                    HeroController.instance.GetComponent<SpriteFlash>().flashFocusHeal();
+                    break;
+                }
+
+                yield return new WaitWhile(() => Client.Instance.isConnected && DateTime.Now.Millisecond - time <= waitTime);
+                time = DateTime.Now.Millisecond;
             }
         }
 
         private static void DisconnectFromServer(string buttonName)
         {
             Log("Disconnecting from Server...");
+            Client.Instance.StopCoroutine(_connectRoutine);
             ClientSend.PlayerDisconnected(Client.Instance.myId);
             Client.Instance.Disconnect();
 
