@@ -35,9 +35,8 @@ namespace MultiplayerClient
         /// <param name="username">The player's username.</param>
         /// <param name="position">The player's starting position.</param>
         /// <param name="scale">The player's starting scale.</param>
-        /// <param name="charmsData">List of bools containing charms equipped.</param>
-        /// <param name="pvp">Whether PvP is enabled.</param>
         /// <param name="animation">The starting animation of the spawned player.</param>
+        /// <param name="charmsData">List of bools containing charms equipped.</param>
         public void SpawnPlayer(int id, string username, Vector3 position, Vector3 scale, string animation, List<bool> charmsData)
         {
             // Prevent duplication of same player, leaving one idle
@@ -48,15 +47,6 @@ namespace MultiplayerClient
             
             GameObject player = Instantiate(playerPrefab);
 
-            if (PvPEnabled)
-            {
-                Log("Adding PvP Collider");
-
-                player.layer = 11;
-
-                player.GetComponent<DamageHero>().enabled = true;
-            }
-
             player.SetActive(true);
             player.SetActiveChildren(true);
             // This component needs to be enabled to run past Awake for whatever reason
@@ -65,6 +55,15 @@ namespace MultiplayerClient
             player.transform.SetPosition2D(position);
             player.transform.localScale = scale;
 
+            if (Instance.PvPEnabled)
+            {
+                Log("Enabling PvP Attributes");
+
+                player.layer = 11;
+
+                player.GetComponent<DamageHero>().enabled = true;
+            }
+            
             player.GetComponent<tk2dSpriteAnimator>().Play(animation);
             
             GameObject nameObj = Instantiate(new GameObject("Username"), position + Vector3.up * 1.25f,
@@ -93,9 +92,9 @@ namespace MultiplayerClient
             Players.Add(id, playerManager);
         }
 
-        public void EnablePvP(bool enable = true)
+        public void EnablePvP(bool enable)
         {
-            PvPEnabled = enable;
+            Instance.PvPEnabled = enable;
             foreach (KeyValuePair<int, PlayerManager> pair in Players)
             {
                 Log($"Getting Player {pair.Key}");
@@ -107,12 +106,7 @@ namespace MultiplayerClient
                 Log("Done.");
             }
         }
-        
-        void Update()
-        {
-            //Log("PvP Enabled: " + PvPEnabled);
-        }
-        
+
         public void DestroyPlayer(int playerId)
         {
             Log("Destroying Player " + playerId);

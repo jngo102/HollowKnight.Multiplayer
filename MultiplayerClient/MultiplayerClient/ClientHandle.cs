@@ -36,6 +36,9 @@ namespace MultiplayerClient
                 {
                     charmsData.Add(packet.ReadBool());
                 }
+
+                bool pvpEnabled = packet.ReadBool();
+                GameManager.Instance.EnablePvP(pvpEnabled);
                 
                 GameManager.Instance.SpawnPlayer(id, username, position, scale, animation, charmsData);
             }
@@ -51,8 +54,6 @@ namespace MultiplayerClient
         public static void PvPEnabled(Packet packet)
         {
             bool enablePvP = packet.ReadBool();
-
-            Log("Enabling PvP on Client Side");
 
             GameManager.Instance.EnablePvP(enablePvP);
         }

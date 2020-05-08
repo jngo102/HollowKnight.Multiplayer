@@ -35,11 +35,6 @@ namespace MultiplayerServer.Canvas
             }
         }
 
-        public void Update()
-        {
-            OptionsPanel.Update();
-        }
-
         public static GUIController Instance
         {
             get

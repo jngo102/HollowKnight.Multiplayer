@@ -34,11 +34,6 @@ namespace MultiplayerClient.Canvas
             }
         }
 
-        public void Update()
-        {
-            ConnectionPanel.Update();
-        }
-
         public static GUIController Instance
         {
             get

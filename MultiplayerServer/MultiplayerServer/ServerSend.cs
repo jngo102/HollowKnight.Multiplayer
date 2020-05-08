@@ -96,6 +96,7 @@ namespace MultiplayerServer
                 {
                     packet.Write(player.GetAttr<Player, bool>("equippedCharm_" + charmNum));
                 }
+                packet.Write(ServerSettings.PvPEnabled);
 
                 Log($"Spawning Player {player.id} on Client {toClient} with Charms");
                 SendTCPData(toClient, packet);
@@ -112,13 +113,13 @@ namespace MultiplayerServer
             }
         }
 
-        public static void PvPEnabled(bool enabled)
+        public static void PvPEnabled()
         {
             using (Packet packet = new Packet((int) ServerPackets.PvPEnabled))
             {
-                packet.Write(enabled);
+                packet.Write(ServerSettings.PvPEnabled);
                 
-                SendTCPDataToAll(packet);    
+                SendTCPDataToAll(packet);
             }
         }
         

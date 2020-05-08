@@ -36,7 +36,7 @@ namespace MultiplayerServer.Canvas
             canvas = parent;
             background = new CanvasImage(parent, tex, pos, sz, bgSubSection);
 
-            active = true;
+            active = false;
         }
 
         public CanvasButton AddButton(string name, Texture2D tex, Vector2 pos, Vector2 sz, UnityAction<string> func, Rect bgSubSection, Font font = null, string text = null, int fontSize = 13)

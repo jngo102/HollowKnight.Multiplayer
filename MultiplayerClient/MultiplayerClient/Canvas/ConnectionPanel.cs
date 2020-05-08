@@ -5,6 +5,7 @@ using IL.HutongGames.PlayMaker.Actions;
 using ModCommon;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace MultiplayerClient.Canvas
@@ -129,8 +130,32 @@ namespace MultiplayerClient.Canvas
             {
                 eventSystem.firstSelectedGameObject = _ipInput.InputObject;
             }
+            
+            Panel.SetActive(false, true);
+            
+            On.GameManager.PauseGameToggle += OnGamePause;
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChange;
         }
 
+        private static IEnumerator OnGamePause(On.GameManager.orig_PauseGameToggle orig, global::GameManager self)
+        { 
+            global::GameManager.instance.StartCoroutine(orig(self));
+
+            bool paused = global::GameManager.instance.IsGamePaused();
+            Panel.SetActive(paused, !paused);
+            
+            yield return null;
+        }
+
+        private static void OnSceneChange(Scene prevScene, Scene nextScene)
+        {
+            if (nextScene.name == "Menu_Title")
+            {
+                Log("Is Menu Title");
+                Panel.SetActive(false, true);
+            }
+        }
+        
         private static Coroutine _connectRoutine;
         private static void ConnectToServer(string buttonName)
         {
@@ -186,29 +211,6 @@ namespace MultiplayerClient.Canvas
             Client.Instance.Disconnect();
 
             Log("You have disconnected from the server.");
-        }
-        
-        public static void Update()
-        {
-            if (Panel == null)
-            {
-                return;
-            }
-
-            if (global::GameManager.instance.IsGamePaused())
-            {
-                if (!Panel.active)
-                {
-                    Panel.SetActive(true, false);    
-                }
-            }
-            else
-            {
-                if (Panel.active)
-                {
-                    Panel.SetActive(false, true);   
-                }
-            }
         }
 
         private static void Log(object message) => Modding.Logger.Log("[Connection Panel] " + message);

@@ -29,11 +29,13 @@ namespace MultiplayerClient
             Vector3 scale = transform.localScale;
             if (GameManager.Instance.Players[playerId].equippedCharm_19)
             {
-                transform.localScale = new Vector3(xDir * 1.8f * 1.3f, scale.y, scale.z);
+                Log("Shaman Stone");
+                transform.localScale = new Vector3(1.8f * 1.3f * xDir, 1.8f * 1.6f * scale.y, scale.z);
             }
-            else
+            else 
             {
-                transform.localScale = new Vector3(xDir * 1.8f, scale.y, scale.z);
+                Log("No SS");
+                transform.localScale = new Vector3(1.3f * xDir, 1.6f * scale.y, scale.z);
             }
             Destroy(gameObject, 2);
         }

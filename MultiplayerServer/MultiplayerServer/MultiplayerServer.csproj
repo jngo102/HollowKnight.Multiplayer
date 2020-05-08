@@ -84,7 +84,7 @@
     <Compile Include="Canvas\OptionsPanel.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="GlobalSettings.cs" />
+    <Compile Include="ServerSettings.cs" />
     <Compile Include="MPServer.cs" />
     <Compile Include="MultiplayerServer.cs" />
     <Compile Include="NetworkManager.cs" />

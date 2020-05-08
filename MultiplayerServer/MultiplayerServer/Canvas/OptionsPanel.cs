@@ -1,5 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 namespace MultiplayerServer.Canvas
 {
@@ -64,44 +66,46 @@ namespace MultiplayerServer.Canvas
                 16
             );
             y += toggleHeight;
+
+            Panel.SetActive(false, true);
+            
+            On.GameManager.PauseGameToggle += OnGamePause;
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChange;
         }
 
+        private static IEnumerator OnGamePause(On.GameManager.orig_PauseGameToggle orig, GameManager self)
+        {
+            GameManager.instance.StartCoroutine(orig(self));
+
+            bool paused = GameManager.instance.IsGamePaused();
+
+            Panel.SetActive(paused, !paused);
+            
+            yield return null;
+        }
+
+        private static void OnSceneChange(Scene prevScene, Scene nextScene)
+        {
+            if (nextScene.name == "Menu_Title")
+            {
+                Log("Is Menu Title");
+                Panel.SetActive(false, true);
+            }
+        }
+        
         private static void PvPToggle(bool toggleValue)
         {
             if (toggleValue)
             {
                 Log("PvP Enabled");
                 ServerSettings.PvPEnabled = true;
-                ServerSend.PvPEnabled(true);
+                ServerSend.PvPEnabled();
             }
             else
             {
                 Log("PvP Disabled");
                 ServerSettings.PvPEnabled = false;
-                ServerSend.PvPEnabled(false);
-            }
-        }
-        
-        public static void Update()
-        {
-            if (Panel == null)
-            {
-                return;
-            }
-
-            if (GameManager.instance.IsGamePaused())
-            {
-                if (!Panel.active)
-                {
-                    Panel.SetActive(true, false);    
-                }
-            }
-            else
-            {
-                if (Panel.active)
-                {
-                    Panel.SetActive(false, true);   
-                }
+                ServerSend.PvPEnabled();
             }
         }
 
