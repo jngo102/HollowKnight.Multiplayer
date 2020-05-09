@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using GlobalEnums;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
@@ -20,9 +21,9 @@ namespace MultiplayerClient
         private static GameObject _hero;
         private static HeroController _hc;
         private static GameObject _playerPrefab;
-        private static PlayMakerFSM _spellControl;
-        private string _savedScene;
-
+        private static PlayMakerFSM _nailArts;
+        private static PlayMakerFSM _spellControl; 
+        
         private void Awake()
         {
             if (Instance == null)
@@ -109,7 +110,8 @@ namespace MultiplayerClient
                 _hc = HeroController.instance;
                 _hero = _hc.gameObject;
                 _hero.AddComponent<HeroTracker>();
-                
+
+                _nailArts = _hero.LocateMyFSM("Nail Arts");
                 _spellControl = _hero.LocateMyFSM("Spell Control");
 
                 var anim = _hero.GetComponent<tk2dSpriteAnimator>();
@@ -180,6 +182,16 @@ namespace MultiplayerClient
             GameObject heroSpells = _hero.FindGameObjectInChildren("Spells");
 
             GameObject sdTrail = null;
+            GameObject qCharge = null;
+            GameObject qTrail2 = null;
+            
+            GameObject fireballParent = _spellControl.GetAction<SpawnObjectFromGlobalPool>("Fireball 2", 3).gameObject.Value;
+            PlayMakerFSM fireballCast = fireballParent.LocateMyFSM("Fireball Cast");
+            GameObject audioPlayerObj = fireballCast.GetAction<AudioPlayerOneShotSingle>("Cast Right", 3).audioPlayer.Value;
+            GameObject audioPlayer;
+            Log("Audio Player Obj: " + audioPlayerObj.name);
+
+            tk2dSpriteAnimator playerAnim = player.GetComponent<tk2dSpriteAnimator>();
             switch (animation)
             {
                 case "SD Dash":
@@ -192,7 +204,7 @@ namespace MultiplayerClient
                     sdTrail.name = "SD Trail " + id;
                     PlayMakerFSM sdTrailFsm = sdTrail.LocateMyFSM("FSM");
                     sdTrailFsm.SetState("Idle");
-                    //sdTrailFsm.InsertMethod("Destroy", 1, () => Destroy(sdTrail));
+                    sdTrailFsm.InsertMethod("Destroy", 1, () => Destroy(sdTrail));
                     sdTrail.GetComponent<MeshRenderer>().enabled = true;
                     tk2dSpriteAnimator trailAnim = sdTrail.GetComponent<tk2dSpriteAnimator>();
                     trailAnim.PlayFromFrame("SD Trail", 0);
@@ -210,7 +222,7 @@ namespace MultiplayerClient
                     break;
                 case "SD Hit Wall":
                     sdTrail.GetComponent<tk2dSpriteAnimator>().Play("SD Trail End");
-
+                    
                     GameObject wallHitEffect = Instantiate(heroEffects.FindGameObjectInChildren("Wall Hit Effect"), playerEffects.transform);
                     wallHitEffect.LocateMyFSM("FSM").InsertMethod("Destroy", 1, () => Destroy(wallHitEffect));
                     
@@ -218,6 +230,13 @@ namespace MultiplayerClient
                 case "Slash":
                     GameObject slash = Instantiate(_hc.slashPrefab, playerAttacks.transform);
                     slash.SetActive(true);
+                    
+                    AudioSource slashAudioSource = slash.GetComponent<AudioSource>();
+                    AudioClip slashClip = slashAudioSource.clip;
+                    Destroy(slashAudioSource);
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(slashClip);
+                    
                     NailSlash nailSlash = slash.GetComponent<NailSlash>();
                     nailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
                     if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
@@ -251,6 +270,13 @@ namespace MultiplayerClient
                 case "SlashAlt":
                     GameObject altSlash = Instantiate(_hc.slashAltPrefab, playerAttacks.transform);
                     altSlash.SetActive(true);
+                    
+                    AudioSource altSlashAudioSource = altSlash.GetComponent<AudioSource>();
+                    AudioClip altSlashClip = altSlashAudioSource.clip;
+                    Destroy(altSlashAudioSource);
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(altSlashClip);
+                    
                     var altNailSlash = altSlash.GetComponent<NailSlash>();
                     altNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
                     if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
@@ -286,6 +312,13 @@ namespace MultiplayerClient
                 case "DownSlash":
                     GameObject downSlash = Instantiate(_hc.downSlashPrefab, playerAttacks.transform);
                     downSlash.SetActive(true);
+                    
+                    AudioSource downSlashAudioSource = downSlash.GetComponent<AudioSource>();
+                    AudioClip downSlashClip = downSlashAudioSource.clip;
+                    Destroy(downSlashAudioSource);
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(downSlashClip);
+
                     var downNailSlash = downSlash.GetComponent<NailSlash>();
                     downNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
                     if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
@@ -321,6 +354,13 @@ namespace MultiplayerClient
                 case "UpSlash":
                     GameObject upSlash = Instantiate(_hc.upSlashPrefab, playerAttacks.transform);
                     upSlash.SetActive(true);
+                    
+                    AudioSource upSlashAudioSource = upSlash.GetComponent<AudioSource>();
+                    AudioClip upSlashClip = upSlashAudioSource.clip;
+                    Destroy(upSlashAudioSource);
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(upSlashClip);
+                    
                     var upNailSlash = upSlash.GetComponent<NailSlash>();
                     upNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
                     if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
@@ -356,6 +396,13 @@ namespace MultiplayerClient
                 case "Wall Slash":
                     GameObject wallSlash = Instantiate(_hc.wallSlashPrefab, playerAttacks.transform);
                     wallSlash.SetActive(true);
+                    
+                    AudioSource wallSlashAudioSource = wallSlash.GetComponent<AudioSource>();
+                    AudioClip wallSlashClip = wallSlashAudioSource.clip;
+                    Destroy(wallSlashAudioSource);
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(wallSlashClip);
+                    
                     var wallNailSlash = wallSlash.GetComponent<NailSlash>();
                     wallNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
 
@@ -377,8 +424,6 @@ namespace MultiplayerClient
 
                     break;
                 case "Fireball2 Cast":
-                    GameObject fireballParent = _spellControl.GetAction<SpawnObjectFromGlobalPool>("Fireball 2", 3).gameObject.Value;
-                    PlayMakerFSM fireballCast = fireballParent.LocateMyFSM("Fireball Cast");
                     AudioClip castClip;
                     if (GameManager.Instance.Players[id].equippedCharm_11)
                     {
@@ -408,24 +453,6 @@ namespace MultiplayerClient
                         else
                         {
                             GameObject flukeObj = fireballCast.GetAction<FlingObjectsFromGlobalPool>("Flukes", 0).gameObject.Value;
-                            /*for (int i = 0; i <= 15; i++)
-                            {
-                                GameObject fluke = Instantiate(flukeObj, spells.transform.position, Quaternion.identity);
-                                fluke.SetActive(true);
-                                fluke.layer = 22;
-                                if (GameManager.Instance.PvPEnabled)
-                                {
-                                    fluke.AddComponent<DamageHero>();
-                                }
-
-                                fluke.AddComponent<SpellFluke>();
-                                fluke.GetComponent<AudioSource>().Play();
-                                fluke.GetComponent<Rigidbody2D>().velocity = new Vector2(Random.Range(5, 15) * -player.transform.localScale.x, Random.Range(0, 20));
-                                fluke.GetComponent<SpriteFlash>().flashFocusHeal();
-                                Destroy(fluke.GetComponent<SpellFluke>());
-                                Destroy(fluke.FindGameObjectInChildren("Damager"));
-                            }*/
-                            
                             GameObject fluke = Instantiate(flukeObj, playerSpells.transform.position, Quaternion.identity);
                             if (GameManager.Instance.PvPEnabled)
                             {
@@ -455,11 +482,49 @@ namespace MultiplayerClient
                         fireballComponent.playerId = id;
                         fireballComponent.xDir = -player.transform.localScale.x;
                     }
-
-                    GameObject audioPlayer = fireballCast.GetAction<AudioPlayerOneShotSingle>("Cast Right", 3).audioPlayer.Value;
+                    
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
                     audioPlayer.GetComponent<AudioSource>().PlayOneShot(castClip);
+                    
+                    break;
+                case "Quake Antic":
+                    AudioClip quakeAnticClip = (AudioClip) _spellControl.GetAction<AudioPlay>("Quake Antic", 0).oneShotClip.Value;
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(quakeAnticClip);
+                    
+                    qCharge = Instantiate(heroSpells.FindGameObjectInChildren("Q Charge"), playerSpells.transform);
+                    qCharge.SetActive(true);
+                    qCharge.GetComponent<tk2dSpriteAnimator>().PlayFromFrame(0);
+                    qCharge.name = "Q Charge " + id;
+                    
+                    break;
+                case "Quake Fall 2":
+                    GameObject qFlashStart = Instantiate(heroSpells.FindGameObjectInChildren("Q Flash Start"), playerSpells.transform);
+                    GameObject sdSharpFlash = Instantiate(heroEffects.FindGameObjectInChildren("SD Sharp Flash"), playerEffects.transform);
+                    qTrail2 = Instantiate(heroSpells.FindGameObjectInChildren("Q Trail 2"), playerSpells.transform);
+
+                    qFlashStart.SetActive(true);
+                    sdSharpFlash.SetActive(true);
+                    qTrail2.SetActive(true);
+                    
+                    Destroy(qFlashStart, 1);
+                    Destroy(sdSharpFlash, 1);
+                    if (qCharge != null)
+                    {
+                        Destroy(qCharge);
+                    }
+                    
                     break;
                 case "Quake Land 2":
+                    AudioClip q2LandClip = (AudioClip) _spellControl.GetAction<AudioPlay>("Q2 Land", 1).oneShotClip.Value;
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(q2LandClip);
+                    
+                    if (qTrail2 != null)
+                    {
+                        Destroy(qTrail2);
+                    }
+                    
                     GameObject qSlamObj = heroSpells.FindGameObjectInChildren("Q Slam 2");
                     GameObject quakeSlam = Instantiate(qSlamObj, playerSpells.transform);
                     quakeSlam.SetActive(true);
@@ -505,6 +570,9 @@ namespace MultiplayerClient
                     break;
                 case "Scream 2":
                     AudioClip screamClip = (AudioClip) _spellControl.GetAction<AudioPlay>("Scream Antic2", 1).oneShotClip.Value;
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(screamClip);
+
                     GameObject scrHeadsObj = heroSpells.FindGameObjectInChildren("Scr Heads 2");
                     GameObject screamHeads = Instantiate(scrHeadsObj, playerSpells.transform);
                     screamHeads.SetActive(true);
@@ -566,6 +634,13 @@ namespace MultiplayerClient
 
                     break;
                 case "NA Cyclone Start":
+                    
+                    break;
+                case "NA Cyclone":
+                    AudioClip cycloneClip = (AudioClip) _nailArts.GetAction<AudioPlayerOneShotSingle>("Play Audio", 0).audioClip.Value;
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(cycloneClip);
+                    
                     GameObject cycloneObj = heroAttacks.FindGameObjectInChildren("Cyclone Slash");
                     GameObject cycloneSlash = Instantiate(cycloneObj, playerAttacks.transform);
                     cycloneSlash.SetActive(true);
@@ -606,9 +681,6 @@ namespace MultiplayerClient
                     Destroy(cycHitRPoly);
 
                     break;
-                case "NA Cyclone":
-                    // So that this animation isn't included in default and immediately destroys the Cyclone Slash
-                    break;
                 case "NA Cyclone End":
                     GameObject cSlash = GameObject.Find("Cyclone Slash " + id);
                     if (cSlash != null)
@@ -618,9 +690,11 @@ namespace MultiplayerClient
 
                     break;
                 case "NA Big Slash":
+                    AudioClip gsClip = (AudioClip) _nailArts.GetAction<AudioPlay>("G Slash", 0).oneShotClip.Value;
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(gsClip);
+                    
                     GameObject gsObj = heroAttacks.FindGameObjectInChildren("Great Slash");
-                    GameObject ds = Instantiate(heroAttacks.FindGameObjectInChildren("Dash Slash"), playerAttacks.transform.position, Quaternion.identity);
-                    ds.SetActive(true);
                     var greatSlash = Instantiate(gsObj, playerAttacks.transform);
                     greatSlash.SetActive(true);
                     greatSlash.layer = 22;
@@ -643,6 +717,10 @@ namespace MultiplayerClient
 
                     break;
                 case "NA Dash Slash":
+                    AudioClip dsClip = (AudioClip) _nailArts.GetAction<AudioPlay>("Dash Slash", 1).oneShotClip.Value;
+                    audioPlayer = audioPlayerObj.Spawn(player.transform);
+                    audioPlayer.GetComponent<AudioSource>().PlayOneShot(dsClip);
+                    
                     GameObject dsObj = heroAttacks.FindGameObjectInChildren("Dash Slash");
                     var dashSlash = Instantiate(dsObj, playerAttacks.transform);
                     dashSlash.SetActive(true);
@@ -663,6 +741,13 @@ namespace MultiplayerClient
                         dsCollider.GetComponent<DamageHero>().damageDealt = 2;
                     }
 
+                    break;
+                case "Shadow Dash":
+                    var collider = player.GetComponent<BoxCollider2D>();
+                    collider.enabled = false;
+                    yield return new WaitForSeconds(playerAnim.GetClipByName("Shadow Dash").Duration);
+                    collider.enabled = true;
+                    
                     break;
                 default:
                     foreach (Transform childTransform in playerAttacks.transform)
