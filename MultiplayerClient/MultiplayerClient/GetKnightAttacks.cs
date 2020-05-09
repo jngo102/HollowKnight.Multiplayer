@@ -5,7 +5,7 @@ namespace MultiplayerClient
 {
     internal partial class MPClient
     {
-        public GameObject attacks;
+        /*public GameObject attacks;
         public GameObject slash;
         public GameObject altSlash;
         public GameObject downSlash;
@@ -74,6 +74,6 @@ namespace MultiplayerClient
             dashSlash = attacks.FindGameObjectInChildren("Dash Slash");
             
             sharpShadow = attacks.FindGameObjectInChildren("Sharp Shadow");
-        }
+        }*/
     }
 }

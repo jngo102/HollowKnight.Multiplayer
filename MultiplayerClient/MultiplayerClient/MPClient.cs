@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GlobalEnums;
+using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
 using ModCommon;
 using ModCommon.Util;
@@ -169,46 +170,67 @@ namespace MultiplayerClient
         public IEnumerator PlayAnimation(int id, string animation)
         {
             GameObject player = GameManager.Instance.Players[id].gameObject;
-            GameObject attacks = player.FindGameObjectInChildren("Attacks");
-            GameObject effects = player.FindGameObjectInChildren("Effects");
-            GameObject spells = player.FindGameObjectInChildren("Spells");
+            
+            GameObject playerAttacks = player.FindGameObjectInChildren("Attacks");
+            GameObject playerEffects = player.FindGameObjectInChildren("Effects");
+            GameObject playerSpells = player.FindGameObjectInChildren("Spells");
+            
+            GameObject heroAttacks = _hero.FindGameObjectInChildren("Attacks");
+            GameObject heroEffects = _hero.FindGameObjectInChildren("Effects");
+            GameObject heroSpells = _hero.FindGameObjectInChildren("Spells");
+
+            GameObject sdTrail = null;
             switch (animation)
             {
                 case "SD Dash":
-                    Log("SD Dash");
-                    /*sdEnergy.SetActive(true);
+                    GameObject sdBurst = Instantiate(heroEffects.FindGameObjectInChildren("SD Burst"), playerEffects.transform);
                     sdBurst.SetActive(true);
+                    sdBurst.LocateMyFSM("FSM").InsertMethod("Destroy", 1, () => Destroy(sdBurst));
+                    
+                    sdTrail = Instantiate(heroEffects.FindGameObjectInChildren("SD Trail"), playerEffects.transform);
                     sdTrail.SetActive(true);
-                    sdBurstGlow.SetActive(true);
+                    sdTrail.name = "SD Trail " + id;
+                    PlayMakerFSM sdTrailFsm = sdTrail.LocateMyFSM("FSM");
+                    sdTrailFsm.SetState("Idle");
+                    //sdTrailFsm.InsertMethod("Destroy", 1, () => Destroy(sdTrail));
                     sdTrail.GetComponent<MeshRenderer>().enabled = true;
-                    trailAnim = sdTrail.GetComponent<tk2dSpriteAnimator>();
-                    trailAnim.PlayFromFrame(0);
-                    trailAnim.Play("SD Trail");*/
+                    tk2dSpriteAnimator trailAnim = sdTrail.GetComponent<tk2dSpriteAnimator>();
+                    trailAnim.PlayFromFrame("SD Trail", 0);
+
+                    GameObject sdBurstGlow = Instantiate(heroEffects.FindGameObjectInChildren("SD Burst Glow"), playerEffects.transform);
+                    sdBurstGlow.SetActive(true);
+                    
                     break;
                 case "Air Cancel":
-                    Log("Air Cancel");
-                    //trailAnim = sdTrail.GetComponent<tk2dSpriteAnimator>();
-                    //trailAnim.Play("SD Trail End");
+                    GameObject sdBreak = Instantiate(heroEffects.FindGameObjectInChildren("SD Break"), playerEffects.transform);
+                    Destroy(sdBreak, 0.54f);
+                    
+                    sdTrail.GetComponent<tk2dSpriteAnimator>().Play("SD Trail End");
+
+                    break;
+                case "SD Hit Wall":
+                    sdTrail.GetComponent<tk2dSpriteAnimator>().Play("SD Trail End");
+
+                    GameObject wallHitEffect = Instantiate(heroEffects.FindGameObjectInChildren("Wall Hit Effect"), playerEffects.transform);
+                    wallHitEffect.LocateMyFSM("FSM").InsertMethod("Destroy", 1, () => Destroy(wallHitEffect));
+                    
                     break;
                 case "Slash":
-                    GameObject slash = Instantiate(_hc.slashPrefab, attacks.transform);
+                    GameObject slash = Instantiate(_hc.slashPrefab, playerAttacks.transform);
                     slash.SetActive(true);
                     NailSlash nailSlash = slash.GetComponent<NailSlash>();
                     nailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
                     if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
                     {
-                        nailSlash.transform.localScale = new Vector3(nailSlash.scale.x * 1.4f, nailSlash.scale.y * 1.4f,
-                            nailSlash.scale.z);
+                        nailSlash.transform.localScale = new Vector3(nailSlash.scale.x * 1.4f, nailSlash.scale.y * 1.4f, nailSlash.scale.z);
                     }
                     else if (GameManager.Instance.Players[id].equippedCharm_13)
                     {
-                        nailSlash.transform.localScale = new Vector3(nailSlash.scale.x * 1.25f,
-                            nailSlash.scale.y * 1.25f, nailSlash.scale.z);
+                        nailSlash.transform.localScale = new Vector3(nailSlash.scale.x * 1.25f, nailSlash.scale.y * 1.25f, nailSlash.scale.z);
                     }
                     else if (GameManager.Instance.Players[id].equippedCharm_18)
                     {
-                        nailSlash.transform.localScale = new Vector3(nailSlash.scale.x * 1.15f,
-                            nailSlash.scale.y * 1.15f, nailSlash.scale.z);
+                        nailSlash.transform.localScale = new Vector3(nailSlash.scale.x * 1.15f, nailSlash.scale.y * 1.15f, nailSlash.scale.z);
                     }
 
                     nailSlash.StartSlash();
@@ -221,31 +243,27 @@ namespace MultiplayerClient
                         slashCollider.GetComponent<PolygonCollider2D>().points = points;
                         var anim = slash.GetComponent<tk2dSpriteAnimator>();
                         float lifetime = anim.DefaultClip.frames.Length / anim.ClipFps;
-                        player.PrintSceneHierarchyTree();
                         Destroy(slash, lifetime);
                         Destroy(slashCollider, lifetime);
                     }
 
                     break;
                 case "SlashAlt":
-                    GameObject altSlash = Instantiate(_hc.slashAltPrefab, attacks.transform);
+                    GameObject altSlash = Instantiate(_hc.slashAltPrefab, playerAttacks.transform);
                     altSlash.SetActive(true);
                     var altNailSlash = altSlash.GetComponent<NailSlash>();
                     altNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
                     if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
                     {
-                        altNailSlash.transform.localScale = new Vector3(altNailSlash.scale.x * 1.4f,
-                            altNailSlash.scale.y * 1.4f, altNailSlash.scale.z);
+                        altNailSlash.transform.localScale = new Vector3(altNailSlash.scale.x * 1.4f, altNailSlash.scale.y * 1.4f, altNailSlash.scale.z);
                     }
                     else if (GameManager.Instance.Players[id].equippedCharm_13)
                     {
-                        altNailSlash.transform.localScale = new Vector3(altNailSlash.scale.x * 1.25f,
-                            altNailSlash.scale.y * 1.25f, altNailSlash.scale.z);
+                        altNailSlash.transform.localScale = new Vector3(altNailSlash.scale.x * 1.25f, altNailSlash.scale.y * 1.25f, altNailSlash.scale.z);
                     }
                     else if (GameManager.Instance.Players[id].equippedCharm_18)
                     {
-                        altNailSlash.transform.localScale = new Vector3(altNailSlash.scale.x * 1.15f,
-                            altNailSlash.scale.y * 1.15f, altNailSlash.scale.z);
+                        altNailSlash.transform.localScale = new Vector3(altNailSlash.scale.x * 1.15f, altNailSlash.scale.y * 1.15f, altNailSlash.scale.z);
                     }
 
                     altNailSlash.StartSlash();
@@ -266,24 +284,21 @@ namespace MultiplayerClient
 
                     break;
                 case "DownSlash":
-                    GameObject downSlash = Instantiate(_hc.downSlashPrefab, attacks.transform);
+                    GameObject downSlash = Instantiate(_hc.downSlashPrefab, playerAttacks.transform);
                     downSlash.SetActive(true);
                     var downNailSlash = downSlash.GetComponent<NailSlash>();
                     downNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
                     if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
                     {
-                        downNailSlash.transform.localScale = new Vector3(downNailSlash.scale.x * 1.4f,
-                            downNailSlash.scale.y * 1.4f, downNailSlash.scale.z);
+                        downNailSlash.transform.localScale = new Vector3(downNailSlash.scale.x * 1.4f, downNailSlash.scale.y * 1.4f, downNailSlash.scale.z);
                     }
                     else if (GameManager.Instance.Players[id].equippedCharm_13)
                     {
-                        downNailSlash.transform.localScale = new Vector3(downNailSlash.scale.x * 1.25f,
-                            downNailSlash.scale.y * 1.25f, downNailSlash.scale.z);
+                        downNailSlash.transform.localScale = new Vector3(downNailSlash.scale.x * 1.25f, downNailSlash.scale.y * 1.25f, downNailSlash.scale.z);
                     }
                     else if (GameManager.Instance.Players[id].equippedCharm_18)
                     {
-                        downNailSlash.transform.localScale = new Vector3(downNailSlash.scale.x * 1.15f,
-                            downNailSlash.scale.y * 1.15f, downNailSlash.scale.z);
+                        downNailSlash.transform.localScale = new Vector3(downNailSlash.scale.x * 1.15f, downNailSlash.scale.y * 1.15f, downNailSlash.scale.z);
                     }
 
                     downNailSlash.StartSlash();
@@ -304,24 +319,21 @@ namespace MultiplayerClient
 
                     break;
                 case "UpSlash":
-                    GameObject upSlash = Instantiate(_hc.upSlashPrefab, attacks.transform);
+                    GameObject upSlash = Instantiate(_hc.upSlashPrefab, playerAttacks.transform);
                     upSlash.SetActive(true);
                     var upNailSlash = upSlash.GetComponent<NailSlash>();
                     upNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
                     if (GameManager.Instance.Players[id].equippedCharm_18 && GameManager.Instance.Players[id].equippedCharm_13)
                     {
-                        upNailSlash.transform.localScale = new Vector3(upNailSlash.scale.x * 1.4f,
-                            upNailSlash.scale.y * 1.4f, upNailSlash.scale.z);
+                        upNailSlash.transform.localScale = new Vector3(upNailSlash.scale.x * 1.4f, upNailSlash.scale.y * 1.4f, upNailSlash.scale.z);
                     }
                     else if (GameManager.Instance.Players[id].equippedCharm_13)
                     {
-                        upNailSlash.transform.localScale = new Vector3(upNailSlash.scale.x * 1.25f,
-                            upNailSlash.scale.y * 1.25f, upNailSlash.scale.z);
+                        upNailSlash.transform.localScale = new Vector3(upNailSlash.scale.x * 1.25f, upNailSlash.scale.y * 1.25f, upNailSlash.scale.z);
                     }
                     else if (GameManager.Instance.Players[id].equippedCharm_18)
                     {
-                        upNailSlash.transform.localScale = new Vector3(upNailSlash.scale.x * 1.15f,
-                            upNailSlash.scale.y * 1.15f, upNailSlash.scale.z);
+                        upNailSlash.transform.localScale = new Vector3(upNailSlash.scale.x * 1.15f, upNailSlash.scale.y * 1.15f, upNailSlash.scale.z);
                     }
 
                     upNailSlash.StartSlash();
@@ -342,7 +354,7 @@ namespace MultiplayerClient
 
                     break;
                 case "Wall Slash":
-                    GameObject wallSlash = Instantiate(_hc.wallSlashPrefab, attacks.transform);
+                    GameObject wallSlash = Instantiate(_hc.wallSlashPrefab, playerAttacks.transform);
                     wallSlash.SetActive(true);
                     var wallNailSlash = wallSlash.GetComponent<NailSlash>();
                     wallNailSlash.SetMantis(GameManager.Instance.Players[id].equippedCharm_13);
@@ -376,7 +388,7 @@ namespace MultiplayerClient
                         {
                             GameObject dungFlukeObj = fireballCast.GetAction<SpawnObjectFromGlobalPool>("Dung R", 0)
                                 .gameObject.Value;
-                            GameObject dungFluke = Instantiate(dungFlukeObj, spells.transform.position,
+                            GameObject dungFluke = Instantiate(dungFlukeObj, playerSpells.transform.position,
                                 Quaternion.identity);
                             dungFluke.SetActive(true);
                             dungFluke.transform.rotation = Quaternion.Euler(0, 0, 26 * -player.transform.localScale.x);
@@ -396,7 +408,7 @@ namespace MultiplayerClient
                         else
                         {
                             GameObject flukeObj = fireballCast.GetAction<FlingObjectsFromGlobalPool>("Flukes", 0).gameObject.Value;
-                            for (int i = 0; i <= 15; i++)
+                            /*for (int i = 0; i <= 15; i++)
                             {
                                 GameObject fluke = Instantiate(flukeObj, spells.transform.position, Quaternion.identity);
                                 fluke.SetActive(true);
@@ -405,20 +417,37 @@ namespace MultiplayerClient
                                 {
                                     fluke.AddComponent<DamageHero>();
                                 }
+
                                 fluke.AddComponent<SpellFluke>();
                                 fluke.GetComponent<AudioSource>().Play();
                                 fluke.GetComponent<Rigidbody2D>().velocity = new Vector2(Random.Range(5, 15) * -player.transform.localScale.x, Random.Range(0, 20));
                                 fluke.GetComponent<SpriteFlash>().flashFocusHeal();
                                 Destroy(fluke.GetComponent<SpellFluke>());
                                 Destroy(fluke.FindGameObjectInChildren("Damager"));
+                            }*/
+                            
+                            GameObject fluke = Instantiate(flukeObj, playerSpells.transform.position, Quaternion.identity);
+                            if (GameManager.Instance.PvPEnabled)
+                            {
+                                fluke.AddComponent<DamageHero>();
                             }
+                            
+                            FlingUtils.Config config = new FlingUtils.Config();
+                            config.Prefab = fluke;
+                            config.AmountMin = 16;
+                            config.AmountMax = 16;
+                            config.AngleMin = player.transform.localScale.x < 0 ? 20 : 120;
+                            config.AngleMax = player.transform.localScale.x < 0 ? 60 : 160;
+                            config.SpeedMin = 15;
+                            config.SpeedMax = 21;
+                            FlingUtils.SpawnAndFling(config, player.transform, Vector3.zero);
                         }
                     }
                     else
                     {
                         castClip = (AudioClip) fireballCast.GetAction<AudioPlayerOneShotSingle>("Cast Right", 3).audioClip.Value;
                         GameObject fireballObj = fireballCast.GetAction<SpawnObjectFromGlobalPool>("Cast Right", 4).gameObject.Value;
-                        GameObject fireball = Instantiate(fireballObj, spells.transform.position, Quaternion.identity);
+                        GameObject fireball = Instantiate(fireballObj, playerSpells.transform.position  + Vector3.down * 0.5f, Quaternion.identity);
                         fireball.SetActive(true);
                         fireball.layer = 22;
                         // Instantiating fireball and setting properties here is weird, so create a component for it.
@@ -431,8 +460,8 @@ namespace MultiplayerClient
                     audioPlayer.GetComponent<AudioSource>().PlayOneShot(castClip);
                     break;
                 case "Quake Land 2":
-                    GameObject qSlamObj = _hero.transform.Find("Spells").Find("Q Slam 2").gameObject;
-                    GameObject quakeSlam = Instantiate(qSlamObj, spells.transform);
+                    GameObject qSlamObj = heroSpells.FindGameObjectInChildren("Q Slam 2");
+                    GameObject quakeSlam = Instantiate(qSlamObj, playerSpells.transform);
                     quakeSlam.SetActive(true);
                     quakeSlam.layer = 22;
                     if (GameManager.Instance.PvPEnabled)
@@ -444,12 +473,12 @@ namespace MultiplayerClient
                     }
 
                     yield return new WaitForSeconds(0.25f);
-                    GameObject qPillarObj = _hero.transform.Find("Spells").Find("Q Pillar").gameObject;
-                    GameObject quakePillar = Instantiate(qPillarObj, spells.transform);
+                    GameObject qPillarObj = heroSpells.FindGameObjectInChildren("Q Pillar");
+                    GameObject quakePillar = Instantiate(qPillarObj, playerSpells.transform);
                     quakePillar.SetActive(true);
 
-                    GameObject qMegaObj = _hero.transform.Find("Spells").Find("Q Mega").gameObject;
-                    GameObject qMega = Instantiate(qMegaObj, spells.transform);
+                    GameObject qMegaObj = heroSpells.FindGameObjectInChildren("Q Mega");
+                    GameObject qMega = Instantiate(qMegaObj, playerSpells.transform);
                     qMega.GetComponent<tk2dSpriteAnimator>().PlayFromFrame(0);
                     qMega.SetActive(true);
                     GameObject qMegaHitL = qMega.FindGameObjectInChildren("Hit L");
@@ -470,17 +499,16 @@ namespace MultiplayerClient
                     yield return new WaitForSeconds(1.0f);
                     
                     Destroy(quakeSlam);
-                    Destroy(qPillarObj);
-                    Destroy(qMegaObj);
+                    Destroy(quakePillar);
+                    Destroy(qMega);
                     
                     break;
                 case "Scream 2":
-                    Log("Scream 2");
                     AudioClip screamClip = (AudioClip) _spellControl.GetAction<AudioPlay>("Scream Antic2", 1).oneShotClip.Value;
-                    GameObject scrHeadsObj = _hero.transform.Find("Spells").Find("Scr Heads 2").gameObject;
-                    GameObject screamHeads = Instantiate(scrHeadsObj, spells.transform);
+                    GameObject scrHeadsObj = heroSpells.FindGameObjectInChildren("Scr Heads 2");
+                    GameObject screamHeads = Instantiate(scrHeadsObj, playerSpells.transform);
                     screamHeads.SetActive(true);
-                    screamHeads.name = "Scream Heads Player " + GameManager.Instance.Players[id].username;
+                    screamHeads.name = "Scream Heads Player " + id;
                     Destroy(screamHeads.LocateMyFSM("Deactivate on Hit"));
                     
                     GameObject screamHitL = screamHeads.FindGameObjectInChildren("Hit L");
@@ -538,11 +566,11 @@ namespace MultiplayerClient
 
                     break;
                 case "NA Cyclone Start":
-                    GameObject cycloneObj = _hc.transform.Find("Attacks").Find("Cyclone Slash").gameObject;
-                    GameObject cycloneSlash = Instantiate(cycloneObj, attacks.transform);
+                    GameObject cycloneObj = heroAttacks.FindGameObjectInChildren("Cyclone Slash");
+                    GameObject cycloneSlash = Instantiate(cycloneObj, playerAttacks.transform);
                     cycloneSlash.SetActive(true);
                     cycloneSlash.layer = 22;
-                    cycloneSlash.name = "Cyclone Slash " + GameManager.Instance.Players[id].username;
+                    cycloneSlash.name = "Cyclone Slash " + id;
                     cycloneSlash.LocateMyFSM("Control Collider").SetState("Init");
                     GameObject hitL = cycloneSlash.FindGameObjectInChildren("Hit L");
                     GameObject hitR = cycloneSlash.FindGameObjectInChildren("Hit R");
@@ -582,17 +610,18 @@ namespace MultiplayerClient
                     // So that this animation isn't included in default and immediately destroys the Cyclone Slash
                     break;
                 case "NA Cyclone End":
-                    if (GameObject.Find("Cyclone Slash " + GameManager.Instance.Players[id].username))
+                    GameObject cSlash = GameObject.Find("Cyclone Slash " + id);
+                    if (cSlash != null)
                     {
-                        Destroy(GameObject.Find("Cyclone Slash " + GameManager.Instance.Players[id].username));
+                        Destroy(cSlash);
                     }
 
                     break;
                 case "NA Big Slash":
-                    GameObject gsObj = _hc.transform.Find("Attacks").Find("Great Slash").gameObject;
-                    GameObject ds = Instantiate(_hc.transform.Find("Attacks").Find("Dash Slash").gameObject, attacks.transform.position, Quaternion.identity);
+                    GameObject gsObj = heroAttacks.FindGameObjectInChildren("Great Slash");
+                    GameObject ds = Instantiate(heroAttacks.FindGameObjectInChildren("Dash Slash"), playerAttacks.transform.position, Quaternion.identity);
                     ds.SetActive(true);
-                    var greatSlash = Instantiate(gsObj, attacks.transform);
+                    var greatSlash = Instantiate(gsObj, playerAttacks.transform);
                     greatSlash.SetActive(true);
                     greatSlash.layer = 22;
                     greatSlash.LocateMyFSM("Control Collider").SetState("Init");
@@ -614,8 +643,8 @@ namespace MultiplayerClient
 
                     break;
                 case "NA Dash Slash":
-                    GameObject dsObj = _hc.transform.Find("Attacks").Find("Dash Slash").gameObject;
-                    var dashSlash = Instantiate(dsObj, attacks.transform);
+                    GameObject dsObj = heroAttacks.FindGameObjectInChildren("Dash Slash");
+                    var dashSlash = Instantiate(dsObj, playerAttacks.transform);
                     dashSlash.SetActive(true);
                     dashSlash.layer = 22;
                     dashSlash.LocateMyFSM("Control Collider").SetState("Init");
@@ -636,17 +665,17 @@ namespace MultiplayerClient
 
                     break;
                 default:
-                    foreach (Transform childTransform in attacks.transform)
+                    foreach (Transform childTransform in playerAttacks.transform)
                     {
                         Destroy(childTransform.gameObject);
                     }
                     
-                    foreach (Transform childTransform in effects.transform)
+                    foreach (Transform childTransform in playerEffects.transform)
                     {
                         Destroy(childTransform.gameObject);
                     }
                     
-                    foreach (Transform childTransform in spells.transform)
+                    foreach (Transform childTransform in playerSpells.transform)
                     {
                         Destroy(childTransform.gameObject);
                     }
@@ -655,6 +684,10 @@ namespace MultiplayerClient
             }
         }
 
+        private void Fling(GameObject go, float angleMin, float angleMax, bool degrees = true){
+            
+        }
+        
         private static void Log(object message) => Modding.Logger.Log("[MP Client] " + message);
     }
 }

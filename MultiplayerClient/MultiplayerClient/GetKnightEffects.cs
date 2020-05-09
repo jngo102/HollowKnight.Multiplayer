@@ -5,7 +5,7 @@ namespace MultiplayerClient
 {
     internal partial class MPClient
     {
-        public GameObject effects;
+        /*public GameObject effects;
         public GameObject roarDust;
         public GameObject roarDustLil;
         public GameObject dashAsh;
@@ -114,6 +114,6 @@ namespace MultiplayerClient
             damageEffect = effects.FindGameObjectInChildren("Damage Effect");
 
             fallTrail = effects.FindGameObjectInChildren("Fall Trail");
-        }
+        }*/
     }
 }
