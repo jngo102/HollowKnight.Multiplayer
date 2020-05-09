@@ -151,7 +151,6 @@ namespace MultiplayerClient.Canvas
         {
             if (nextScene.name == "Menu_Title")
             {
-                Log("Is Menu Title");
                 Panel.SetActive(false, true);
             }
         }

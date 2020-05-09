@@ -22,5 +22,7 @@ namespace MultiplayerClient
                 _storedScale = heroScale;
             }
         }
+
+        private void Log(object message) => Modding.Logger.Log("[Hero Tracker] " + message);
     }
 }

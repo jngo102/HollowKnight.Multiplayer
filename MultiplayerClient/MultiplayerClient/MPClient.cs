@@ -50,34 +50,7 @@ namespace MultiplayerClient
 
             DontDestroyOnLoad(clientManager);
             DontDestroyOnLoad(gameManager);
-            
-            _hc = HeroController.instance;
-            _hero = _hc.gameObject;
-            _spellControl = _hero.LocateMyFSM("Spell Control");
 
-            _hero.AddComponent<HeroTracker>();
-            
-            var anim = _hero.GetComponent<tk2dSpriteAnimator>();
-            foreach (tk2dSpriteAnimationClip clip in anim.Library.clips)
-            {
-                if (clip.frames.Length > 0)
-                {
-                    tk2dSpriteAnimationFrame frame0 = clip.frames[0];
-                    frame0.triggerEvent = true;
-                    frame0.eventInfo = clip.name;
-                    clip.frames[0] = frame0;
-                }
-                
-            }
-            
-            anim.AnimationEventTriggered = AnimationEventDelegate;
-            
-            // Q2 Land state resets tk2dSpriteAnimator's AnimationEventTriggered delegate, so insert method in following state to reset it
-            _spellControl.InsertMethod("Q2 Pillar", _spellControl.GetState("Q2 Pillar").Actions.Length, () =>
-            {
-                anim.AnimationEventTriggered = AnimationEventDelegate;
-            });
-            
             _playerPrefab = new GameObject(
                 "PlayerPrefab",
                 typeof(BoxCollider2D),
@@ -123,9 +96,43 @@ namespace MultiplayerClient
             GameManager.Instance.playerPrefab = _playerPrefab;
             
             HeroController.instance.OnDeath += HeroDeath;
+            UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChange;
             On.HeroController.EnterSceneDreamGate += OnEnterSceneDG;
         }
 
+        private void OnSceneChange(Scene prevScene, Scene nextScene)
+        {
+            if (MultiplayerClient.NonGameplayScenes.Contains(prevScene.name) &&
+                !MultiplayerClient.NonGameplayScenes.Contains(nextScene.name))
+            {
+                _hc = HeroController.instance;
+                _hero = _hc.gameObject;
+                _hero.AddComponent<HeroTracker>();
+                
+                _spellControl = _hero.LocateMyFSM("Spell Control");
+
+                var anim = _hero.GetComponent<tk2dSpriteAnimator>();
+                foreach (tk2dSpriteAnimationClip clip in anim.Library.clips)
+                {
+                    if (clip.frames.Length > 0)
+                    {
+                        tk2dSpriteAnimationFrame frame0 = clip.frames[0];
+                        frame0.triggerEvent = true;
+                        frame0.eventInfo = clip.name;
+                        clip.frames[0] = frame0;
+                    }
+                }
+            
+                anim.AnimationEventTriggered = AnimationEventDelegate;
+            
+                // Q2 Land state resets tk2dSpriteAnimator's AnimationEventTriggered delegate, so insert method in following state to reset it
+                _spellControl.InsertMethod("Q2 Pillar", _spellControl.GetState("Q2 Pillar").Actions.Length, () =>
+                {
+                    anim.AnimationEventTriggered = AnimationEventDelegate;
+                });
+            }
+        }
+        
         private void OnEnterSceneDG(On.HeroController.orig_EnterSceneDreamGate orig, HeroController self)
         {
             try
