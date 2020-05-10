@@ -156,6 +156,20 @@ namespace MultiplayerServer
             }
         }
 
+        public static void HealthUpdated(int fromClient, int health, int maxHealth, int healthBlue)
+        {
+            using (Packet packet = new Packet((int) ServerPackets.HealthUpdated))
+            {
+                packet.Write(fromClient);
+                packet.Write(health);
+                packet.Write(maxHealth);
+                packet.Write(healthBlue);
+
+                Log("Sending Health Data to all clients except " + fromClient);
+                SendTCPDataToAll(fromClient, packet);
+            }
+        }
+        
         public static void CharmsUpdated(int fromClient, Player player)
         {
             using (Packet packet = new Packet((int) ServerPackets.CharmsUpdated))
@@ -165,8 +179,7 @@ namespace MultiplayerServer
                 {
                     packet.Write(player.GetAttr<Player, bool>("equippedCharm_" + charmNum));
                 }
-
-                Log("Sending CharmsUpdate packet from Server");
+                
                 SendTCPDataToAll(fromClient, packet);
             }
         }

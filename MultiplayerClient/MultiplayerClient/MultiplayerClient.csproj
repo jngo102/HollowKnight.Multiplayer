@@ -94,6 +94,7 @@
     <Compile Include="MPClient.cs" />
     <Compile Include="MultiplayerClient.cs" />
     <Compile Include="Packet.cs" />
+    <Compile Include="PlayAnimation.cs" />
     <Compile Include="PlayerController.cs" />
     <Compile Include="PlayerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -37,6 +37,9 @@ namespace MultiplayerClient
                 packet.Write(PlayerManager.activeScene);
                 packet.Write(heroTransform.position);
                 packet.Write(heroTransform.localScale);
+                packet.Write(PlayerData.instance.health);
+                packet.Write(PlayerData.instance.maxHealth);
+                packet.Write(PlayerData.instance.healthBlue);
 
                 for (int charmNum = 1; charmNum <= 40; charmNum++)
                 {
@@ -89,6 +92,19 @@ namespace MultiplayerClient
             }
         }
 
+        public static void HealthUpdated(int currentHealth, int currentMaxHealth, int currentHealthBlue)
+        {
+            using (Packet packet = new Packet((int) ClientPackets.HealthUpdated))
+            {
+                packet.Write(currentHealth);
+                packet.Write(currentMaxHealth);
+                packet.Write(currentHealthBlue);
+
+                Log("Sending Health Data to Server");
+                SendTCPData(packet);
+            }
+        }
+        
         public static void CharmsUpdated(PlayerData pd)
         {
             using (Packet packet = new Packet((int) ClientPackets.CharmsUpdated))

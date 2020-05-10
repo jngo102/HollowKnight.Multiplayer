@@ -334,6 +334,7 @@ namespace MultiplayerClient
                 { (int) ServerPackets.PlayerPosition, ClientHandle.PlayerPosition },
                 { (int) ServerPackets.PlayerScale, ClientHandle.PlayerScale },
                 { (int) ServerPackets.PlayerAnimation, ClientHandle.PlayerAnimation },
+                { (int) ServerPackets.HealthUpdated, ClientHandle.HealthUpdated },
                 { (int) ServerPackets.CharmsUpdated, ClientHandle.CharmsUpdated },
                 { (int) ServerPackets.PlayerDisconnected, ClientHandle.PlayerDisconnected },
             };

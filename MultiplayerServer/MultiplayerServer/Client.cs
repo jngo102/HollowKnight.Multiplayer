@@ -220,12 +220,15 @@ namespace MultiplayerServer
         /// <param name="position">The spawn position of the new player.</param>
         /// <param name="scale">The spawn scale of the new player.</param>
         /// <param name="animation">The animation that the new player starts in.</param>
+        /// <param name="health">The current health of the new player.</param>
+        /// <param name="maxHealth">The maximum health of the new player.</param>
+        /// <param name="healthBlue">The blue health of the new player.</param>
         /// <param name="charmsData">The equipped charms of the new player.</param>
-        public void SendIntoGame(string username, Vector3 position, Vector3 scale, string animation, List<bool> charmsData)
+        public void SendIntoGame(string username, Vector3 position, Vector3 scale, string animation, int health, int maxHealth, int healthBlue, List<bool> charmsData)
         {
             player = NetworkManager.Instance.InstantiatePlayer(position, scale);
-            player.Initialize(id, username, animation);
-            
+            player.Initialize(id, username, animation, health, maxHealth, healthBlue);
+
             for (int charmNum = 1; charmNum <= 40; charmNum++)
             {
                 player.SetAttr("equippedCharm_" + charmNum, charmsData[charmNum - 1]);

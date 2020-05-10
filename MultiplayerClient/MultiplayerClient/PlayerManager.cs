@@ -51,6 +51,10 @@ namespace MultiplayerClient
         public bool equippedCharm_38;
         public bool equippedCharm_39;
         public bool equippedCharm_40;
+
+        public int health;
+        public int maxHealth;
+        public int healthBlue;
         
         private void Awake()
         {

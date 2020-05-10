@@ -15,6 +15,7 @@ namespace MultiplayerServer
         PlayerPosition,
         PlayerScale,
         PlayerAnimation,
+        HealthUpdated,
         CharmsUpdated,
         PlayerDisconnected,
     }
@@ -27,6 +28,7 @@ namespace MultiplayerServer
         PlayerScale,
         PlayerAnimation,
         SceneChanged,
+        HealthUpdated,
         CharmsUpdated,
         PlayerDisconnected,
     }

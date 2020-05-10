@@ -95,6 +95,20 @@ namespace MultiplayerClient
             }
         }
 
+        public static void HealthUpdated(Packet packet)
+        {
+            int fromClient = packet.ReadInt();
+            int health = packet.ReadInt();
+            int maxHealth = packet.ReadInt();
+            int healthBlue = packet.ReadInt();
+
+            Log("Health Data from Server: " + health + " " + maxHealth + " " + healthBlue);
+            
+            GameManager.Instance.Players[fromClient].health = health;
+            GameManager.Instance.Players[fromClient].maxHealth = maxHealth;
+            GameManager.Instance.Players[fromClient].healthBlue = healthBlue;
+        }
+        
         public static void CharmsUpdated(Packet packet)
         {
             int fromClient = packet.ReadInt();

@@ -16,15 +16,17 @@ namespace MultiplayerServer
             string activeScene = packet.ReadString();
             Vector3 position = packet.ReadVector3();
             Vector3 scale = packet.ReadVector3();
+            int health = packet.ReadInt();
+            int maxHealth = packet.ReadInt();
+            int healthBlue = packet.ReadInt();
 
             List<bool> charmsData = new List<bool>();
             for (int charmNum = 1; charmNum <= 40; charmNum++)
             {
                 charmsData.Add(packet.ReadBool());
             }
-
-            Log("Sending into game");
-            Server.clients[fromClient].SendIntoGame(username, position, scale, currentClip, charmsData);
+            
+            Server.clients[fromClient].SendIntoGame(username, position, scale, currentClip, health, maxHealth, healthBlue, charmsData);
             SceneChanged(fromClient, activeScene);
 
             Log($"{username} connected successfully and is now player {fromClient}.");
@@ -102,6 +104,21 @@ namespace MultiplayerServer
             }
         }
 
+        public static void HealthUpdated(int fromClient, Packet packet)
+        {
+            int currentHealth = packet.ReadInt();
+            int currentMaxHealth = packet.ReadInt();
+            int currentHealthBlue = packet.ReadInt();
+
+            Log("From Client: " + currentHealth + " " + currentMaxHealth + " " + currentHealthBlue);
+            
+            Server.clients[fromClient].player.health = currentHealth;
+            Server.clients[fromClient].player.maxHealth = currentMaxHealth;
+            Server.clients[fromClient].player.healthBlue = currentHealthBlue;
+
+            ServerSend.HealthUpdated(fromClient, currentHealth, currentMaxHealth, currentHealthBlue);
+        }
+        
         public static void CharmsUpdated(int fromClient, Packet packet)
         {
             for (int charmNum = 1; charmNum <= 40; charmNum++)

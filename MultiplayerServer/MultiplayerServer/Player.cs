@@ -12,7 +12,6 @@ namespace MultiplayerServer
         public string activeScene;
         public Vector3 position;
         public Vector3 scale;
-        public bool pvpOn;
 
         public bool equippedCharm_1;
         public bool equippedCharm_2;
@@ -55,11 +54,18 @@ namespace MultiplayerServer
         public bool equippedCharm_39;
         public bool equippedCharm_40;
 
-        public void Initialize(int id, string username, string animation)
+        public int health;
+        public int maxHealth;
+        public int healthBlue;
+
+        public void Initialize(int id, string username, string animation, int health, int maxHealth, int healthBlue)
         {
             this.id = id;
             this.username = username;
             this.animation = animation;
+            this.health = health;
+            this.maxHealth = maxHealth;
+            this.healthBlue = healthBlue;
         }
 
         public void SetPosition(Vector3 position)
