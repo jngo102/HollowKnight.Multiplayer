@@ -14,7 +14,7 @@ namespace MultiplayerClient
         public static Client Instance;
         public static int dataBufferSize = 4096;
 
-        public string ip = "127.0.0.1";
+        public string host = "localhost";
         public int port = 26950;
         public string username = "Default";
         public int myId;
@@ -79,7 +79,7 @@ namespace MultiplayerClient
                 };
 
                 receiveBuffer = new byte[dataBufferSize];
-                socket.BeginConnect(Instance.ip, Instance.port, ConnectCallback, socket);
+                socket.BeginConnect(Instance.host, Instance.port, ConnectCallback, socket);
             }
 
             /// <summary>Initializes the newly connected client's TCP-related info.</summary>
@@ -213,18 +213,13 @@ namespace MultiplayerClient
             public UdpClient socket;
             public IPEndPoint endPoint;
 
-            public UDP()
-            {
-                endPoint = new IPEndPoint(IPAddress.Parse(Instance.ip), Instance.port);
-            }
-
             /// <summary>Attempts to connect to the server via UDP.</summary>
             /// <param name="localPort">The port number to bind the UDP socket to.</param>
             public void Connect(int localPort)
             {
+                endPoint = new IPEndPoint(IPAddress.Any, localPort);
                 socket = new UdpClient(localPort);
-
-                socket.Connect(endPoint);
+                socket.Connect(Instance.host, Instance.port);
                 socket.BeginReceive(ReceiveCallback, null);
 
                 using (Packet packet = new Packet())
@@ -242,14 +237,9 @@ namespace MultiplayerClient
                     packet.InsertInt(Instance.myId);
                     if (socket != null)
                     {
-                        if (endPoint == null)
-                        {
-                            endPoint = new IPEndPoint(IPAddress.Parse(Instance.ip), Instance.port);
-                        }
-                        
                         if (!socket.Client.Connected)
                         {
-                            socket.Connect(endPoint);
+                            socket.Connect(Instance.host, Instance.port);
                             socket.BeginReceive(ReceiveCallback, null);
                         }
 
@@ -317,7 +307,6 @@ namespace MultiplayerClient
                     Instance.Disconnect();
                 }
                 
-                endPoint = null;
                 socket = null;
             }
         }

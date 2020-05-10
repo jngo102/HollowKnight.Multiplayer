@@ -69,7 +69,7 @@ namespace MultiplayerClient.Canvas
                 new Rect(0, y, inputImg.width, inputImg.height),
                 GUIController.Instance.trajanNormal,
                 "",
-                "IP Address",
+                "Address",
                 16
             );
             y += inputImg.height + 5;
@@ -162,7 +162,7 @@ namespace MultiplayerClient.Canvas
             {
                 Log("Connecting to Server...");
                 
-                if (_ipInput.GetText() != "") Client.Instance.ip = _ipInput.GetText();
+                if (_ipInput.GetText() != "") Client.Instance.host = _ipInput.GetText();
                 if (_portInput.GetText() != "") Client.Instance.port = int.Parse(_portInput.GetText());
                 if (_usernameInput.GetText() != "") Client.Instance.username = _usernameInput.GetText();
 
