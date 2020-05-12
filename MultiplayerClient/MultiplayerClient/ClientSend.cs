@@ -32,7 +32,7 @@ namespace MultiplayerClient
                 Transform heroTransform = HeroController.instance.gameObject.transform;
                 
                 packet.Write(Client.Instance.myId);
-                packet.Write(Client.Instance.username);
+                packet.Write(MultiplayerClient.settings.username);
                 packet.Write(HeroController.instance.GetComponent<tk2dSpriteAnimator>().CurrentClip.name);
                 packet.Write(PlayerManager.activeScene);
                 packet.Write(heroTransform.position);

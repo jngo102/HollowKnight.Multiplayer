@@ -93,6 +93,7 @@
     <Compile Include="HeroTracker.cs" />
     <Compile Include="MPClient.cs" />
     <Compile Include="MultiplayerClient.cs" />
+    <Compile Include="MultiplayerSettings.cs" />
     <Compile Include="Packet.cs" />
     <Compile Include="PlayAnimation.cs" />
     <Compile Include="PlayerController.cs" />
