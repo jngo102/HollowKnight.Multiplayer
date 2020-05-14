@@ -45,13 +45,12 @@ namespace MultiplayerClient
             GameObject clientManager = new GameObject("Client Manager");
             clientManager.AddComponent<Client>();
             clientManager.AddComponent<ThreadManager>();
-            
-            Log("Creating Game Manager");
-            GameObject gameManager = new GameObject("Game Manager");
-            gameManager.AddComponent<GameManager>();
-
             DontDestroyOnLoad(clientManager);
-            DontDestroyOnLoad(gameManager);
+
+            Log("Creating Session Manager");
+            GameObject sessionManager = new GameObject("Session Manager");
+            sessionManager.AddComponent<SessionManager>();
+            DontDestroyOnLoad(sessionManager);
 
             _playerPrefab = new GameObject(
                 "PlayerPrefab",
@@ -96,7 +95,7 @@ namespace MultiplayerClient
             
             DontDestroyOnLoad(_playerPrefab);
             
-            GameManager.Instance.playerPrefab = _playerPrefab;
+            SessionManager.Instance.playerPrefab = _playerPrefab;
             
             HeroController.instance.OnDeath += HeroDeath;
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChange;

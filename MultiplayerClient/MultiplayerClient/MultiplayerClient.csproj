@@ -87,7 +87,7 @@
     <Compile Include="ClientSend.cs" />
     <Compile Include="DungFluke.cs" />
     <Compile Include="Fireball.cs" />
-    <Compile Include="GameManager.cs" />
+    <Compile Include="SessionManager.cs" />
     <Compile Include="GetKnightAttacks.cs" />
     <Compile Include="GetKnightEffects.cs" />
     <Compile Include="HeroTracker.cs" />

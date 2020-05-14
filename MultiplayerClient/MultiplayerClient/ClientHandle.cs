@@ -38,9 +38,9 @@ namespace MultiplayerClient
                 }
 
                 bool pvpEnabled = packet.ReadBool();
-                GameManager.Instance.EnablePvP(pvpEnabled);
+                SessionManager.Instance.EnablePvP(pvpEnabled);
                 
-                GameManager.Instance.SpawnPlayer(id, username, position, scale, animation, charmsData);
+                SessionManager.Instance.SpawnPlayer(id, username, position, scale, animation, charmsData);
             }
         }
 
@@ -48,14 +48,14 @@ namespace MultiplayerClient
         {
             int clientToDestroy = packet.ReadInt();
 
-            GameManager.Instance.DestroyPlayer(clientToDestroy);
+            SessionManager.Instance.DestroyPlayer(clientToDestroy);
         }
 
         public static void PvPEnabled(Packet packet)
         {
             bool enablePvP = packet.ReadBool();
 
-            GameManager.Instance.EnablePvP(enablePvP);
+            SessionManager.Instance.EnablePvP(enablePvP);
         }
             
         public static void PlayerPosition(Packet packet)
@@ -63,9 +63,9 @@ namespace MultiplayerClient
             int id = packet.ReadInt();
             Vector3 position = packet.ReadVector3();
 
-            if (GameManager.Instance.Players.ContainsKey(id))
+            if (SessionManager.Instance.Players.ContainsKey(id))
             {
-                GameManager.Instance.Players[id].gameObject.transform.position = position;
+                SessionManager.Instance.Players[id].gameObject.transform.position = position;
             }
         }
 
@@ -74,9 +74,9 @@ namespace MultiplayerClient
             int id = packet.ReadInt();
             Vector3 scale = packet.ReadVector3();
 
-            if (GameManager.Instance.Players.ContainsKey(id))
+            if (SessionManager.Instance.Players.ContainsKey(id))
             {
-                GameManager.Instance.Players[id].gameObject.transform.localScale = scale;
+                SessionManager.Instance.Players[id].gameObject.transform.localScale = scale;
             }
         }
         
@@ -85,13 +85,13 @@ namespace MultiplayerClient
             int id = packet.ReadInt();
             string animation = packet.ReadString();
 
-            if (GameManager.Instance.Players.ContainsKey(id))
+            if (SessionManager.Instance.Players.ContainsKey(id))
             {
-                var anim = GameManager.Instance.Players[id].gameObject.GetComponent<tk2dSpriteAnimator>();
+                var anim = SessionManager.Instance.Players[id].gameObject.GetComponent<tk2dSpriteAnimator>();
                 anim.Stop();
                 anim.Play(animation);
 
-                GameManager.Instance.StartCoroutine(MPClient.Instance.PlayAnimation(id, animation));
+                SessionManager.Instance.StartCoroutine(MPClient.Instance.PlayAnimation(id, animation));
             }
         }
 
@@ -104,9 +104,9 @@ namespace MultiplayerClient
 
             Log("Health Data from Server: " + health + " " + maxHealth + " " + healthBlue);
             
-            GameManager.Instance.Players[fromClient].health = health;
-            GameManager.Instance.Players[fromClient].maxHealth = maxHealth;
-            GameManager.Instance.Players[fromClient].healthBlue = healthBlue;
+            SessionManager.Instance.Players[fromClient].health = health;
+            SessionManager.Instance.Players[fromClient].maxHealth = maxHealth;
+            SessionManager.Instance.Players[fromClient].healthBlue = healthBlue;
         }
         
         public static void CharmsUpdated(Packet packet)
@@ -115,7 +115,7 @@ namespace MultiplayerClient
             for (int charmNum = 1; charmNum <= 40; charmNum++)
             {
                 bool equippedCharm = packet.ReadBool();
-                GameManager.Instance.Players[fromClient].SetAttr("equippedCharm_" + charmNum, equippedCharm);
+                SessionManager.Instance.Players[fromClient].SetAttr("equippedCharm_" + charmNum, equippedCharm);
             }
             Log("Finished Modifying equippedCharm bools");
         }
@@ -125,7 +125,7 @@ namespace MultiplayerClient
             int id = packet.ReadInt();
             Log($"Player {id} has disconnected from the server.");
     
-            GameManager.Instance.DestroyPlayer(id);
+            SessionManager.Instance.DestroyPlayer(id);
         }
         
         private static void Log(object message) => Modding.Logger.Log("[Client Handle] " + message);

@@ -22,12 +22,12 @@ namespace MultiplayerClient
         {
             _anim.PlayFromFrame(0);
             _rb.velocity = Vector2.right * FireballSpeed * xDir;
-            if (GameManager.Instance.PvPEnabled)
+            if (SessionManager.Instance.PvPEnabled)
             {
                 gameObject.AddComponent<DamageHero>();
             }
             Vector3 scale = transform.localScale;
-            if (GameManager.Instance.Players[playerId].equippedCharm_19)
+            if (SessionManager.Instance.Players[playerId].equippedCharm_19)
             {
                 Log("Shaman Stone");
                 transform.localScale = new Vector3(1.8f * xDir, 1.4f * scale.y, scale.z);

@@ -10,7 +10,7 @@ namespace MultiplayerClient
     {
         public IEnumerator PlayAnimation(int id, string animation)
         {
-            PlayerManager playerManager = GameManager.Instance.Players[id];
+            PlayerManager playerManager = SessionManager.Instance.Players[id];
             GameObject player = playerManager.gameObject;
             
             GameObject playerAttacks = player.FindGameObjectInChildren("Attacks");
@@ -98,7 +98,7 @@ namespace MultiplayerClient
 
                     nailSlash.StartSlash();
 
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         GameObject slashCollider = Instantiate(MultiplayerClient.GameObjects["Slash"], slash.transform);
                         slashCollider.SetActive(true);
@@ -144,7 +144,7 @@ namespace MultiplayerClient
                             beam.SetActive(true);
                             beam.layer = 22;
                             Destroy(beam.LocateMyFSM("damages_enemy"));
-                            if (GameManager.Instance.PvPEnabled)
+                            if (SessionManager.Instance.PvPEnabled)
                             {
                                 beam.AddComponent<DamageHero>().damageDealt = fury && playerManager.equippedCharm_25 ? 2 : 1;
                             }
@@ -182,7 +182,7 @@ namespace MultiplayerClient
 
                     altNailSlash.StartSlash();
 
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         GameObject altSlashCollider =
                             Instantiate(MultiplayerClient.GameObjects["Slash"], altSlash.transform);
@@ -230,7 +230,7 @@ namespace MultiplayerClient
                             beam.SetActive(true);
                             beam.layer = 22;
                             Destroy(beam.LocateMyFSM("damages_enemy"));
-                            if (GameManager.Instance.PvPEnabled)
+                            if (SessionManager.Instance.PvPEnabled)
                             {
                                 beam.AddComponent<DamageHero>().damageDealt = furyAlt && playerManager.equippedCharm_25 ? 2 : 1;
                             }
@@ -268,7 +268,7 @@ namespace MultiplayerClient
 
                     downNailSlash.StartSlash();
 
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         GameObject downSlashCollider =
                             Instantiate(MultiplayerClient.GameObjects["Slash"], downSlash.transform);
@@ -305,7 +305,7 @@ namespace MultiplayerClient
                             beam.transform.localScale = new Vector3(player.transform.localScale.x, ls.y, ls.z);
                             beam.transform.rotation = Quaternion.Euler(0, 0, beam.transform.localScale.x > 0 ? 90 : -90);
                             Destroy(beam.LocateMyFSM("damages_enemy"));
-                            if (GameManager.Instance.PvPEnabled)
+                            if (SessionManager.Instance.PvPEnabled)
                             {
                                 beam.AddComponent<DamageHero>().damageDealt = furyDown && playerManager.equippedCharm_25 ? 2 : 1;
                             }
@@ -343,7 +343,7 @@ namespace MultiplayerClient
 
                     upNailSlash.StartSlash();
 
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         GameObject upSlashCollider = Instantiate(MultiplayerClient.GameObjects["Slash"], upSlash.transform);
                         upSlashCollider.SetActive(true);
@@ -380,7 +380,7 @@ namespace MultiplayerClient
                             beam.transform.localScale = new Vector3(player.transform.localScale.x, ls.y, ls.z);
                             beam.transform.rotation = Quaternion.Euler(0, 0, beam.transform.localScale.x > 0 ? -90 : 90);
                             Destroy(beam.LocateMyFSM("damages_enemy"));
-                            if (GameManager.Instance.PvPEnabled)
+                            if (SessionManager.Instance.PvPEnabled)
                             {
                                 beam.AddComponent<DamageHero>().damageDealt = furyUp && playerManager.equippedCharm_25 ? 2 : 1;
                             }
@@ -406,7 +406,7 @@ namespace MultiplayerClient
 
                     wallNailSlash.StartSlash();
 
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         GameObject wallSlashCollider =
                             Instantiate(MultiplayerClient.GameObjects["Slash"], wallSlash.transform);
@@ -454,7 +454,7 @@ namespace MultiplayerClient
                             beam.SetActive(true);
                             beam.layer = 22;
                             Destroy(beam.LocateMyFSM("damages_enemy"));
-                            if (GameManager.Instance.PvPEnabled)
+                            if (SessionManager.Instance.PvPEnabled)
                             {
                                 beam.AddComponent<DamageHero>().damageDealt = furyWall && playerManager.equippedCharm_25 ? 2 : 1;
                             }
@@ -480,7 +480,7 @@ namespace MultiplayerClient
                             PlayMakerFSM dungFlukeControl = dungFluke.LocateMyFSM("Control");
                             var blowClip = (AudioClip) dungFlukeControl.GetAction<AudioPlayerOneShotSingle>("Blow", 4).audioClip.Value;
                             Destroy(dungFluke.LocateMyFSM("Control"));
-                            if (GameManager.Instance.PvPEnabled)
+                            if (SessionManager.Instance.PvPEnabled)
                             {
                                 dungFluke.AddComponent<DamageHero>();
                             }
@@ -493,7 +493,7 @@ namespace MultiplayerClient
                         {
                             GameObject flukeObj = fireballCast.GetAction<FlingObjectsFromGlobalPool>("Flukes", 0).gameObject.Value;
                             GameObject fluke = Instantiate(flukeObj, playerSpells.transform.position, Quaternion.identity);
-                            if (GameManager.Instance.PvPEnabled)
+                            if (SessionManager.Instance.PvPEnabled)
                             {
                                 fluke.AddComponent<DamageHero>();
                             }
@@ -568,7 +568,7 @@ namespace MultiplayerClient
                     GameObject quakeSlam = Instantiate(qSlamObj, playerSpells.transform);
                     quakeSlam.SetActive(true);
                     quakeSlam.layer = 22;
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         GameObject quakeHitL = quakeSlam.FindGameObjectInChildren("Hit L");
                         quakeHitL.AddComponent<DamageHero>();
@@ -588,14 +588,14 @@ namespace MultiplayerClient
                     GameObject qMegaHitL = qMega.FindGameObjectInChildren("Hit L");
                     qMegaHitL.layer = 22;
                     Destroy(qMegaHitL.LocateMyFSM("damages_enemy"));
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         qMegaHitL.AddComponent<DamageHero>();
                     }
                     GameObject qMegaHitR = qMega.FindGameObjectInChildren("Hit R");
                     qMegaHitR.layer = 22;
                     Destroy(qMegaHitR.LocateMyFSM("damages_enemy"));
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         qMegaHitR.AddComponent<DamageHero>();
                     }
@@ -633,7 +633,7 @@ namespace MultiplayerClient
                     screamHitLDmgPoly.isTrigger = true;
                     var screamHitLPoly = screamHitL.GetComponent<PolygonCollider2D>(); 
                     screamHitLDmgPoly.points = screamHitLPoly.points;
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         screamHitLDamager.AddComponent<DamageHero>();
                     }
@@ -644,7 +644,7 @@ namespace MultiplayerClient
                     screamHitRDmgPoly.isTrigger = true;
                     var screamHitRPoly = screamHitR.GetComponent<PolygonCollider2D>();
                     screamHitRDmgPoly.points = screamHitRPoly.points;
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         screamHitRDamager.AddComponent<DamageHero>();
                     }
@@ -655,7 +655,7 @@ namespace MultiplayerClient
                     screamHitUDmgPoly.isTrigger = true;
                     var screamHitUPoly = screamHitU.GetComponent<PolygonCollider2D>();
                     screamHitUDmgPoly.points = screamHitUPoly.points;
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         screamHitUDamager.AddComponent<DamageHero>();
                     }
@@ -691,7 +691,7 @@ namespace MultiplayerClient
 
                     GameObject cycHitLDamager = Instantiate(new GameObject("Cyclone Hit L"), hitL.transform);
                     cycHitLDamager.layer = 11;
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         cycHitLDamager.AddComponent<DamageHero>();
                         cycHitLDamager.AddComponent<TinkEffect>();
@@ -705,7 +705,7 @@ namespace MultiplayerClient
 
                     GameObject cycHitRDamager = Instantiate(new GameObject("Cyclone Hit R"), hitR.transform);
                     cycHitRDamager.layer = 11;
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         cycHitRDamager.AddComponent<DamageHero>();
                         cycHitRDamager.AddComponent<TinkEffect>();
@@ -743,7 +743,7 @@ namespace MultiplayerClient
                     float gsLifetime = gsAnim.DefaultClip.frames.Length / gsAnim.ClipFps;
                     Destroy(greatSlash, gsLifetime);
                     
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         GameObject gsCollider =
                             Instantiate(MultiplayerClient.GameObjects["Slash"], greatSlash.transform);
@@ -770,7 +770,7 @@ namespace MultiplayerClient
                     float dsLifetime = dsAnim.DefaultClip.frames.Length / dsAnim.ClipFps;
                     Destroy(dashSlash, dsLifetime);
 
-                    if (GameManager.Instance.PvPEnabled)
+                    if (SessionManager.Instance.PvPEnabled)
                     {
                         GameObject dsCollider = Instantiate(MultiplayerClient.GameObjects["Slash"], dashSlash.transform);
                         dsCollider.SetActive(true);

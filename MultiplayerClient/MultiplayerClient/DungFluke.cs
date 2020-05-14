@@ -48,7 +48,7 @@ namespace MultiplayerClient
             Destroy(dungCloud.GetComponent<DamageEffectTicker>());
             dungCloud.LocateMyFSM("Control").SetState("Collider On");
             dungCloud.AddComponent<AudioSource>().PlayOneShot(blowClip);
-            if (GameManager.Instance.PvPEnabled)
+            if (SessionManager.Instance.PvPEnabled)
             {
                 dungCloud.AddComponent<DamageHero>();
             }

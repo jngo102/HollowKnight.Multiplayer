@@ -342,7 +342,7 @@ namespace MultiplayerClient
                 Log("You have been disconnected from the server.");
             }
             
-            GameManager.Instance.DestroyAllPlayers();
+            SessionManager.Instance.DestroyAllPlayers();
         }
 
         private static void Log(object message) => Modding.Logger.Log("[Client] (Client) " + message);
