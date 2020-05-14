@@ -110,10 +110,16 @@ namespace MultiplayerClient
         private void OnTakeDamage(On.HeroController.orig_TakeDamage orig, HeroController hc, GameObject go,
             CollisionSide damageSide, int damageAmount, int hazardType)
         {
+            int old_health = PlayerData.instance.health;
             orig(hc, go, damageSide, damageAmount, hazardType);
 
-            Log("Took Damage: " + PlayerData.instance.health + " " + PlayerData.instance.maxHealth);
-            ClientSend.HealthUpdated(PlayerData.instance.health, PlayerData.instance.maxHealth, PlayerData.instance.healthBlue);
+            // OnTakeDamage is called even when the player has iframes.
+            // And it is called a LOT, so to avoid spamming the server, we check if the health changed before sending.
+            if(PlayerData.instance.health != old_health)
+            {
+                Log("Took Damage: " + PlayerData.instance.health + " " + PlayerData.instance.maxHealth);
+                ClientSend.HealthUpdated(PlayerData.instance.health, PlayerData.instance.maxHealth, PlayerData.instance.healthBlue);
+            }
         }
 
         private void OnAddHealth(On.HeroController.orig_AddHealth orig, HeroController hc, int amount)
