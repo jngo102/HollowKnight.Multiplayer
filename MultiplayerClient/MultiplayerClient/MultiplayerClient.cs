@@ -9,10 +9,11 @@ using UnityEngine.SceneManagement;
 
 namespace MultiplayerClient
 {
-    public class MultiplayerClient : Mod
+    public class MultiplayerClient : Mod<SaveSettings, GlobalSettings>
     {
         public static readonly Dictionary<string, GameObject> GameObjects = new Dictionary<string, GameObject>();
-        
+        internal static GlobalSettings settings;
+
         public override string GetVersion()
         {
             return "0.0.2";
@@ -29,6 +30,8 @@ namespace MultiplayerClient
 
         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
+            settings = GlobalSettings;
+
             GameObjects.Add("Glob", preloadedObjects["GG_Hive_Knight"]["Battle Scene/Globs/Hive Knight Glob"]);
             GameObjects.Add("Slash", preloadedObjects["GG_Hive_Knight"]["Battle Scene/Hive Knight/Slash 1"]);
 
@@ -40,10 +43,20 @@ namespace MultiplayerClient
             
             ModHooks.Instance.BeforeSavegameSaveHook += RespawnFix;
             ModHooks.Instance.CharmUpdateHook += OnCharmUpdate;
+            ModHooks.Instance.ApplicationQuitHook += OnApplicationQuit;
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
-            
         }
-        
+
+        private void OnApplicationQuit()
+        {
+            SaveGlobalSettings();
+
+            if (Client.Instance != null)
+            {
+                Client.Instance.Disconnect();
+            }
+        }
+
         private void RespawnFix(SaveGameData data)
         {
             PlayerData playerData = data.playerData;
