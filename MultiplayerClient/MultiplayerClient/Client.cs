@@ -13,10 +13,7 @@ namespace MultiplayerClient
     {
         public static Client Instance;
         public static int dataBufferSize = 4096;
-
-        public string host = "localhost";
-        public int port = 26950;
-        public string username = "Default";
+        
         public int myId;
         public TCP tcp;
         public UDP udp;
@@ -44,11 +41,6 @@ namespace MultiplayerClient
         {
             tcp = new TCP();
             udp = new UDP();
-        }
-        
-        private void OnApplicationQuit()
-        {
-            Disconnect();
         }
 
         /// <summary>Attempts to connect to the server.</summary>
@@ -79,7 +71,7 @@ namespace MultiplayerClient
                 };
 
                 receiveBuffer = new byte[dataBufferSize];
-                socket.BeginConnect(Instance.host, Instance.port, ConnectCallback, socket);
+                socket.BeginConnect(MultiplayerClient.settings.host, MultiplayerClient.settings.port, ConnectCallback, socket);
             }
 
             /// <summary>Initializes the newly connected client's TCP-related info.</summary>
@@ -219,7 +211,7 @@ namespace MultiplayerClient
             {
                 endPoint = new IPEndPoint(IPAddress.Any, localPort);
                 socket = new UdpClient(localPort);
-                socket.Connect(Instance.host, Instance.port);
+                socket.Connect(MultiplayerClient.settings.host, MultiplayerClient.settings.port);
                 socket.BeginReceive(ReceiveCallback, null);
 
                 using (Packet packet = new Packet())
@@ -239,7 +231,7 @@ namespace MultiplayerClient
                     {
                         if (!socket.Client.Connected)
                         {
-                            socket.Connect(Instance.host, Instance.port);
+                            socket.Connect(MultiplayerClient.settings.host, MultiplayerClient.settings.port);
                             socket.BeginReceive(ReceiveCallback, null);
                         }
 
@@ -333,12 +325,12 @@ namespace MultiplayerClient
         /// <summary>Disconnects from the server and stops all network traffic.</summary>
         public void Disconnect()
         {
-            if (isConnected)
-            {
-                isConnected = false;
-                tcp.socket.Close();
-                udp.socket.Close();
+            isConnected = false;
 
+            if (tcp.socket.Connected)
+            {
+                ClientSend.PlayerDisconnected(Client.Instance.myId);
+                tcp.socket.Close();
                 Log("You have been disconnected from the server.");
             }
             

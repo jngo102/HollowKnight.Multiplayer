@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace MultiplayerClient.Canvas
@@ -69,6 +70,7 @@ namespace MultiplayerClient.Canvas
             _inputField.targetGraphic = image;
             _inputField.placeholder = placeholderTxt;
             _inputField.textComponent = textTxt;
+            _inputField.text = inputText;
             
             _active = true;
         }
@@ -116,10 +118,18 @@ namespace MultiplayerClient.Canvas
             return null;
         }
 
-        public void Focus()
+        public void SetActive()
         {
             _inputField.Select();
             _inputField.ActivateInputField();
+        }
+
+        public void AddClickEvent(UnityAction<string> action)
+        {
+            if (_textObject != null)
+            {
+                _textObject.GetComponent<Button>().onClick.AddListener(SetActive);
+            }
         }
 
         public void ChangePlaceholder(string text)

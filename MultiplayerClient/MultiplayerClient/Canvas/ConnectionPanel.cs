@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using IL.HutongGames.PlayMaker.Actions;
-using ModCommon;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using Object = UnityEngine.Object;
+using Modding;
 
 namespace MultiplayerClient.Canvas
 {
@@ -17,6 +16,8 @@ namespace MultiplayerClient.Canvas
         private static CanvasInput _ipInput;
         private static CanvasInput _portInput;
         private static CanvasInput _usernameInput;
+        private static CanvasButton _connectButton;
+        private static CanvasText _connectionInfo;
 
         public static void BuildMenu(GameObject canvas)
         {
@@ -68,8 +69,7 @@ namespace MultiplayerClient.Canvas
                 Vector2.zero,
                 new Rect(0, y, inputImg.width, inputImg.height),
                 GUIController.Instance.trajanNormal,
-                "",
-                "Address",
+                MultiplayerClient.settings.host, "Address",
                 16
             );
             y += inputImg.height + 5;
@@ -81,8 +81,7 @@ namespace MultiplayerClient.Canvas
                 Vector2.zero,
                 new Rect(0, y, inputImg.width, inputImg.height),
                 GUIController.Instance.trajanNormal,
-                "",
-                "Port",
+                MultiplayerClient.settings.port.ToString(), "Port",
                 16
             );
             y += inputImg.height + 5;
@@ -94,18 +93,17 @@ namespace MultiplayerClient.Canvas
                 Vector2.zero,
                 new Rect(0, y, inputImg.width, inputImg.height),
                 GUIController.Instance.trajanNormal,
-                "",
-                "Username",
+                MultiplayerClient.settings.username, "Username",
                 16
             );
             y += inputImg.height + 5;
             
-            Panel.AddButton(
+            _connectButton = Panel.AddButton(
                 "Connect Button",
                 buttonImg,
                 new Vector2(x, y),
                 Vector2.zero,
-                ConnectToServer,
+                ToggleConnectToServer,
                 new Rect(0, y, buttonImg.width, buttonImg.height),
                 GUIController.Instance.trajanNormal,
                 "Connect",
@@ -113,24 +111,21 @@ namespace MultiplayerClient.Canvas
             );
             y += buttonImg.height;
 
-            Panel.AddButton(
-                "Disconnect Button",
-                buttonImg,
-                new Vector2(x, y),
-                Vector2.zero,
-                DisconnectFromServer,
-                new Rect(0, y, buttonImg.width, buttonImg.height),
-                GUIController.Instance.trajanNormal,
-                "Disconnect",
-                16
+
+            _connectionInfo = new CanvasText(
+                canvas,
+                new Vector2(Screen.width / 2 - 500, Screen.height - 70),
+                new Vector2(1000.0f, 50.0f),
+                GUIController.Instance.trajanBold, "Disconnected.",
+                fontSize:42, alignment: TextAnchor.UpperCenter
             );
-            y += buttonImg.height;
 
             if (eventSystem != null)
             {
                 eventSystem.firstSelectedGameObject = _ipInput.InputObject;
             }
-            
+
+            _connectionInfo.SetActive(false);
             Panel.SetActive(false, true);
             
             On.GameManager.PauseGameToggle += OnGamePause;
@@ -142,6 +137,7 @@ namespace MultiplayerClient.Canvas
             global::GameManager.instance.StartCoroutine(orig(self));
 
             bool paused = global::GameManager.instance.IsGamePaused();
+            _connectionInfo.SetActive(paused);
             Panel.SetActive(paused, !paused);
             
             yield return null;
@@ -156,21 +152,38 @@ namespace MultiplayerClient.Canvas
         }
         
         private static Coroutine _connectRoutine;
-        private static void ConnectToServer(string buttonName)
+
+        private static void ToggleConnectToServer(string buttonName)
+        {
+            if(Client.Instance.isConnected)
+            {
+                DisconnectFromServer();
+                _connectButton.UpdateText("Connect");
+            }
+            else
+            {
+                ConnectToServer();
+                _connectButton.UpdateText("Disconnect");
+            }
+        }
+
+        private static void ConnectToServer()
         {
             if (!Client.Instance.isConnected)
             {
                 Log("Connecting to Server...");
+                _connectionInfo.UpdateText("Connecting to server...");
                 
-                if (_ipInput.GetText() != "") Client.Instance.host = _ipInput.GetText();
-                if (_portInput.GetText() != "") Client.Instance.port = int.Parse(_portInput.GetText());
-                if (_usernameInput.GetText() != "") Client.Instance.username = _usernameInput.GetText();
+                if (_ipInput.GetText() != "") MultiplayerClient.settings.host = _ipInput.GetText();
+                if (_portInput.GetText() != "") MultiplayerClient.settings.port = int.Parse(_portInput.GetText());
+                if (_usernameInput.GetText() != "") MultiplayerClient.settings.username = _usernameInput.GetText();
 
                 PlayerManager.activeScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
                 _connectRoutine = Client.Instance.StartCoroutine(Connect());
 
                 Log("Connected to Server!");
+                _connectionInfo.UpdateText("Connected to server.");
             }
             else
             {
@@ -188,7 +201,15 @@ namespace MultiplayerClient.Canvas
                 Log("Connection Attempt: " + attempt);
                 if (!Client.Instance.isConnected)
                 {
-                    Client.Instance.ConnectToServer();
+                    try
+                    {
+                        Client.Instance.ConnectToServer();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log(ex);
+                        continue;
+                    }
                 }
                 else
                 {
@@ -202,14 +223,12 @@ namespace MultiplayerClient.Canvas
             }
         }
 
-        private static void DisconnectFromServer(string buttonName)
+        private static void DisconnectFromServer()
         {
             Log("Disconnecting from Server...");
             Client.Instance.StopCoroutine(_connectRoutine);
-            ClientSend.PlayerDisconnected(Client.Instance.myId);
             Client.Instance.Disconnect();
-
-            Log("You have disconnected from the server.");
+            _connectionInfo.UpdateText("Disconnected.");
         }
 
         private static void Log(object message) => Modding.Logger.Log("[Connection Panel] " + message);
