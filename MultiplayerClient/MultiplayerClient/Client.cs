@@ -333,9 +333,8 @@ namespace MultiplayerClient
                 tcp.socket.Close();
                 Log("You have been disconnected from the server.");
             }
-
-            udp.socket.Close();
-            GameManager.Instance.DestroyAllPlayers();
+            
+            SessionManager.Instance.DestroyAllPlayers();
         }
 
         private static void Log(object message) => Modding.Logger.Log("[Client] (Client) " + message);

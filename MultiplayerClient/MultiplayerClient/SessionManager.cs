@@ -8,9 +8,9 @@ using UnityEngine.UI;
 
 namespace MultiplayerClient
 {
-    public class GameManager : MonoBehaviour
+    public class SessionManager : MonoBehaviour
     {
-        public static GameManager Instance;
+        public static SessionManager Instance;
         public bool PvPEnabled;
 
         public Dictionary<int, PlayerManager> Players = new Dictionary<int,PlayerManager>();
