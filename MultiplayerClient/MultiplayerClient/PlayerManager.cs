@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace MultiplayerClient
 {
@@ -55,6 +56,9 @@ namespace MultiplayerClient
         public int health;
         public int maxHealth;
         public int healthBlue;
+
+        public Dictionary<int, byte[]> texIndexedByteDict = new Dictionary<int, byte[]>();
+        public Texture2D knightTexture;
         
         private void Awake()
         {

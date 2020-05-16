@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Jason\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Jason\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_MultiplayerClient.-1774731118.00" t="ExcludeRecursive" />
+    <e p="C:\Users\Jason\Documents\Hollow Knight Stuff\Modding\HollowKnight.Multiplayer\MultiplayerClient" t="IncludeFlat">
+      <e p="MultiplayerClient" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Canvas" t="Include">
+          <e p="CanvasButton.cs" t="Include" />
+          <e p="CanvasImage.cs" t="Include" />
+          <e p="CanvasInput.cs" t="Include" />
+          <e p="CanvasPanel.cs" t="Include" />
+          <e p="CanvasText.cs" t="Include" />
+          <e p="CanvasToggle.cs" t="Include" />
+          <e p="ConnectionPanel.cs" t="Include" />
+          <e p="GUIController.cs" t="Include" />
+        </e>
+        <e p="Client.cs" t="Include" />
+        <e p="ClientHandle.cs" t="Include" />
+        <e p="ClientSend.cs" t="Include" />
+        <e p="DungFluke.cs" t="Include" />
+        <e p="Extensions.cs" t="Include" />
+        <e p="Fireball.cs" t="Include" />
+        <e p="GetKnightAttacks.cs" t="Include" />
+        <e p="GetKnightEffects.cs" t="Include" />
+        <e p="HeroTracker.cs" t="Include" />
+        <e p="Images" t="Include">
+          <e p="Button_BG.png" t="Include" />
+          <e p="Input_BG.png" t="Include" />
+          <e p="Panel_BG.png" t="Include" />
+        </e>
+        <e p="MPClient.cs" t="Include" />
+        <e p="MultiplayerClient.cs" t="Include" />
+        <e p="MultiplayerClient.csproj" t="IncludeRecursive" />
+        <e p="MultiplayerSettings.cs" t="Include" />
+        <e p="obj" t="ExcludeRecursive" />
+        <e p="Packet.cs" t="Include" />
+        <e p="PlayAnimation.cs" t="Include" />
+        <e p="PlayerController.cs" t="Include" />
+        <e p="PlayerManager.cs" t="Include" />
+        <e p="Properties" t="Include">
+          <e p="AssemblyInfo.cs" t="Include" />
+        </e>
+        <e p="SessionManager.cs" t="Include" />
+        <e p="ThreadManager.cs" t="Include" />
+        <e p="TinkSound.cs" t="Include" />
+      </e>
+      <e p="MultiplayerClient.sln" t="IncludeFlat" />
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>

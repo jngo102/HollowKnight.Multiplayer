@@ -10,6 +10,8 @@ namespace MultiplayerServer
     {
         Welcome = 1,
         SpawnPlayer,
+        KnightTexture,
+        FinishedSendingTexBytes,
         DestroyPlayer,
         PvPEnabled,
         PlayerPosition,
@@ -24,6 +26,8 @@ namespace MultiplayerServer
     public enum ClientPackets
     {
         WelcomeReceived = 1,
+        KnightTexture,
+        FinishedSendingTexBytes,
         PlayerPosition,
         PlayerScale,
         PlayerAnimation,

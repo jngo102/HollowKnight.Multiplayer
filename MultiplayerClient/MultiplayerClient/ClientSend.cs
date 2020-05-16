@@ -1,4 +1,5 @@
-﻿using ModCommon.Util;
+﻿using System;
+using ModCommon.Util;
 using MultiplayerClient.Canvas;
 using UnityEngine;
 
@@ -52,6 +53,50 @@ namespace MultiplayerClient
             }
         }
 
+        public static void KnightTexture()
+        {
+            var sprite = HeroController.instance.GetComponent<tk2dSprite>();
+            var anim = HeroController.instance.GetComponent<tk2dSpriteAnimator>();
+            Texture2D knightTex = sprite.GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            byte[] knightTexBytes = knightTex.DuplicateTexture().EncodeToPNG();
+            int length = 4093;
+            byte[] fragment = new byte[length];
+            int order = 0;
+            for (int i = 0; i < knightTexBytes.Length; i += length)
+            {
+                if (knightTexBytes.Length - i < length)
+                {
+                    length = knightTexBytes.Length - i;
+                }
+                
+                Array.Copy(knightTexBytes, i, fragment, 0,  length);
+                using (Packet packet = new Packet((int) ClientPackets.KnightTexture))
+                {
+                    packet.Write(order);
+                    packet.Write(fragment);
+
+                    order++;
+                    
+                    Log("Sending Tex Data from Client to Server: " + packet.Length());
+
+                    SendTCPData(packet);
+                }
+            }
+            
+            Log("Sending Finish Sending Texture Bytes");
+            FinishedSendingTexBytes();
+        }
+
+        public static void FinishedSendingTexBytes(bool finishedSending = true)
+        {
+            using (Packet packet = new Packet((int) ClientPackets.FinishedSendingTexBytes))
+            {
+                packet.Write(finishedSending);
+
+                SendTCPData(packet);
+            }
+        }
+        
         public static void PlayerPosition(Vector3 position)
         {
             using (Packet packet = new Packet((int) ClientPackets.PlayerPosition))

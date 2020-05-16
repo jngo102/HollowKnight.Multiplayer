@@ -310,6 +310,8 @@ namespace MultiplayerClient
             {
                 { (int) ServerPackets.Welcome, ClientHandle.Welcome },
                 { (int) ServerPackets.SpawnPlayer, ClientHandle.SpawnPlayer },
+                { (int) ServerPackets.KnightTexture, ClientHandle.KnightTexture },
+                { (int) ServerPackets.FinishedSendingTexBytes, ClientHandle.FinishedSendingTexBytes },
                 { (int) ServerPackets.DestroyPlayer, ClientHandle.DestroyPlayer },
                 { (int) ServerPackets.PvPEnabled, ClientHandle.PvPEnabled },
                 { (int) ServerPackets.PlayerPosition, ClientHandle.PlayerPosition },

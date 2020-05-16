@@ -103,6 +103,31 @@ namespace MultiplayerServer
             }
         }
 
+        public static void KnightTexture(int fromClient, int order, byte[] knightTexBytes)
+        {
+            using (Packet packet = new Packet((byte) ServerPackets.KnightTexture))
+            {
+                packet.Write(fromClient);
+                packet.Write(order);
+                packet.Write(knightTexBytes);
+
+                Log("Sending Tex from Server to Clients except " + fromClient);
+                SendTCPDataToAll(fromClient, packet);
+            }
+        }
+
+        public static void FinishedSendingTexBytes(int fromClient, bool finishedSending)
+        {
+            using (Packet packet = new Packet((byte) ServerPackets.FinishedSendingTexBytes))
+            {
+                packet.Write(fromClient);
+                packet.Write(finishedSending);
+
+                Log("Sending Finished From Server to Clients except " + fromClient);
+                SendTCPDataToAll(fromClient, packet);
+            }
+        }
+        
         public static void DestroyPlayer(int toClient, int clientToDestroy)
         {
             using (Packet packet = new Packet((int) ServerPackets.DestroyPlayer))

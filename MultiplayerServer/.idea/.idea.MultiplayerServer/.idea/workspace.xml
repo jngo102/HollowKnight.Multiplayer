@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="02be8a13-bf6a-4497-a8dc-655f3cdc1254" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Extensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Client.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Client.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientHandle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientHandle.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientSend.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientSend.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Packet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Packet.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/PlayerManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/PlayerManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/SessionManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/SessionManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MultiplayerServer/Packet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Packet.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MultiplayerServer/Server.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Server.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/BD415012-12DE-46CB-994F-F5FEA298D08A/20/cb023079/AudioPlayerOneShot.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MPClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientHandle.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasText.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Fireball.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/PlayerController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Canvas/ConnectionPanel.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasInput.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Canvas/CanvasButton.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Client.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Player.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasImage.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasPanel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/NetworkManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasButton.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/PlayAnimation.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/MPServer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasToggle.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/OptionsPanel.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/MultiplayerServer.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/GUIController.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Constants.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Server.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Packet.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/ServerSettings.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Client.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/ThreadManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/Properties/AssemblyInfo.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/MultiplayerServer/Properties/Server.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Program.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/GameLogic.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/MultiplayerServer.csproj" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Constants.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/MPServer.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasImage.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasTex.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasText.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/MultiplayerServer.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasInput.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasButton.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasToggle.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/ThreadManager.cs" />
+        <option value="$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/BD415012-12DE-46CB-994F-F5FEA298D08A/20/cb023079/AudioPlayerOneShot.cs" />
+        <option value="$USER_HOME$/AppData/LocalLow/Team Cherry/Hollow Knight/output_log.txt" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/GlobalSettings.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/GUIController.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasPanel.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/OptionsPanel.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/ServerSettings.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Player.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Client.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/NetworkManager.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Packet.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Server.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" />
+      </list>
+    </option>
+  </component>
+  <component name="IgnoredFileRootStore">
+    <option name="generatedRoots">
+      <set>
+        <option value="C:\Users\Jason\Documents\Hollow Knight Stuff\Modding\HollowKnight.Multiplayer\MultiplayerServer\.idea\.idea.MultiplayerServer\.idea" />
+      </set>
+    </option>
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="ProjectId" id="1abBDvdUXtSsT8G0Ptyk0ZFc2um" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
+    <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/MultiplayerServer/Images/Panel_BG.png" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="CodeLensConfigurable" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected=".NET Project.Default">
+    <configuration name="Default" type="DotNetProject" factoryName=".NET Project">
+      <option name="EXE_PATH" value="$PROJECT_DIR$/MultiplayerServer/bin/Debug/MultiplayerServer.exe" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MultiplayerServer/bin/Debug" />
+      <option name="PASS_PARENT_ENVS" value="1" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="PROJECT_PATH" value="$PROJECT_DIR$/MultiplayerServer/MultiplayerServer.csproj" />
+      <option name="PROJECT_EXE_PATH_TRACKING" value="1" />
+      <option name="PROJECT_ARGUMENTS_TRACKING" value="1" />
+      <option name="PROJECT_WORKING_DIRECTORY_TRACKING" value="1" />
+      <option name="PROJECT_KIND" value="Console" />
+      <option name="PROJECT_TFM" value=".NETFramework,Version=v3.5" />
+      <method v="2">
+        <option name="Build" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Attach to Unity Editor &amp; Play" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="UNITY_ATTACH_AND_PLAY" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="userSelectedPid" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Attach to Unity Editor" type="UNITY_DEBUG_RUN_CONFIGURATION" factoryName="Unity Debug" show_console_on_std_err="false" show_console_on_std_out="false" port="50000" address="localhost">
+      <option name="allowRunningInParallel" value="false" />
+      <option name="listenPortForConnections" value="false" />
+      <option name="pid" />
+      <option name="userSelectedPid" value="false" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="02be8a13-bf6a-4497-a8dc-655f3cdc1254" name="Default Changelist" comment="" />
+      <created>1586994296170</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1586994296170</updated>
+      <workItem from="1586994297673" duration="16262000" />
+      <workItem from="1587041529997" duration="27140000" />
+      <workItem from="1587087052790" duration="13404000" />
+      <workItem from="1587131380708" duration="36064000" />
+      <workItem from="1587185924244" duration="172000" />
+      <workItem from="1587186105803" duration="10860000" />
+      <workItem from="1587229237321" duration="46339000" />
+      <workItem from="1587391781965" duration="6512000" />
+      <workItem from="1587412016827" duration="19470000" />
+      <workItem from="1587512507740" duration="111849000" />
+      <workItem from="1588981128432" duration="26717000" />
+      <workItem from="1589497888386" duration="18880000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnityUnitTestConfiguration" currentTestLauncher="NUnit" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint enabled="true" suspend="NONE" type="DotNet Exception Breakpoints">
+          <properties exception="System.Threading.ThreadAbortException" displayValue="System.Threading.ThreadAbortException" />
+          <option name="timeStamp" value="1" />
+        </breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

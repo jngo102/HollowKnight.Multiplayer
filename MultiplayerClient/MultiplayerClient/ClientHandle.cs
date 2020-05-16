@@ -18,6 +18,7 @@ namespace MultiplayerClient
             Client.Instance.myId = myId;
 
             ClientSend.WelcomeReceived();
+            ClientSend.KnightTexture();
             
             Client.Instance.udp.Connect(((IPEndPoint) Client.Instance.tcp.socket.Client.LocalEndPoint).Port);
         }
@@ -44,6 +45,28 @@ namespace MultiplayerClient
             }
         }
 
+        public static void KnightTexture(Packet packet)
+        {
+            int client = packet.ReadInt();
+            int order = packet.ReadInt();
+            byte[] knightTexBytes = packet.ReadBytes(4093);
+            Log("Received Tex from Server: " + knightTexBytes.Length);
+            
+            SessionManager.Instance.Players[client].texIndexedByteDict[order] = knightTexBytes;
+        }
+
+        public static void FinishedSendingTexBytes(Packet packet)
+        {
+            int client = packet.ReadInt();
+            bool finishedSending = packet.ReadBool();
+            Log("Received Finished from Server: " + finishedSending);
+            
+            if (finishedSending)
+            {
+                SessionManager.Instance.CompileByteFragments(client);
+            }
+        }
+        
         public static void DestroyPlayer(Packet packet)
         {
             int clientToDestroy = packet.ReadInt();
