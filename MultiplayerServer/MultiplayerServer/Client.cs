@@ -12,12 +12,12 @@ namespace MultiplayerServer
     {
         public static int dataBufferSize = 4096;
         
-        public int id;
+        public byte id;
         public Player player;
         public TCP tcp;
         public UDP udp;
 
-        public Client(int clientID)
+        public Client(byte clientID)
         {
             id = clientID;
             tcp = new TCP(id);
@@ -28,12 +28,12 @@ namespace MultiplayerServer
         {
             public TcpClient socket;
 
-            private readonly int id;
+            private readonly byte id;
             private NetworkStream stream;
             private Packet receivedData;
             private byte[] receiveBuffer;
 
-            public TCP(int id)
+            public TCP(byte id)
             {
                 this.id = id;
             }
@@ -169,9 +169,9 @@ namespace MultiplayerServer
         {
             public IPEndPoint endPoint;
 
-            private int id;
+            private byte id;
 
-            public UDP(int id)
+            public UDP(byte id)
             {
                 this.id = id;
             }

@@ -10,7 +10,7 @@ namespace MultiplayerServer
         public static int MaxPlayers { get; private set; }
         public static int Port { get; private set; }
         public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
-        public delegate void PacketHandler(int fromClient, Packet packet);
+        public delegate void PacketHandler(byte fromClient, Packet packet);
 
         public static Dictionary<int, PacketHandler> PacketHandlers;
 
@@ -113,7 +113,7 @@ namespace MultiplayerServer
         
         private static void InitializeServerData()
         {
-            for (int i = 1; i <= MaxPlayers; i++)
+            for (byte i = 1; i <= MaxPlayers; i++)
             {
                 clients.Add(i, new Client(i));
             }

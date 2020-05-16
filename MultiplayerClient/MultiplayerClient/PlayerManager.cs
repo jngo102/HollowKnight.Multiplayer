@@ -7,7 +7,7 @@ namespace MultiplayerClient
     {
         public static PlayerManager Instance;
         
-        public int id;
+        public byte id;
         public string username;
 
         public static string activeScene;

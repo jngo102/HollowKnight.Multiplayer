@@ -14,7 +14,7 @@ namespace MultiplayerClient
         public static Client Instance;
         public static int dataBufferSize = 4096;
         
-        public int myId;
+        public byte myId;
         public TCP tcp;
         public UDP udp;
 
@@ -331,7 +331,7 @@ namespace MultiplayerClient
 
             if (tcp.socket.Connected)
             {
-                ClientSend.PlayerDisconnected(Client.Instance.myId);
+                ClientSend.PlayerDisconnected(Instance.myId);
                 tcp.socket.Close();
                 Log("You have been disconnected from the server.");
             }

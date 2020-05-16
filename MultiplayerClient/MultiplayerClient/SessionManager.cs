@@ -38,7 +38,7 @@ namespace MultiplayerClient
         /// <param name="scale">The player's starting scale.</param>
         /// <param name="animation">The starting animation of the spawned player.</param>
         /// <param name="charmsData">List of bools containing charms equipped.</param>
-        public void SpawnPlayer(int id, string username, Vector3 position, Vector3 scale, string animation, List<bool> charmsData)
+        public void SpawnPlayer(byte id, string username, Vector3 position, Vector3 scale, string animation, List<bool> charmsData)
         {
             // Prevent duplication of same player, leaving one idle
             if (Players.ContainsKey(id))

@@ -6,7 +6,7 @@ namespace MultiplayerServer
 {
     public class Player : MonoBehaviour
     {
-        public int id;
+        public byte id;
         public string username;
         public string animation;
         public string activeScene;
@@ -58,7 +58,7 @@ namespace MultiplayerServer
         public int maxHealth;
         public int healthBlue;
 
-        public void Initialize(int id, string username, string animation, int health, int maxHealth, int healthBlue)
+        public void Initialize(byte id, string username, string animation, int health, int maxHealth, int healthBlue)
         {
             this.id = id;
             this.username = username;

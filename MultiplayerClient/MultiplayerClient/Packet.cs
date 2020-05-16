@@ -85,6 +85,13 @@ namespace MultiplayerClient
             buffer.InsertRange(0, BitConverter.GetBytes(buffer.Count)); // Insert the byte length of the packet at the very beginning
         }
 
+        /// <summary>Inserts the given byte at the start of the buffer.</summary>
+        /// <param name="value">The byte to insert.</param>
+        public void InsertByte(byte value)
+        {
+            buffer.InsertRange(0, BitConverter.GetBytes(value)); // Insert the byte at the start of the buffer
+        }
+        
         /// <summary>Inserts the given int at the start of the buffer.</summary>
         /// <param name="value">The int to insert.</param>
         public void InsertInt(int value)

@@ -61,7 +61,7 @@ namespace MultiplayerClient
             byte[] knightTexBytes = knightTex.DuplicateTexture().EncodeToPNG();
             int length = 4093;
             byte[] fragment = new byte[length];
-            int order = 0;
+            short order = 0;
             for (int i = 0; i < knightTexBytes.Length; i += length)
             {
                 if (knightTexBytes.Length - i < length)

@@ -8,9 +8,9 @@ namespace MultiplayerServer
 {
     public class ServerHandle
     {
-        public static void WelcomeReceived(int fromClient, Packet packet)
+        public static void WelcomeReceived(byte fromClient, Packet packet)
         {
-            int clientIdCheck = packet.ReadInt();
+            byte clientIdCheck = packet.ReadByte();
             string username = packet.ReadString();
             string currentClip = packet.ReadString();
             string activeScene = packet.ReadString();
@@ -36,16 +36,17 @@ namespace MultiplayerServer
             }
         }
 
-        public static void KnightTexture(int fromClient, Packet packet)
+        public static void KnightTexture(byte fromClient, Packet packet)
         {
-            int order = packet.ReadInt();
+            short order = packet.ReadShort();
+            Log("Order: " + order);
             byte[] knightTexBytes = packet.ReadBytes(4093);
             Log("Received Tex Data from Client: " + knightTexBytes.Length);
             
             ServerSend.KnightTexture(fromClient, order, knightTexBytes);
         }
 
-        public static void FinishedSendingTexBytes(int fromClient, Packet packet)
+        public static void FinishedSendingTexBytes(byte fromClient, Packet packet)
         {
             bool finishedSending = packet.ReadBool();
             Log("Received Finished Sending Bool: " + finishedSending);
@@ -53,34 +54,34 @@ namespace MultiplayerServer
             ServerSend.FinishedSendingTexBytes(fromClient, finishedSending);
         }
         
-        public static void PlayerPosition(int fromClient, Packet packet)
+        public static void PlayerPosition(byte fromClient, Packet packet)
         {
             Vector3 position = packet.ReadVector3();
             
             Server.clients[fromClient].player.SetPosition(position);
         }
 
-        public static void PlayerScale(int fromClient, Packet packet)
+        public static void PlayerScale(byte fromClient, Packet packet)
         {
             Vector3 scale = packet.ReadVector3();
 
             Server.clients[fromClient].player.SetScale(scale);
         }
         
-        public static void PlayerAnimation(int fromClient, Packet packet)
+        public static void PlayerAnimation(byte fromClient, Packet packet)
         {
             string animation = packet.ReadString();
             
             Server.clients[fromClient].player.SetAnimation(animation);
         }
 
-        public static void SceneChanged(int fromClient, Packet packet)
+        public static void SceneChanged(byte fromClient, Packet packet)
         {
             string sceneName = packet.ReadString();
             
             Server.clients[fromClient].player.activeScene = sceneName;
 
-            for (int i = 1; i <= Server.MaxPlayers; i++)    
+            for (byte i = 1; i <= Server.MaxPlayers; i++)    
             {    
                 if (Server.clients[i].player != null && i != fromClient)
                 {
@@ -103,7 +104,7 @@ namespace MultiplayerServer
         /// <summary>Initial scene load when joining the server for the first time.</summary>
         /// <param name="fromClient">The ID of the client who joined the server</param>
         /// <param name="sceneName">The name of the client's active scene when joining the server</param>
-        public static void SceneChanged(int fromClient, string sceneName)
+        public static void SceneChanged(byte fromClient, string sceneName)
         {
             Server.clients[fromClient].player.activeScene = sceneName;
 
@@ -121,7 +122,7 @@ namespace MultiplayerServer
             }
         }
 
-        public static void HealthUpdated(int fromClient, Packet packet)
+        public static void HealthUpdated(byte fromClient, Packet packet)
         {
             int currentHealth = packet.ReadInt();
             int currentMaxHealth = packet.ReadInt();
@@ -136,7 +137,7 @@ namespace MultiplayerServer
             ServerSend.HealthUpdated(fromClient, currentHealth, currentMaxHealth, currentHealthBlue);
         }
         
-        public static void CharmsUpdated(int fromClient, Packet packet)
+        public static void CharmsUpdated(byte fromClient, Packet packet)
         {
             for (int charmNum = 1; charmNum <= 40; charmNum++)
             {
@@ -147,7 +148,7 @@ namespace MultiplayerServer
             ServerSend.CharmsUpdated(fromClient, Server.clients[fromClient].player);
         }
         
-        public static void PlayerDisconnected(int fromClient, Packet packet)
+        public static void PlayerDisconnected(byte fromClient, Packet packet)
         {
             int id = packet.ReadInt();
 

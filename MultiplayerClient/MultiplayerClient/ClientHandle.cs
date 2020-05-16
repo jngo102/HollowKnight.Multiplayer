@@ -11,7 +11,7 @@ namespace MultiplayerClient
     {
         public static void Welcome(Packet packet)
         {
-            int myId = packet.ReadInt();
+            byte myId = packet.ReadByte();
             string msg = packet.ReadString();
 
             Log($"Message from server: {msg}");
@@ -27,7 +27,7 @@ namespace MultiplayerClient
         {
             if (Client.Instance.isConnected)
             {
-                int id = packet.ReadInt();
+                byte id = packet.ReadByte();
                 string username = packet.ReadString();
                 Vector3 position = packet.ReadVector3();
                 Vector3 scale = packet.ReadVector3();
@@ -47,7 +47,7 @@ namespace MultiplayerClient
 
         public static void KnightTexture(Packet packet)
         {
-            int client = packet.ReadInt();
+            byte client = packet.ReadByte();
             int order = packet.ReadInt();
             byte[] knightTexBytes = packet.ReadBytes(4093);
             Log("Received Tex from Server: " + knightTexBytes.Length);
@@ -57,7 +57,7 @@ namespace MultiplayerClient
 
         public static void FinishedSendingTexBytes(Packet packet)
         {
-            int client = packet.ReadInt();
+            byte client = packet.ReadByte();
             bool finishedSending = packet.ReadBool();
             Log("Received Finished from Server: " + finishedSending);
             
@@ -69,7 +69,7 @@ namespace MultiplayerClient
         
         public static void DestroyPlayer(Packet packet)
         {
-            int clientToDestroy = packet.ReadInt();
+            byte clientToDestroy = packet.ReadByte();
 
             SessionManager.Instance.DestroyPlayer(clientToDestroy);
         }
@@ -83,7 +83,7 @@ namespace MultiplayerClient
             
         public static void PlayerPosition(Packet packet)
         {
-            int id = packet.ReadInt();
+            byte id = packet.ReadByte();
             Vector3 position = packet.ReadVector3();
 
             if (SessionManager.Instance.Players.ContainsKey(id))
@@ -94,7 +94,7 @@ namespace MultiplayerClient
 
         public static void PlayerScale(Packet packet)
         {
-            int id = packet.ReadInt();
+            byte id = packet.ReadByte();
             Vector3 scale = packet.ReadVector3();
 
             if (SessionManager.Instance.Players.ContainsKey(id))
@@ -105,7 +105,7 @@ namespace MultiplayerClient
         
         public static void PlayerAnimation(Packet packet)
         {
-            int id = packet.ReadInt();
+            byte id = packet.ReadByte();
             string animation = packet.ReadString();
 
             if (SessionManager.Instance.Players.ContainsKey(id))
@@ -120,7 +120,7 @@ namespace MultiplayerClient
 
         public static void HealthUpdated(Packet packet)
         {
-            int fromClient = packet.ReadInt();
+            byte fromClient = packet.ReadByte();
             int health = packet.ReadInt();
             int maxHealth = packet.ReadInt();
             int healthBlue = packet.ReadInt();
@@ -134,7 +134,7 @@ namespace MultiplayerClient
         
         public static void CharmsUpdated(Packet packet)
         {
-            int fromClient = packet.ReadInt();
+            byte fromClient = packet.ReadByte();
             for (int charmNum = 1; charmNum <= 40; charmNum++)
             {
                 bool equippedCharm = packet.ReadBool();
@@ -145,7 +145,7 @@ namespace MultiplayerClient
         
         public static void PlayerDisconnected(Packet packet)
         {
-            int id = packet.ReadInt();
+            byte id = packet.ReadByte();
             Log($"Player {id} has disconnected from the server.");
     
             SessionManager.Instance.DestroyPlayer(id);
