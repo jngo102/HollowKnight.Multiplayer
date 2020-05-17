@@ -121,7 +121,18 @@ namespace MultiplayerServer
             PacketHandlers = new Dictionary<int, PacketHandler>
             {
                 { (int) ClientPackets.WelcomeReceived, ServerHandle.WelcomeReceived },
+                { (int) ClientPackets.BaldurTexture, ServerHandle.BaldurTexture },
+                { (int) ClientPackets.FlukeTexture, ServerHandle.FlukeTexture },
+                { (int) ClientPackets.GrimmTexture, ServerHandle.GrimmTexture },
+                { (int) ClientPackets.HatchlingTexture, ServerHandle.HatchlingTexture },
                 { (int) ClientPackets.KnightTexture, ServerHandle.KnightTexture },
+                { (int) ClientPackets.ShieldTexture, ServerHandle.ShieldTexture },
+                { (int) ClientPackets.SprintTexture, ServerHandle.SprintTexture },
+                { (int) ClientPackets.UnnTexture, ServerHandle.UnnTexture },
+                { (int) ClientPackets.VoidTexture, ServerHandle.VoidTexture },
+                { (int) ClientPackets.VSTexture, ServerHandle.VSTexture },
+                { (int) ClientPackets.WeaverTexture, ServerHandle.WeaverTexture },
+                { (int) ClientPackets.WraithsTexture, ServerHandle.WraithsTexture },
                 { (int) ClientPackets.PlayerPosition, ServerHandle.PlayerPosition },
                 { (int) ClientPackets.PlayerScale, ServerHandle.PlayerScale },
                 { (int) ClientPackets.PlayerAnimation, ServerHandle.PlayerAnimation },

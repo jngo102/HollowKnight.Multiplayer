@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using ModCommon;
 using ModCommon.Util;
@@ -19,6 +20,8 @@ namespace MultiplayerClient
 
             ClientSend.WelcomeReceived();
             ClientSend.KnightTexture();
+            ClientSend.VoidTexture();
+            //ClientSend.VSTexture();
             
             Client.Instance.udp.Connect(((IPEndPoint) Client.Instance.tcp.socket.Client.LocalEndPoint).Port);
         }
@@ -45,23 +48,196 @@ namespace MultiplayerClient
             }
         }
 
+        #region CustomKnight Integration
+        
+        public static void BaldurTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasBaldur";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.baldurTexture = tex;
+        }
+        
+        public static void FlukeTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasFluke";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.flukeTexture = tex;
+        }
+        
+        public static void GrimmTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasGrimm";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.grimmTexture = tex;
+        }
+        
+        public static void HatchlingTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasHatchling";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.hatchlingTexture = tex;
+        }
+        
         public static void KnightTexture(Packet packet)
         {
             byte client = packet.ReadByte();
-            //int order = packet.ReadInt();
             int byteLength = packet.ReadInt();
-            byte[] knightTexBytes = packet.ReadBytes(byteLength);
-            Log("Received Tex from Server: " + knightTexBytes.Length);
+            byte[] texBytes = packet.ReadBytes(byteLength);
 
-            Texture2D knightTex = new Texture2D(1, 1);
-            knightTex.LoadImage(knightTexBytes);
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasKnight";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+            GameObject player = playerManager.gameObject;
 
-            SessionManager.Instance.Players[client].gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material
-                .mainTexture = knightTex;
+            var materialPropertyBlock = new MaterialPropertyBlock();
+            player.GetComponent<MeshRenderer>().GetPropertyBlock(materialPropertyBlock);
+            materialPropertyBlock.SetTexture("_MainTex", tex);
+            player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock);
 
-            //SessionManager.Instance.Players[client].texIndexedByteDict[order] = knightTexBytes;
+            playerManager.knightTexture = tex;
+        }
+        
+        public static void ShieldTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasShield";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.shieldTexture = tex;
+        }
+        
+        public static void SprintTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasSprint";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.sprintTexture = tex;
+        }
+        
+        public static void UnnTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasUnn";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.unnTexture = tex;
+        }
+        
+        public static void VoidTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasVoid";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.voidTexture = tex;
         }
 
+        public static void VSTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasVS";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.vsTexture = tex;
+        }
+        
+        public static void WeaverTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasWeaver";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.weaverTexture = tex;
+        }
+        
+        public static void WraithsTexture(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
+
+            Texture2D tex = new Texture2D(1, 1);
+            tex.LoadImage(texBytes);
+            tex.name = "atlasWraiths";
+            
+            PlayerManager playerManager = SessionManager.Instance.Players[client];
+
+            playerManager.wraithsTexture = tex;
+        }
+        
+        #endregion CustomKnight Integration
+        
         public static void DestroyPlayer(Packet packet)
         {
             byte clientToDestroy = packet.ReadByte();

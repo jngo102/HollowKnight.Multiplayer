@@ -1,4 +1,6 @@
 ﻿using System;
+using HutongGames.PlayMaker.Actions;
+using ModCommon;
 using ModCommon.Util;
 using MultiplayerClient.Canvas;
 using UnityEngine;
@@ -53,20 +55,243 @@ namespace MultiplayerClient
             }
         }
 
+        #region CustomKnight Integration
+        public static void BaldurTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.BaldurTexture))
+            {
+                GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
+                GameObject baldur = charmEffects.FindGameObjectInChildren("Blocker Shield").FindGameObjectInChildren("Shell Anim");
+                Texture2D tex = baldur.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                byte[] texBytes = tex.EncodeToPNG();
+                Log("Baldur Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        public static void FlukeTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.FlukeTexture))
+            {
+                GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
+                PlayMakerFSM poolFlukes = charmEffects.LocateMyFSM("Pool Flukes");
+                GameObject fluke = poolFlukes.GetAction<CreateGameObjectPool>("Pool Normal", 0).prefab.Value;
+                Texture2D tex = fluke.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                byte[] texBytes = tex.EncodeToPNG();
+                Log("Fluke Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        public static void GrimmTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.GrimmTexture))
+            {
+                GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
+                PlayMakerFSM spawnGrimmchild = charmEffects.LocateMyFSM("Spawn Grimmchild");
+                GameObject grimm = spawnGrimmchild.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
+                Texture2D tex = grimm.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                byte[] texBytes = tex.EncodeToPNG();
+                Log("Grimm Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        public static void HatchlingTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.HatchlingTexture))
+            {
+                GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
+                PlayMakerFSM hatchlingSpawn = charmEffects.LocateMyFSM("Hatchling Spawn");
+                GameObject hatchling = hatchlingSpawn.GetAction<SpawnObjectFromGlobalPool>("Hatch", 2).gameObject.Value;
+                Texture2D tex = hatchling.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                byte[] texBytes = tex.EncodeToPNG();
+                Log("Hatchling Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
         public static void KnightTexture()
         {
             using (Packet packet = new Packet((int) ClientPackets.KnightTexture))
             {
                 var sprite = HeroController.instance.GetComponent<tk2dSprite>();
-                Texture2D knightTex = sprite.GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                byte[] knightTexBytes = knightTex.DuplicateTexture().EncodeToPNG();
-                Log("Knight Tex Size: " + knightTexBytes.Length);
-                packet.Write(knightTexBytes.Length);
-                packet.Write(knightTexBytes);
+                Texture2D tex = sprite.GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
+                Log("Knight Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
 
                 SendTCPData(packet);
             }
         }
+        
+        public static void ShieldTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.ShieldTexture))
+            {
+                GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
+                PlayMakerFSM spawnOrbitShield = charmEffects.LocateMyFSM("Spawn Orbit Shield");
+                GameObject orbitShield = spawnOrbitShield.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
+                GameObject shield = orbitShield.FindGameObjectInChildren("Shield");
+                Texture2D tex = shield.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                byte[] texBytes = tex.EncodeToPNG();
+                Log("Shield Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        public static void SprintTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.SprintTexture))
+            {
+                var anim = HeroController.instance.GetComponent<tk2dSpriteAnimator>();
+                Texture2D tex = anim.GetClipByName("Sprint").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
+                byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
+                Log("Sprint Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        public static void UnnTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.UnnTexture))
+            {
+                var anim = HeroController.instance.GetComponent<tk2dSpriteAnimator>();
+                Texture2D tex = anim.GetClipByName("Slug Up").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
+                byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
+                Log("Unn Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        public static void VoidTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.VoidTexture))
+            {
+                GameObject hc = HeroController.instance.gameObject;
+                Texture2D tex = null;
+                foreach (Transform child in hc.transform)
+                {
+                    if (child.name == "Spells")
+                    {
+                        foreach (Transform spellsChild in child)
+                        {
+                            if (spellsChild.name == "Scr Heads 2")
+                            {
+                                tex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                            }
+                        }
+                    }
+                }
+
+                byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
+                Log("Void Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        public static void VSTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.VSTexture))
+            {
+                GameObject hc = HeroController.instance.gameObject;
+                Texture2D tex = null;
+                foreach (Transform child in hc.transform)
+                {
+                    if (child.name == "Focus Effects")
+                    {
+                        foreach (Transform focusChild in child)
+                        {
+                            if (focusChild.name == "Heal Anim")
+                            {
+                                tex = focusChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
+                Log("VS Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        public static void WeaverlingTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.WeaverTexture))
+            {
+                GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
+                PlayMakerFSM weaverlingControl = charmEffects.LocateMyFSM("Weaverling Control");
+                GameObject weaver = weaverlingControl.GetAction<SpawnObjectFromGlobalPool>("Spawn", 0).gameObject.Value;
+                Texture2D tex = weaver.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                byte[] texBytes = tex.EncodeToPNG();
+                Log("Weaverling Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+
+        public static void WraithsTexture()
+        {
+            using (Packet packet = new Packet((int) ClientPackets.WraithsTexture))
+            {
+                GameObject hc = HeroController.instance.gameObject;
+                Texture2D tex = null;
+                foreach (Transform child in hc.transform)
+                {
+                    if (child.name == "Spells")
+                    {
+                        foreach (Transform spellsChild in child)
+                        {
+                            if (spellsChild.name == "Scr Heads")
+                            {
+                                tex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                            }
+                        }
+                    }
+                }
+                
+                byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
+                Log("Wraiths Tex Size: " + texBytes.Length);
+                packet.Write(texBytes.Length);
+                packet.Write(texBytes);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        #endregion CustomKnight Integration
         
         public static void PlayerPosition(Vector3 position)
         {

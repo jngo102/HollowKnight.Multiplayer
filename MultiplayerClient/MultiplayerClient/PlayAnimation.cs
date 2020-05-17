@@ -12,6 +12,9 @@ namespace MultiplayerClient
         {
             PlayerManager playerManager = SessionManager.Instance.Players[id];
             GameObject player = playerManager.gameObject;
+
+            var materialPropertyBlock = new MaterialPropertyBlock();
+            MeshRenderer mRend;
             
             GameObject playerAttacks = player.FindGameObjectInChildren("Attacks");
             GameObject playerEffects = player.FindGameObjectInChildren("Effects");
@@ -38,10 +41,22 @@ namespace MultiplayerClient
                 case "SD Dash":
                     GameObject sdBurst = Instantiate(heroEffects.FindGameObjectInChildren("SD Burst"), playerEffects.transform);
                     sdBurst.SetActive(true);
+
+                    mRend = sdBurst.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     sdBurst.LocateMyFSM("FSM").InsertMethod("Destroy", 1, () => Destroy(sdBurst));
                     
                     sdTrail = Instantiate(heroEffects.FindGameObjectInChildren("SD Trail"), playerEffects.transform);
-                    sdTrail.SetActive(true);
+                    sdTrail.SetActive(true);    
+                    
+                    mRend = sdTrail.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     sdTrail.name = "SD Trail " + id;
                     PlayMakerFSM sdTrailFsm = sdTrail.LocateMyFSM("FSM");
                     sdTrailFsm.SetState("Idle");
@@ -53,10 +68,20 @@ namespace MultiplayerClient
                     GameObject sdBurstGlow = Instantiate(heroEffects.FindGameObjectInChildren("SD Burst Glow"), playerEffects.transform);
                     sdBurstGlow.SetActive(true);
                     
+                    mRend = sdBurstGlow.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     break;
                 case "Air Cancel":
                     GameObject sdBreak = Instantiate(heroEffects.FindGameObjectInChildren("SD Break"), playerEffects.transform);
                     Destroy(sdBreak, 0.54f);
+                    
+                    mRend = sdBreak.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
                     
                     sdTrail.GetComponent<tk2dSpriteAnimator>().Play("SD Trail End");
 
@@ -65,12 +90,23 @@ namespace MultiplayerClient
                     sdTrail.GetComponent<tk2dSpriteAnimator>().Play("SD Trail End");
                     
                     GameObject wallHitEffect = Instantiate(heroEffects.FindGameObjectInChildren("Wall Hit Effect"), playerEffects.transform);
+                    
+                    mRend = wallHitEffect.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     wallHitEffect.LocateMyFSM("FSM").InsertMethod("Destroy", 1, () => Destroy(wallHitEffect));
                     
                     break;
                 case "Slash":
                     GameObject slash = Instantiate(_hc.slashPrefab, playerAttacks.transform);
                     slash.SetActive(true);
+                    
+                    mRend = slash.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
                     
                     AudioSource slashAudioSource = slash.GetComponent<AudioSource>();
                     AudioClip slashClip = slashAudioSource.clip;
@@ -155,6 +191,11 @@ namespace MultiplayerClient
                 case "SlashAlt":
                     GameObject altSlash = Instantiate(_hc.slashAltPrefab, playerAttacks.transform);
                     altSlash.SetActive(true);
+                    
+                    mRend = altSlash.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
                     
                     AudioSource altSlashAudioSource = altSlash.GetComponent<AudioSource>();
                     AudioClip altSlashClip = altSlashAudioSource.clip;
@@ -242,6 +283,11 @@ namespace MultiplayerClient
                     GameObject downSlash = Instantiate(_hc.downSlashPrefab, playerAttacks.transform);
                     downSlash.SetActive(true);
                     
+                    mRend = downSlash.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     AudioSource downSlashAudioSource = downSlash.GetComponent<AudioSource>();
                     AudioClip downSlashClip = downSlashAudioSource.clip;
                     Destroy(downSlashAudioSource);
@@ -317,6 +363,11 @@ namespace MultiplayerClient
                     GameObject upSlash = Instantiate(_hc.upSlashPrefab, playerAttacks.transform);
                     upSlash.SetActive(true);
 
+                    mRend = upSlash.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     AudioSource upSlashAudioSource = upSlash.GetComponent<AudioSource>();
                     AudioClip upSlashClip = upSlashAudioSource.clip;
                     Destroy(upSlashAudioSource);
@@ -392,6 +443,11 @@ namespace MultiplayerClient
                     GameObject wallSlash = Instantiate(_hc.wallSlashPrefab, playerAttacks.transform);
                     wallSlash.SetActive(true);
                     
+                    mRend = wallSlash.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     AudioSource wallSlashAudioSource = wallSlash.GetComponent<AudioSource>();
                     AudioClip wallSlashClip = wallSlashAudioSource.clip;
                     Destroy(wallSlashAudioSource);
@@ -466,8 +522,7 @@ namespace MultiplayerClient
                     AudioClip castClip;
                     if (playerManager.equippedCharm_11)
                     {
-                        castClip = (AudioClip) fireballCast.GetAction<AudioPlayerOneShotSingle>("Fluke R", 0).audioClip
-                            .Value;
+                        castClip = (AudioClip) fireballCast.GetAction<AudioPlayerOneShotSingle>("Fluke R", 0).audioClip.Value;
                         if (playerManager.equippedCharm_10)
                         {
                             GameObject dungFlukeObj = fireballCast.GetAction<SpawnObjectFromGlobalPool>("Dung R", 0)
@@ -516,6 +571,12 @@ namespace MultiplayerClient
                         GameObject fireball = Instantiate(fireballObj, playerSpells.transform.position  + Vector3.down * 0.5f, Quaternion.identity);
                         fireball.SetActive(true);
                         fireball.layer = 22;
+                        
+                        mRend = fireball.GetComponent<MeshRenderer>();
+                        mRend.GetPropertyBlock(materialPropertyBlock);
+                        materialPropertyBlock.SetTexture("_MainTex", playerManager.voidTexture);
+                        mRend.SetPropertyBlock(materialPropertyBlock);
+                        
                         // Instantiating fireball and setting properties here is weird, so create a component for it.
                         var fireballComponent = fireball.AddComponent<Fireball>();
                         fireballComponent.playerId = id;
@@ -533,8 +594,14 @@ namespace MultiplayerClient
                     
                     qCharge = Instantiate(heroSpells.FindGameObjectInChildren("Q Charge"), playerSpells.transform);
                     qCharge.SetActive(true);
-                    qCharge.GetComponent<tk2dSpriteAnimator>().PlayFromFrame(0);
                     qCharge.name = "Q Charge " + id;
+                    
+                    mRend = qCharge.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.vsTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
+                    qCharge.GetComponent<tk2dSpriteAnimator>().PlayFromFrame(0);
                     
                     break;
                 case "Quake Fall 2":
@@ -545,6 +612,21 @@ namespace MultiplayerClient
                     qFlashStart.SetActive(true);
                     sdSharpFlash.SetActive(true);
                     qTrail2.SetActive(true);
+                    
+                    mRend = qFlashStart.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.voidTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
+                    mRend = sdSharpFlash.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.voidTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
+                    mRend = qTrail2.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.voidTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
                     
                     Destroy(qFlashStart, 1);
                     Destroy(sdSharpFlash, 1);
@@ -568,6 +650,12 @@ namespace MultiplayerClient
                     GameObject quakeSlam = Instantiate(qSlamObj, playerSpells.transform);
                     quakeSlam.SetActive(true);
                     quakeSlam.layer = 22;
+                    
+                    mRend = quakeSlam.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.voidTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     if (SessionManager.Instance.PvPEnabled)
                     {
                         GameObject quakeHitL = quakeSlam.FindGameObjectInChildren("Hit L");
@@ -580,11 +668,22 @@ namespace MultiplayerClient
                     GameObject qPillarObj = heroSpells.FindGameObjectInChildren("Q Pillar");
                     GameObject quakePillar = Instantiate(qPillarObj, playerSpells.transform);
                     quakePillar.SetActive(true);
+                    
+                    mRend = quakePillar.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.voidTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
 
                     GameObject qMegaObj = heroSpells.FindGameObjectInChildren("Q Mega");
                     GameObject qMega = Instantiate(qMegaObj, playerSpells.transform);
                     qMega.GetComponent<tk2dSpriteAnimator>().PlayFromFrame(0);
                     qMega.SetActive(true);
+                    
+                    mRend = qMega.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.voidTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     GameObject qMegaHitL = qMega.FindGameObjectInChildren("Hit L");
                     qMegaHitL.layer = 22;
                     Destroy(qMegaHitL.LocateMyFSM("damages_enemy"));
@@ -616,6 +715,12 @@ namespace MultiplayerClient
                     GameObject screamHeads = Instantiate(scrHeadsObj, playerSpells.transform);
                     screamHeads.SetActive(true);
                     screamHeads.name = "Scream Heads Player " + id;
+                    
+                    mRend = screamHeads.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.voidTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     Destroy(screamHeads.LocateMyFSM("Deactivate on Hit"));
                     
                     GameObject screamHitL = screamHeads.FindGameObjectInChildren("Hit L");
@@ -685,6 +790,12 @@ namespace MultiplayerClient
                     cycloneSlash.SetActive(true);
                     cycloneSlash.layer = 22;
                     cycloneSlash.name = "Cyclone Slash " + id;
+                    
+                    mRend = cycloneSlash.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     cycloneSlash.LocateMyFSM("Control Collider").SetState("Init");
                     GameObject hitL = cycloneSlash.FindGameObjectInChildren("Hit L");
                     GameObject hitR = cycloneSlash.FindGameObjectInChildren("Hit R");
@@ -737,6 +848,12 @@ namespace MultiplayerClient
                     var greatSlash = Instantiate(gsObj, playerAttacks.transform);
                     greatSlash.SetActive(true);
                     greatSlash.layer = 22;
+                    
+                    mRend = greatSlash.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     greatSlash.LocateMyFSM("Control Collider").SetState("Init");
 
                     var gsAnim = greatSlash.GetComponent<tk2dSpriteAnimator>();
@@ -764,6 +881,12 @@ namespace MultiplayerClient
                     var dashSlash = Instantiate(dsObj, playerAttacks.transform);
                     dashSlash.SetActive(true);
                     dashSlash.layer = 22;
+                    
+                    mRend = dashSlash.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    
                     dashSlash.LocateMyFSM("Control Collider").SetState("Init");
 
                     var dsAnim = dashSlash.GetComponent<tk2dSpriteAnimator>();
@@ -806,6 +929,11 @@ namespace MultiplayerClient
                     hitCrack.SetActive(true);
                     hitPt1.SetActive(true);
                     hitPt2.SetActive(true);
+
+                    mRend = hitCrack.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", playerManager.knightTexture);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
 
                     hitPt1.GetComponent<ParticleSystem>().Play();
                     hitPt2.GetComponent<ParticleSystem>().Play();
