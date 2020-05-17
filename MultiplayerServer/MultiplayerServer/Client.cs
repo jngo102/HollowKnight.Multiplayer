@@ -10,7 +10,7 @@ namespace MultiplayerServer
 {
     public class Client
     {
-        public static int dataBufferSize = 4096;
+        public static int dataBufferSize = (int) Mathf.Pow(10, 8);
         
         public byte id;
         public Player player;

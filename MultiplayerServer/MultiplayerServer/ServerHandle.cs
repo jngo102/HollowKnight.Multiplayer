@@ -38,22 +38,11 @@ namespace MultiplayerServer
 
         public static void KnightTexture(byte fromClient, Packet packet)
         {
-            short order = packet.ReadShort();
-            Log("Order: " + order);
-            byte[] knightTexBytes = packet.ReadBytes(4093);
-            Log("Received Tex Data from Client: " + knightTexBytes.Length);
-            
-            ServerSend.KnightTexture(fromClient, order, knightTexBytes);
+            int byteLength = packet.ReadInt();
+            byte[] knightTexBytes = packet.ReadBytes(byteLength);
+            ServerSend.KnightTexture(fromClient, knightTexBytes);
         }
 
-        public static void FinishedSendingTexBytes(byte fromClient, Packet packet)
-        {
-            bool finishedSending = packet.ReadBool();
-            Log("Received Finished Sending Bool: " + finishedSending);
-
-            ServerSend.FinishedSendingTexBytes(fromClient, finishedSending);
-        }
-        
         public static void PlayerPosition(byte fromClient, Packet packet)
         {
             Vector3 position = packet.ReadVector3();

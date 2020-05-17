@@ -11,7 +11,6 @@ namespace MultiplayerClient
         Welcome = 1,
         SpawnPlayer,
         KnightTexture,
-        FinishedSendingTexBytes,
         DestroyPlayer,
         PvPEnabled,
         PlayerPosition,
@@ -27,7 +26,6 @@ namespace MultiplayerClient
     {
         WelcomeReceived = 1,
         KnightTexture,
-        FinishedSendingTexBytes,
         PlayerPosition,
         PlayerScale,
         PlayerAnimation,

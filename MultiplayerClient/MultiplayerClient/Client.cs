@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace MultiplayerClient
 {
     public class Client : MonoBehaviour
     {
         public static Client Instance;
-        public static int dataBufferSize = 4096;
+        public static int dataBufferSize = (int) Mathf.Pow(10, 8);
         
         public byte myId;
         public TCP tcp;
@@ -311,7 +308,6 @@ namespace MultiplayerClient
                 { (int) ServerPackets.Welcome, ClientHandle.Welcome },
                 { (int) ServerPackets.SpawnPlayer, ClientHandle.SpawnPlayer },
                 { (int) ServerPackets.KnightTexture, ClientHandle.KnightTexture },
-                { (int) ServerPackets.FinishedSendingTexBytes, ClientHandle.FinishedSendingTexBytes },
                 { (int) ServerPackets.DestroyPlayer, ClientHandle.DestroyPlayer },
                 { (int) ServerPackets.PvPEnabled, ClientHandle.PvPEnabled },
                 { (int) ServerPackets.PlayerPosition, ClientHandle.PlayerPosition },

@@ -122,7 +122,6 @@ namespace MultiplayerServer
             {
                 { (int) ClientPackets.WelcomeReceived, ServerHandle.WelcomeReceived },
                 { (int) ClientPackets.KnightTexture, ServerHandle.KnightTexture },
-                { (int) ClientPackets.FinishedSendingTexBytes, ServerHandle.FinishedSendingTexBytes },
                 { (int) ClientPackets.PlayerPosition, ServerHandle.PlayerPosition },
                 { (int) ClientPackets.PlayerScale, ServerHandle.PlayerScale },
                 { (int) ClientPackets.PlayerAnimation, ServerHandle.PlayerAnimation },

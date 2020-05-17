@@ -103,27 +103,15 @@ namespace MultiplayerServer
             }
         }
 
-        public static void KnightTexture(byte fromClient, int order, byte[] knightTexBytes)
+        public static void KnightTexture(byte fromClient, byte[] knightTexBytes)
         {
             using (Packet packet = new Packet((byte) ServerPackets.KnightTexture))
             {
                 packet.Write(fromClient);
-                packet.Write(order);
+                packet.Write(knightTexBytes.Length);
                 packet.Write(knightTexBytes);
 
                 Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-
-        public static void FinishedSendingTexBytes(byte fromClient, bool finishedSending)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.FinishedSendingTexBytes))
-            {
-                packet.Write(fromClient);
-                packet.Write(finishedSending);
-
-                Log("Sending Finished From Server to Clients except " + fromClient);
                 SendTCPDataToAll(fromClient, packet);
             }
         }

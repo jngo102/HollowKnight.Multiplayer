@@ -55,43 +55,14 @@ namespace MultiplayerClient
 
         public static void KnightTexture()
         {
-            var sprite = HeroController.instance.GetComponent<tk2dSprite>();
-            var anim = HeroController.instance.GetComponent<tk2dSpriteAnimator>();
-            Texture2D knightTex = sprite.GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            byte[] knightTexBytes = knightTex.DuplicateTexture().EncodeToPNG();
-            int length = 4093;
-            byte[] fragment = new byte[length];
-            short order = 0;
-            for (int i = 0; i < knightTexBytes.Length; i += length)
+            using (Packet packet = new Packet((int) ClientPackets.KnightTexture))
             {
-                if (knightTexBytes.Length - i < length)
-                {
-                    length = knightTexBytes.Length - i;
-                }
-                
-                Array.Copy(knightTexBytes, i, fragment, 0,  length);
-                using (Packet packet = new Packet((int) ClientPackets.KnightTexture))
-                {
-                    packet.Write(order);
-                    packet.Write(fragment);
-
-                    order++;
-                    
-                    Log("Sending Tex Data from Client to Server: " + packet.Length());
-
-                    SendTCPData(packet);
-                }
-            }
-            
-            Log("Sending Finish Sending Texture Bytes");
-            FinishedSendingTexBytes();
-        }
-
-        public static void FinishedSendingTexBytes(bool finishedSending = true)
-        {
-            using (Packet packet = new Packet((int) ClientPackets.FinishedSendingTexBytes))
-            {
-                packet.Write(finishedSending);
+                var sprite = HeroController.instance.GetComponent<tk2dSprite>();
+                Texture2D knightTex = sprite.GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                byte[] knightTexBytes = knightTex.DuplicateTexture().EncodeToPNG();
+                Log("Knight Tex Size: " + knightTexBytes.Length);
+                packet.Write(knightTexBytes.Length);
+                packet.Write(knightTexBytes);
 
                 SendTCPData(packet);
             }

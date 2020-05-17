@@ -48,25 +48,20 @@ namespace MultiplayerClient
         public static void KnightTexture(Packet packet)
         {
             byte client = packet.ReadByte();
-            int order = packet.ReadInt();
-            byte[] knightTexBytes = packet.ReadBytes(4093);
+            //int order = packet.ReadInt();
+            int byteLength = packet.ReadInt();
+            byte[] knightTexBytes = packet.ReadBytes(byteLength);
             Log("Received Tex from Server: " + knightTexBytes.Length);
-            
-            SessionManager.Instance.Players[client].texIndexedByteDict[order] = knightTexBytes;
+
+            Texture2D knightTex = new Texture2D(1, 1);
+            knightTex.LoadImage(knightTexBytes);
+
+            SessionManager.Instance.Players[client].gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material
+                .mainTexture = knightTex;
+
+            //SessionManager.Instance.Players[client].texIndexedByteDict[order] = knightTexBytes;
         }
 
-        public static void FinishedSendingTexBytes(Packet packet)
-        {
-            byte client = packet.ReadByte();
-            bool finishedSending = packet.ReadBool();
-            Log("Received Finished from Server: " + finishedSending);
-            
-            if (finishedSending)
-            {
-                SessionManager.Instance.CompileByteFragments(client);
-            }
-        }
-        
         public static void DestroyPlayer(Packet packet)
         {
             byte clientToDestroy = packet.ReadByte();

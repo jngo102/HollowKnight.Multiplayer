@@ -214,7 +214,6 @@ namespace MultiplayerClient.Canvas
                 else
                 {
                     Log("Connected to Server!");
-                    HeroController.instance.GetComponent<SpriteFlash>().flashFocusHeal();
                     break;
                 }
 

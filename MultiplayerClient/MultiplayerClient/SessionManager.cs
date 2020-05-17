@@ -14,7 +14,7 @@ namespace MultiplayerClient
         public static SessionManager Instance;
         public bool PvPEnabled;
 
-        public Dictionary<int, PlayerManager> Players = new Dictionary<int,PlayerManager>();
+        public Dictionary<int, PlayerManager> Players = new Dictionary<int, PlayerManager>();
 
         public GameObject playerPrefab;
 
@@ -93,46 +93,6 @@ namespace MultiplayerClient
             Players.Add(id, playerManager);
         }
 
-        public void CompileByteFragments(int client)
-        {
-            Log("Compiling Texture for client: " + client);
-            PlayerManager playerManager = Players[client];
-            Dictionary<int, byte[]> dict = playerManager.texIndexedByteDict;
-            Log("Creating texBytes");
-            byte[] texBytes = new byte[4093 * dict.Count];
-            Log("Loop");
-            for (short i = 0; i < dict.Count; i++)
-            {
-                Array.Copy(dict[i], 0, texBytes, i * 4093, 4093);
-            }
-
-            Log("Creating knightTex");
-            Texture2D knightTex = new Texture2D(1, 1);
-            Log("Loading knightTex");
-            knightTex.LoadImage(texBytes);
-            knightTex.name = "atlas1";
-
-            Log("New Material");
-            var mat = new Material(Shader.Find("Sprites/Default-ColorFlash"));
-            Log("Setting tex");
-            mat.mainTexture = knightTex;
-            Log("knightTex name: " + knightTex.name);
-
-            Log("Getting anim and sprite");
-            GameObject player = playerManager.gameObject;
-            var anim = player.GetComponent<tk2dSpriteAnimator>();
-            var sprite = player.GetComponent<tk2dSprite>();
-            Log("Setting Collection material");
-            Material newMaterial = new Material(Shader.Find("Sprites/Default-ColorFlash"));
-            newMaterial.mainTexture = knightTex;
-            newMaterial.name = "atlas1 material";
-            sprite.GetCurrentSpriteDef().material.mainTexture = knightTex;
-            playerManager.knightTexture = knightTex;
-
-            Log("Writing knightTex to PNG");
-            File.WriteAllBytes(Path.Combine(Application.streamingAssetsPath, "Test.png"), texBytes);
-        }
-        
         public void EnablePvP(bool enable)
         {
             Instance.PvPEnabled = enable;
