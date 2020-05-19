@@ -60,9 +60,39 @@ namespace MultiplayerServer.Canvas
                 new Vector2(panelImg.width, 20),
                 new Vector2(-60, 0),
                 new Rect(0, 0, 150, 20),
-                PvPToggle,
+                TogglePvP,
                 GUIController.Instance.trajanNormal,
                 "Enable PvP",
+                16
+            );
+            y += toggleHeight;
+            
+            Panel.AddToggle(
+                "Toggle Spectator",
+                GUIController.Instance.images["Toggle_BG"],
+                GUIController.Instance.images["Checkmark"],
+                new Vector2(x, y),
+                new Vector2(panelImg.width, 20),
+                new Vector2(-60, 0),
+                new Rect(0, 0, 150, 20),
+                ToggleSpectator,
+                GUIController.Instance.trajanNormal,
+                "Spectator Mode",
+                16
+            );
+            y += toggleHeight;
+            
+            Panel.AddToggle(
+                "Toggle Custom Knight",
+                GUIController.Instance.images["Toggle_BG"],
+                GUIController.Instance.images["Checkmark"],
+                new Vector2(x, y),
+                new Vector2(panelImg.width, 20),
+                new Vector2(-60, 0),
+                new Rect(0, 0, 150, 20),
+                ToggleCustomKnight,
+                GUIController.Instance.trajanNormal,
+                "Custom Knight Integration",
                 16
             );
             y += toggleHeight;
@@ -92,7 +122,7 @@ namespace MultiplayerServer.Canvas
             }
         }
         
-        private static void PvPToggle(bool toggleValue)
+        private static void TogglePvP(bool toggleValue)
         {
             if (toggleValue)
             {
@@ -105,6 +135,36 @@ namespace MultiplayerServer.Canvas
                 Log("PvP Disabled");
                 ServerSettings.PvPEnabled = false;
                 ServerSend.PvPEnabled();
+            }
+        }
+        
+        private static void ToggleSpectator(bool toggleValue)
+        {
+            if (toggleValue)
+            {
+                Log("Spectator Mode Enabled");
+                ServerSettings.SpectatorMode = true;
+                //ServerSend.PvPEnabled();
+            }
+            else
+            {
+                Log("Spectator Mode Disabled");
+                ServerSettings.SpectatorMode = false;
+                //ServerSend.PvPEnabled();
+            }
+        }
+        
+        private static void ToggleCustomKnight(bool toggleValue)
+        {
+            if (toggleValue)
+            {
+                Log("Custom Knight Enabled");
+                ServerSettings.CustomKnightIntegration = true;
+            }
+            else
+            {
+                Log("Custom Knight Disabled");
+                ServerSettings.CustomKnightIntegration = false;
             }
         }
 

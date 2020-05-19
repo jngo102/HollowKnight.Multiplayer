@@ -9,7 +9,7 @@ namespace MultiplayerClient
     public class Client : MonoBehaviour
     {
         public static Client Instance;
-        public static int dataBufferSize = (int) Mathf.Pow(10, 8);
+        public static int dataBufferSize = 16384;
         
         public byte myId;
         public TCP tcp;

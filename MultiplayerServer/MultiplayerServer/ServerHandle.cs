@@ -163,26 +163,28 @@ namespace MultiplayerServer
                         ServerSend.SpawnPlayer(fromClient, iPlayer);
                         ServerSend.SpawnPlayer(i, fromPlayer);
                         // CustomKnight integration
-                        Log("Requesting Textures");
-                        ServerSend.RequestTextures(
-                            i,
-                            iPlayer.knightHash,
-                            iPlayer.sprintHash,
-                            iPlayer.unnHash,
-                            iPlayer.voidHash,
-                            iPlayer.vsHash,
-                            iPlayer.wraithsHash
-                        );
-                        ServerSend.RequestTextures(
-                            fromClient, 
-                            fromPlayer.knightHash,
-                            fromPlayer.sprintHash,
-                            fromPlayer.unnHash,
-                            fromPlayer.voidHash,
-                            fromPlayer.vsHash,
-                            fromPlayer.wraithsHash
-                        );
-                        
+                        if (ServerSettings.CustomKnightIntegration)
+                        {
+                            Log("Requesting Textures");
+                            ServerSend.RequestTextures(
+                                i,
+                                iPlayer.knightHash,
+                                iPlayer.sprintHash,
+                                iPlayer.unnHash,
+                                iPlayer.voidHash,
+                                iPlayer.vsHash,
+                                iPlayer.wraithsHash
+                            );
+                            ServerSend.RequestTextures(
+                                fromClient,
+                                fromPlayer.knightHash,
+                                fromPlayer.sprintHash,
+                                fromPlayer.unnHash,
+                                fromPlayer.voidHash,
+                                fromPlayer.vsHash,
+                                fromPlayer.wraithsHash
+                            );
+                        }
                     }
                     else
                     {
@@ -215,25 +217,28 @@ namespace MultiplayerServer
                         ServerSend.SpawnPlayer(fromClient, iPlayer);
                         ServerSend.SpawnPlayer(i, fromPlayer);
                         // CustomKnight integration
-                        Log("Requesting Textures");
-                        ServerSend.RequestTextures(
-                            i,
-                            iPlayer.knightHash,
-                            iPlayer.sprintHash,
-                            iPlayer.unnHash,
-                            iPlayer.voidHash,
-                            iPlayer.vsHash,
-                            iPlayer.wraithsHash
-                        );
-                        ServerSend.RequestTextures(
-                            fromClient, 
-                            fromPlayer.knightHash,
-                            fromPlayer.sprintHash,
-                            fromPlayer.unnHash,
-                            fromPlayer.voidHash,
-                            fromPlayer.vsHash,
-                            fromPlayer.wraithsHash
-                        );
+                        if (ServerSettings.CustomKnightIntegration)
+                        {
+                            Log("Requesting Textures");
+                            ServerSend.RequestTextures(
+                                i,
+                                iPlayer.knightHash,
+                                iPlayer.sprintHash,
+                                iPlayer.unnHash,
+                                iPlayer.voidHash,
+                                iPlayer.vsHash,
+                                iPlayer.wraithsHash
+                            );
+                            ServerSend.RequestTextures(
+                                fromClient,
+                                fromPlayer.knightHash,
+                                fromPlayer.sprintHash,
+                                fromPlayer.unnHash,
+                                fromPlayer.voidHash,
+                                fromPlayer.vsHash,
+                                fromPlayer.wraithsHash
+                            );
+                        }
                     }
                 }
             }

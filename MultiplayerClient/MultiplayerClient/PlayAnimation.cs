@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using HutongGames.PlayMaker.Actions;
 using ModCommon;
 using ModCommon.Util;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace MultiplayerClient
 {
@@ -1044,6 +1046,13 @@ namespace MultiplayerClient
                         Destroy(childTransform.gameObject);
                     }
 
+                    mRend = player.GetComponent<MeshRenderer>();
+                    mRend.GetPropertyBlock(materialPropertyBlock);
+                    materialPropertyBlock.SetTexture("_MainTex", knightTex);
+                    mRend.SetPropertyBlock(materialPropertyBlock);
+
+                    GC.Collect();
+                    
                     break;
             }
         }

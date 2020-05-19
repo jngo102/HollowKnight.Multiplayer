@@ -127,6 +127,8 @@ namespace MultiplayerClient
             }
             
             Players.Add(id, playerManager);
+            
+            GC.Collect();
         }
 
         public void EnablePvP(bool enable)
@@ -134,13 +136,9 @@ namespace MultiplayerClient
             Instance.PvPEnabled = enable;
             foreach (KeyValuePair<int, PlayerManager> pair in Players)
             {
-                Log($"Getting Player {pair.Key}");
                 GameObject player = pair.Value.gameObject;
-                Log("Changing Player Layer");
                 player.layer = enable ? 11 : 9;
-                Log("Enabling DamageHero");
                 player.GetComponent<DamageHero>().enabled = enable;
-                Log("Done.");
             }
         }
 
