@@ -58,6 +58,18 @@ namespace MultiplayerServer
         public int maxHealth;
         public int healthBlue;
 
+        public int baldurHash;
+        public int flukeHash;
+        public int grimmHash;
+        public int knightHash;
+        public int shieldHash;
+        public int sprintHash;
+        public int unnHash;
+        public int voidHash;
+        public int vsHash;
+        public int weaverash;
+        public int wraithsHash;
+        
         public void Initialize(byte id, string username, string animation, int health, int maxHealth, int healthBlue)
         {
             this.id = id;

@@ -22,6 +22,7 @@ namespace MultiplayerClient
         VSTexture,
         WeaverTexture,
         WraithsTexture,
+        RequestTextures,
         DestroyPlayer,
         PvPEnabled,
         PlayerPosition,

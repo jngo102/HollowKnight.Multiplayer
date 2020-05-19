@@ -19,9 +19,6 @@ namespace MultiplayerClient
             Client.Instance.myId = myId;
 
             ClientSend.WelcomeReceived();
-            ClientSend.KnightTexture();
-            ClientSend.VoidTexture();
-            //ClientSend.VSTexture();
             
             Client.Instance.udp.Connect(((IPEndPoint) Client.Instance.tcp.socket.Client.LocalEndPoint).Port);
         }
@@ -59,10 +56,8 @@ namespace MultiplayerClient
             Texture2D tex = new Texture2D(1, 1);
             tex.LoadImage(texBytes);
             tex.name = "atlasBaldur";
-            
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
 
-            playerManager.baldurTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Baldur"] = tex;
         }
         
         public static void FlukeTexture(Packet packet)
@@ -75,9 +70,7 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasFluke";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.flukeTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Fluke"] = tex;
         }
         
         public static void GrimmTexture(Packet packet)
@@ -90,9 +83,7 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasGrimm";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.grimmTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Grimm"] = tex;
         }
         
         public static void HatchlingTexture(Packet packet)
@@ -105,9 +96,7 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasHatchling";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.hatchlingTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Hatchling"] = tex;
         }
         
         public static void KnightTexture(Packet packet)
@@ -128,7 +117,7 @@ namespace MultiplayerClient
             materialPropertyBlock.SetTexture("_MainTex", tex);
             player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock);
 
-            playerManager.knightTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Knight"] = tex;
         }
         
         public static void ShieldTexture(Packet packet)
@@ -141,9 +130,7 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasShield";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.shieldTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Shield"] = tex;
         }
         
         public static void SprintTexture(Packet packet)
@@ -156,9 +143,7 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasSprint";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.sprintTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Sprint"] = tex;
         }
         
         public static void UnnTexture(Packet packet)
@@ -171,9 +156,7 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasUnn";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.unnTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Unn"] = tex;
         }
         
         public static void VoidTexture(Packet packet)
@@ -186,9 +169,7 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasVoid";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.voidTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Void"] = tex;
         }
 
         public static void VSTexture(Packet packet)
@@ -201,9 +182,7 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasVS";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.vsTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["VS"] = tex;
         }
         
         public static void WeaverTexture(Packet packet)
@@ -216,9 +195,7 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasWeaver";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.weaverTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Weaver"] = tex;
         }
         
         public static void WraithsTexture(Packet packet)
@@ -231,9 +208,103 @@ namespace MultiplayerClient
             tex.LoadImage(texBytes);
             tex.name = "atlasWraiths";
             
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-
-            playerManager.wraithsTexture = tex;
+            SessionManager.Instance.PlayerTextures[client]["Wraiths"] = tex;
+        }
+        
+        public static void RequestTextures(Packet packet)
+        {
+            GameObject hc = HeroController.instance.gameObject;
+            
+            int receivedKnightTexHash = packet.ReadInt();
+            int receivedSprintTexHash = packet.ReadInt();
+            int receivedUnnTexHash = packet.ReadInt();
+            int receivedVoidTexHash = packet.ReadInt();
+            int receivedVSTexHash = packet.ReadInt();
+            int receivedWraithsTexHash = packet.ReadInt();
+            
+            Texture2D knightTex = hc.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            var anim = hc.GetComponent<tk2dSpriteAnimator>();
+            Texture2D sprintTex = anim.GetClipByName("Sprint").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
+            Texture2D unnTex = anim.GetClipByName("Slug Up").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
+            int knightTexHash = knightTex.GetHashCode();
+            int sprintTexHash = sprintTex.GetHashCode();
+            int unnTexHash = unnTex.GetHashCode();
+            int voidTexHash = 0;
+            int vsTexHash = 0;
+            int wraithsTexHash = 0;
+            foreach (Transform child in hc.transform)
+            {
+                if (child.name == "Spells")
+                {
+                    foreach (Transform spellsChild in child)
+                    {
+                        if (spellsChild.name == "Scr Heads")
+                        {
+                            Texture2D wraithsTex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                            wraithsTexHash = wraithsTex.GetHashCode();
+                        }
+                        else if (spellsChild.name == "Scr Heads 2")
+                        {
+                            Texture2D voidTex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                            voidTexHash = voidTex.GetHashCode();
+                        }
+                    }
+                }
+                else if (child.name == "Focus Effects")
+                {
+                    foreach (Transform focusChild in child)
+                    {
+                        if (focusChild.name == "Heal Anim")
+                        {
+                            Texture2D vsTex = focusChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                            vsTexHash = vsTex.GetHashCode();
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            Log("Received Knight Tex Hash: " + receivedKnightTexHash);
+            Log("Knight Tex Hash: " + knightTexHash);
+            
+            Log("Received Void Tex Hash: " + receivedVoidTexHash);
+            Log("Void Tex Hash: " + voidTexHash);
+            
+            if (knightTexHash != receivedKnightTexHash)
+            {
+                Log("Sending updated Knight Texture");
+                ClientSend.KnightTexture();
+            }
+            
+            if (sprintTexHash != receivedSprintTexHash)
+            {
+                Log("Sending updated Sprint Texture");
+                ClientSend.SprintTexture();
+            }
+            
+            if (unnTexHash != receivedUnnTexHash)
+            {
+                Log("Sending updated Unn Texture");
+                ClientSend.UnnTexture();
+            }
+            
+            if (voidTexHash != receivedVoidTexHash)
+            {
+                Log("Sending updated Void Texture");
+                ClientSend.VoidTexture();
+            }
+            
+            if (vsTexHash != receivedVSTexHash)
+            {
+                Log("Sending updated VS Texture");
+                ClientSend.VSTexture();
+            }
+            
+            if (wraithsTexHash != receivedWraithsTexHash)
+            {
+                Log("Sending updated Wraiths Texture");
+                ClientSend.WraithsTexture();
+            }
         }
         
         #endregion CustomKnight Integration

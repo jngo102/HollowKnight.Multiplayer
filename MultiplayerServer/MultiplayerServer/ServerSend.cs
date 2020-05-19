@@ -261,6 +261,29 @@ namespace MultiplayerServer
             }
         }
         
+        public static void RequestTextures(
+            byte toClient, 
+            int knightTexHash, 
+            int sprintTexHash,
+            int unnTexHash,
+            int voidTexHash,
+            int vsTexHash,
+            int wraithsTexHash
+        )
+        {
+            using (Packet packet = new Packet((int) ServerPackets.RequestTextures))
+            {
+                packet.Write(knightTexHash);
+                packet.Write(sprintTexHash);
+                packet.Write(unnTexHash);
+                packet.Write(voidTexHash);
+                packet.Write(vsTexHash);
+                packet.Write(wraithsTexHash);
+                
+                SendTCPData(toClient, packet);
+            }
+        }
+        
         #endregion CustomKnight Integration
         
         public static void DestroyPlayer(byte toClient, int clientToDestroy)

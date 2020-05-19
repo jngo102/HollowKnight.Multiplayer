@@ -158,8 +158,31 @@ namespace MultiplayerServer
                     if (Server.clients[i].player.activeScene == sceneName)
                     {
                         Log("Same Scene, Spawning Players Subsequent Pass");
-                        ServerSend.SpawnPlayer(fromClient, Server.clients[i].player);
-                        ServerSend.SpawnPlayer(i, Server.clients[fromClient].player);
+                        Player iPlayer = Server.clients[i].player;
+                        Player fromPlayer = Server.clients[fromClient].player;
+                        ServerSend.SpawnPlayer(fromClient, iPlayer);
+                        ServerSend.SpawnPlayer(i, fromPlayer);
+                        // CustomKnight integration
+                        Log("Requesting Textures");
+                        ServerSend.RequestTextures(
+                            i,
+                            iPlayer.knightHash,
+                            iPlayer.sprintHash,
+                            iPlayer.unnHash,
+                            iPlayer.voidHash,
+                            iPlayer.vsHash,
+                            iPlayer.wraithsHash
+                        );
+                        ServerSend.RequestTextures(
+                            fromClient, 
+                            fromPlayer.knightHash,
+                            fromPlayer.sprintHash,
+                            fromPlayer.unnHash,
+                            fromPlayer.voidHash,
+                            fromPlayer.vsHash,
+                            fromPlayer.wraithsHash
+                        );
+                        
                     }
                     else
                     {
@@ -178,7 +201,7 @@ namespace MultiplayerServer
         {
             Server.clients[fromClient].player.activeScene = sceneName;
 
-            for (int i = 1; i <= Server.MaxPlayers; i++)
+            for (byte i = 1; i <= Server.MaxPlayers; i++)
             {
                 if (Server.clients[i].player != null && i != fromClient)
                 {
@@ -187,6 +210,30 @@ namespace MultiplayerServer
                         Log("Same Scene, Spawning Players First Pass");
                         ServerSend.SpawnPlayer(fromClient, Server.clients[i].player);
                         ServerSend.SpawnPlayer(Server.clients[i].player.id, Server.clients[fromClient].player);
+                        Player iPlayer = Server.clients[i].player;
+                        Player fromPlayer = Server.clients[fromClient].player;
+                        ServerSend.SpawnPlayer(fromClient, iPlayer);
+                        ServerSend.SpawnPlayer(i, fromPlayer);
+                        // CustomKnight integration
+                        Log("Requesting Textures");
+                        ServerSend.RequestTextures(
+                            i,
+                            iPlayer.knightHash,
+                            iPlayer.sprintHash,
+                            iPlayer.unnHash,
+                            iPlayer.voidHash,
+                            iPlayer.vsHash,
+                            iPlayer.wraithsHash
+                        );
+                        ServerSend.RequestTextures(
+                            fromClient, 
+                            fromPlayer.knightHash,
+                            fromPlayer.sprintHash,
+                            fromPlayer.unnHash,
+                            fromPlayer.voidHash,
+                            fromPlayer.vsHash,
+                            fromPlayer.wraithsHash
+                        );
                     }
                 }
             }

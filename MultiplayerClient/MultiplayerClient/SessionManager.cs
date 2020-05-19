@@ -16,6 +16,10 @@ namespace MultiplayerClient
 
         public Dictionary<int, PlayerManager> Players = new Dictionary<int, PlayerManager>();
 
+        public Dictionary<byte, Dictionary<string, Texture2D>> PlayerTextures = new Dictionary<byte, Dictionary<string, Texture2D>>();
+
+        public byte MaxPlayers = 50;
+        
         public GameObject playerPrefab;
 
         private void Awake()
@@ -31,6 +35,29 @@ namespace MultiplayerClient
             }
         }
 
+        private void Start()
+        {
+            Dictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>
+            {
+                { "Baldur", null },
+                { "Fluke", null },
+                { "Grimm", null },
+                { "Hatchling", null },
+                { "Knight", null },
+                { "Shield", null },
+                { "Sprint", null },
+                { "Unn", null },
+                { "Void", null },
+                { "VS", null },
+                { "Weaver", null },
+                { "Wraiths", null },
+            };    
+            for (int client = 1; client <= MaxPlayers; client++)
+            {
+                PlayerTextures.Add((byte) client, textureDict);
+            }
+        }
+        
         /// <summary>Spawns a player.</summary>
         /// <param name="id">The player's ID.</param>
         /// <param name="username">The player's username.</param>
@@ -90,6 +117,15 @@ namespace MultiplayerClient
                 playerManager.SetAttr("equippedCharm_" + charmNum, charmsData[charmNum - 1]);
             }
 
+            if (PlayerTextures[id]["Knight"] != null)
+            {
+                Log("Setting Knight Tex on Spawned Player");
+                var materialPropertyBlock = new MaterialPropertyBlock();
+                player.GetComponent<MeshRenderer>().GetPropertyBlock(materialPropertyBlock);
+                materialPropertyBlock.SetTexture("_MainTex", PlayerTextures[id]["Knight"]);
+                player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock);
+            }
+            
             Players.Add(id, playerManager);
         }
 

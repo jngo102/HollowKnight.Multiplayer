@@ -319,6 +319,7 @@ namespace MultiplayerClient
                 { (int) ServerPackets.VSTexture, ClientHandle.VSTexture },
                 { (int) ServerPackets.WeaverTexture, ClientHandle.WeaverTexture },
                 { (int) ServerPackets.WraithsTexture, ClientHandle.WraithsTexture },
+                { (int) ServerPackets.RequestTextures, ClientHandle.RequestTextures },
                 { (int) ServerPackets.DestroyPlayer, ClientHandle.DestroyPlayer },
                 { (int) ServerPackets.PvPEnabled, ClientHandle.PvPEnabled },
                 { (int) ServerPackets.PlayerPosition, ClientHandle.PlayerPosition },
