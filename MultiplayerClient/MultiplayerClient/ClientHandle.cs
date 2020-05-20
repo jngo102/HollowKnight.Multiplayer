@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using ModCommon;
 using ModCommon.Util;
 using UnityEngine;
@@ -46,169 +47,90 @@ namespace MultiplayerClient
         }
 
         #region CustomKnight Integration
+
+        private static void HandleTexture(Packet packet, string texName)
+        {
+            byte client = packet.ReadByte();
+            short order = packet.ReadShort();
+            byte[] texBytes = packet.ReadBytes(16378);
+
+            if (SessionManager.Instance.Players.ContainsKey(client))
+            {
+                SessionManager.Instance.Players[client].TexBytes[texName].Add(order, texBytes);
+            }
+        }
         
+        public static void FinishedSendingTexBytes(Packet packet)
+        {
+            byte client = packet.ReadByte();
+            string texName = packet.ReadString();
+            bool finishedSending = packet.ReadBool();
+            
+            if (finishedSending)
+            {
+                SessionManager.Instance.CompileByteFragments(client, texName);
+            }
+        }
+
         public static void BaldurTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasBaldur";
-
-            SessionManager.Instance.PlayerTextures[client]["Baldur"] = tex;
+            HandleTexture(packet, "Baldur");
         }
-        
+
         public static void FlukeTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasFluke";
-            
-            SessionManager.Instance.PlayerTextures[client]["Fluke"] = tex;
+            HandleTexture(packet, "Fluke");
         }
-        
+
         public static void GrimmTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasGrimm";
-            
-            SessionManager.Instance.PlayerTextures[client]["Grimm"] = tex;
+            HandleTexture(packet, "Grimm");
         }
-        
+
         public static void HatchlingTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasHatchling";
-            
-            SessionManager.Instance.PlayerTextures[client]["Hatchling"] = tex;
+            HandleTexture(packet, "Hatchling");
         }
+        
         
         public static void KnightTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasKnight";
-            
-            PlayerManager playerManager = SessionManager.Instance.Players[client];
-            GameObject player = playerManager.gameObject;
-
-            var materialPropertyBlock = new MaterialPropertyBlock();
-            player.GetComponent<MeshRenderer>().GetPropertyBlock(materialPropertyBlock);
-            materialPropertyBlock.SetTexture("_MainTex", tex);
-            player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock);
-
-            SessionManager.Instance.PlayerTextures[client]["Knight"] = tex;
+            HandleTexture(packet, "Knight");
         }
-        
+
         public static void ShieldTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasShield";
-            
-            SessionManager.Instance.PlayerTextures[client]["Shield"] = tex;
+            HandleTexture(packet, "Shield");
         }
         
         public static void SprintTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasSprint";
-            
-            SessionManager.Instance.PlayerTextures[client]["Sprint"] = tex;
+            HandleTexture(packet, "Sprint");
         }
         
         public static void UnnTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasUnn";
-            
-            SessionManager.Instance.PlayerTextures[client]["Unn"] = tex;
+            HandleTexture(packet, "Unn");
         }
         
         public static void VoidTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasVoid";
-            
-            SessionManager.Instance.PlayerTextures[client]["Void"] = tex;
+            HandleTexture(packet, "Void");
         }
 
         public static void VSTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasVS";
-            
-            SessionManager.Instance.PlayerTextures[client]["VS"] = tex;
+            HandleTexture(packet, "VS");
         }
         
         public static void WeaverTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasWeaver";
-            
-            SessionManager.Instance.PlayerTextures[client]["Weaver"] = tex;
+            HandleTexture(packet, "Weaver");
         }
         
         public static void WraithsTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-
-            Texture2D tex = new Texture2D(1, 1);
-            tex.LoadImage(texBytes);
-            tex.name = "atlasWraiths";
-            
-            SessionManager.Instance.PlayerTextures[client]["Wraiths"] = tex;
+            HandleTexture(packet, "Wraiths");
         }
         
         public static void RequestTextures(Packet packet)
@@ -263,13 +185,7 @@ namespace MultiplayerClient
                     }
                 }
             }
-            
-            Log("Received Knight Tex Hash: " + receivedKnightTexHash);
-            Log("Knight Tex Hash: " + knightTexHash);
-            
-            Log("Received Void Tex Hash: " + receivedVoidTexHash);
-            Log("Void Tex Hash: " + voidTexHash);
-            
+
             if (knightTexHash != receivedKnightTexHash)
             {
                 Log("Sending updated Knight Texture");

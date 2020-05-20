@@ -123,14 +123,56 @@ namespace MultiplayerClient
                 var materialPropertyBlock = new MaterialPropertyBlock();
                 player.GetComponent<MeshRenderer>().GetPropertyBlock(materialPropertyBlock);
                 materialPropertyBlock.SetTexture("_MainTex", PlayerTextures[id]["Knight"]);
-                player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock);
+                player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock); ;
             }
             
             Players.Add(id, playerManager);
             
             GC.Collect();
+            
+            Log("Done Spawning Player " + id);
         }
 
+        public void CompileByteFragments(byte client, string texName)
+        {
+            Log("Compiling Texture for client: " + client);
+            Log("Texture Name: " + texName);
+            PlayerManager playerManager = Players[client];
+            GameObject player = playerManager.gameObject;
+            Dictionary<short, byte[]> dict = playerManager.TexBytes[texName];
+            Log("Creating texBytes");
+            int length = 16378;
+            byte[] texBytes = new byte[length * dict.Count];
+            Log("Loop");
+            for (short i = 0; i < dict.Count; i++)
+            {
+                Array.Copy(dict[i], 0, texBytes, i * length, length);
+            }
+            
+            Log("Loading tex");
+            PlayerTextures[client][texName] = new Texture2D(1, 1);
+            PlayerTextures[client][texName].LoadImage(texBytes);
+
+            if (texName == "Knight")
+            {
+                Log("Changing Knight Tex");
+                var materialPropertyBlock = new MaterialPropertyBlock();
+                var mRend = player.GetComponent<MeshRenderer>();
+                mRend.GetPropertyBlock(materialPropertyBlock);
+                materialPropertyBlock.SetTexture("_MainTex", PlayerTextures[client][texName]);
+                mRend.SetPropertyBlock(materialPropertyBlock);
+                materialPropertyBlock.Clear();
+            }
+
+            playerManager.TexBytes[texName] = new Dictionary<short, byte[]>();
+            
+            texBytes = null;
+
+            GC.Collect();
+            
+            //File.WriteAllBytes(Path.Combine(Application.streamingAssetsPath, texName + ".png"), texBytes);
+        }
+        
         public void EnablePvP(bool enable)
         {
             Instance.PvPEnabled = enable;
@@ -158,6 +200,6 @@ namespace MultiplayerClient
             }
         }
 
-        private static void Log(object message) => Modding.Logger.Log("[Game Manager] " + message);
+        private static void Log(object message) => Modding.Logger.Log("[Session Manager] " + message);
     }
 }

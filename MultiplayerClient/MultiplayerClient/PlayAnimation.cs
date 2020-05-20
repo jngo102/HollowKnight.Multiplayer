@@ -1016,18 +1016,24 @@ namespace MultiplayerClient
 
                     break;
                 case string slug when animation.StartsWith("Slug"):
-                    mRend = player.GetComponent<MeshRenderer>();
-                    mRend.GetPropertyBlock(materialPropertyBlock);
-                    materialPropertyBlock.SetTexture("_MainTex", unnTex);
-                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    if (unnTex != null)
+                    {
+                        mRend = player.GetComponent<MeshRenderer>();
+                        mRend.GetPropertyBlock(materialPropertyBlock);
+                        materialPropertyBlock.SetTexture("_MainTex", unnTex);
+                        mRend.SetPropertyBlock(materialPropertyBlock);
+                    }
 
                     break;
                 case "Sprint":
                 case string dg when animation.StartsWith("DG"):
-                    mRend = player.GetComponent<MeshRenderer>();
-                    mRend.GetPropertyBlock(materialPropertyBlock);
-                    materialPropertyBlock.SetTexture("_MainTex", sprintTex);
-                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    if (sprintTex != null)
+                    {
+                        mRend = player.GetComponent<MeshRenderer>();
+                        mRend.GetPropertyBlock(materialPropertyBlock);
+                        materialPropertyBlock.SetTexture("_MainTex", sprintTex);
+                        mRend.SetPropertyBlock(materialPropertyBlock);
+                    }
 
                     break;
                 default:
@@ -1046,10 +1052,13 @@ namespace MultiplayerClient
                         Destroy(childTransform.gameObject);
                     }
 
-                    mRend = player.GetComponent<MeshRenderer>();
-                    mRend.GetPropertyBlock(materialPropertyBlock);
-                    materialPropertyBlock.SetTexture("_MainTex", knightTex);
-                    mRend.SetPropertyBlock(materialPropertyBlock);
+                    if (knightTex != null)
+                    {
+                        mRend = player.GetComponent<MeshRenderer>();
+                        mRend.GetPropertyBlock(materialPropertyBlock);
+                        materialPropertyBlock.SetTexture("_MainTex", knightTex);
+                        mRend.SetPropertyBlock(materialPropertyBlock);
+                    }
 
                     GC.Collect();
                     

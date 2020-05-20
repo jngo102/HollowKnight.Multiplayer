@@ -104,159 +104,28 @@ namespace MultiplayerServer
         }
 
         #region CustomKnight Integration
-        
-        public static void BaldurTexture(byte fromClient, byte[] texBytes)
+
+        public static void SendTexture(byte fromClient, short order, byte[] texBytes, int serverPacketId)
         {
-            using (Packet packet = new Packet((byte) ServerPackets.BaldurTexture))
+            using (Packet packet = new Packet(serverPacketId))
             {
                 packet.Write(fromClient);
-                packet.Write(texBytes.Length);
+                packet.Write(order);
                 packet.Write(texBytes);
 
-                Log("Sending Tex from Server to Clients except " + fromClient);
                 SendTCPDataToAll(fromClient, packet);
             }
         }
         
-        public static void FlukeTexture(byte fromClient, byte[] texBytes)
+        public static void FinishedSendingTexBytes(byte fromClient, string texName, bool finishedSending)
         {
-            using (Packet packet = new Packet((byte) ServerPackets.FlukeTexture))
+            using (Packet packet = new Packet((byte) ServerPackets.FinishedSendingTexBytes))
             {
                 packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
+                packet.Write(texName);
+                packet.Write(finishedSending);
 
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void GrimmTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.GrimmTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void HatchlingTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.HatchlingTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void KnightTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.KnightTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void ShieldTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.ShieldTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void SprintTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.SprintTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void UnnTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.UnnTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void VoidTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.VoidTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void VSTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.VSTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void WeaverTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.WeaverTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void WraithsTexture(byte fromClient, byte[] texBytes)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.WraithsTexture))
-            {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                Log("Sending Tex from Server to Clients except " + fromClient);
+                Log("Sending Finished From Server to Clients except " + fromClient);
                 SendTCPDataToAll(fromClient, packet);
             }
         }

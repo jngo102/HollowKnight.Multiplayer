@@ -37,89 +37,82 @@ namespace MultiplayerServer
         }
 
         #region CustomKnight Integration
+
+        private static void HandleTexture(byte fromClient, Packet packet, int serverPacketId)
+        {
+            short order = packet.ReadShort();
+            byte[] texBytes = packet.ReadBytes(16378);
+            
+            ServerSend.SendTexture(fromClient, order, texBytes, serverPacketId);
+        }
+        
+        public static void FinishedSendingTexBytes(byte fromClient, Packet packet)
+        {
+            string texName = packet.ReadString();
+            bool finishedSending = packet.ReadBool();
+            Log("Received Finished Sending Bool: " + finishedSending);
+
+            ServerSend.FinishedSendingTexBytes(fromClient, texName, finishedSending);
+        }
         
         public static void BaldurTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.BaldurTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.BaldurTexture);
         }
         
         public static void FlukeTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.FlukeTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.FlukeTexture);
         }
         
         public static void GrimmTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.GrimmTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.GrimmTexture);
         }
         
         public static void HatchlingTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.HatchlingTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.HatchlingTexture);
         }
 
         public static void KnightTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.KnightTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.KnightTexture);
         }
 
         public static void ShieldTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.ShieldTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.ShieldTexture);
         }
         
         public static void SprintTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.SprintTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.SprintTexture);
         }
         
         public static void UnnTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.UnnTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.UnnTexture);
         }
         
         public static void VoidTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.VoidTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.VoidTexture);
         }
         
         public static void VSTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.VSTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.VSTexture);
         }
         
         public static void WeaverTexture(byte fromClient, Packet packet)
-        {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.WeaverTexture(fromClient, texBytes);
+        { 
+            HandleTexture(fromClient, packet, (int) ServerPackets.WeaverTexture);
         }
         
         public static void WraithsTexture(byte fromClient, Packet packet)
         {
-            int byteLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(byteLength);
-            ServerSend.WraithsTexture(fromClient, texBytes);
+            HandleTexture(fromClient, packet, (int) ServerPackets.WraithsTexture);
         }
         
         #endregion CustomKnight Integration
