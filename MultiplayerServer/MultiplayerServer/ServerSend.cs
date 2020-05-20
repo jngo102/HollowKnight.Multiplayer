@@ -131,23 +131,35 @@ namespace MultiplayerServer
         }
         
         public static void RequestTextures(
-            byte toClient, 
-            int knightTexHash, 
-            int sprintTexHash,
-            int unnTexHash,
-            int voidTexHash,
-            int vsTexHash,
-            int wraithsTexHash
+            byte toClient,
+            int baldurHash,
+            int flukeHash,
+            int grimmHash,
+            int hatchlingHash,
+            int knightHash,
+            int shieldHash,
+            int sprintHash,
+            int unnHash,
+            int voidHash,
+            int vsHash,
+            int weaverHash,
+            int wraithsHash
         )
         {
             using (Packet packet = new Packet((int) ServerPackets.RequestTextures))
             {
-                packet.Write(knightTexHash);
-                packet.Write(sprintTexHash);
-                packet.Write(unnTexHash);
-                packet.Write(voidTexHash);
-                packet.Write(vsTexHash);
-                packet.Write(wraithsTexHash);
+                packet.Write(baldurHash);
+                packet.Write(flukeHash);
+                packet.Write(grimmHash);
+                packet.Write(hatchlingHash);
+                packet.Write(knightHash);
+                packet.Write(shieldHash);
+                packet.Write(sprintHash);
+                packet.Write(unnHash);
+                packet.Write(voidHash);
+                packet.Write(vsHash);
+                packet.Write(weaverHash);
+                packet.Write(wraithsHash);
                 
                 SendTCPData(toClient, packet);
             }

@@ -161,20 +161,32 @@ namespace MultiplayerServer
                             Log("Requesting Textures");
                             ServerSend.RequestTextures(
                                 i,
+                                iPlayer.baldurHash,
+                                iPlayer.flukeHash,
+                                iPlayer.grimmHash,
+                                iPlayer.hatchlingHash,
                                 iPlayer.knightHash,
+                                iPlayer.shieldHash,
                                 iPlayer.sprintHash,
                                 iPlayer.unnHash,
                                 iPlayer.voidHash,
                                 iPlayer.vsHash,
+                                iPlayer.weaverHash,
                                 iPlayer.wraithsHash
                             );
                             ServerSend.RequestTextures(
                                 fromClient,
+                                fromPlayer.baldurHash,
+                                fromPlayer.flukeHash,
+                                fromPlayer.grimmHash,
+                                fromPlayer.hatchlingHash,
                                 fromPlayer.knightHash,
+                                fromPlayer.shieldHash,
                                 fromPlayer.sprintHash,
                                 fromPlayer.unnHash,
                                 fromPlayer.voidHash,
                                 fromPlayer.vsHash,
+                                fromPlayer.weaverHash,
                                 fromPlayer.wraithsHash
                             );
                         }
@@ -215,20 +227,32 @@ namespace MultiplayerServer
                             Log("Requesting Textures");
                             ServerSend.RequestTextures(
                                 i,
+                                iPlayer.baldurHash,
+                                iPlayer.flukeHash,
+                                iPlayer.grimmHash,
+                                iPlayer.hatchlingHash,
                                 iPlayer.knightHash,
+                                iPlayer.shieldHash,
                                 iPlayer.sprintHash,
                                 iPlayer.unnHash,
                                 iPlayer.voidHash,
                                 iPlayer.vsHash,
+                                iPlayer.weaverHash,
                                 iPlayer.wraithsHash
                             );
                             ServerSend.RequestTextures(
                                 fromClient,
+                                fromPlayer.baldurHash,
+                                fromPlayer.flukeHash,
+                                fromPlayer.grimmHash,
+                                fromPlayer.hatchlingHash,
                                 fromPlayer.knightHash,
+                                fromPlayer.shieldHash,
                                 fromPlayer.sprintHash,
                                 fromPlayer.unnHash,
                                 fromPlayer.voidHash,
                                 fromPlayer.vsHash,
+                                fromPlayer.weaverHash,
                                 fromPlayer.wraithsHash
                             );
                         }

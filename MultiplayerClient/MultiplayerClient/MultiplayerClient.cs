@@ -37,7 +37,7 @@ namespace MultiplayerClient
 
             GUIController.Instance.BuildMenus();
 
-            global::GameManager.instance.gameObject.AddComponent<MPClient>();
+            GameManager.instance.gameObject.AddComponent<MPClient>();
 
             Unload();
             
@@ -129,7 +129,5 @@ namespace MultiplayerClient
             
             SessionManager.Instance.DestroyAllPlayers();
         }
-        
-        private static void Log(object message) => Modding.Logger.Log("[Multiplayer Client] " + message);
     }
 }

@@ -102,6 +102,7 @@ namespace MultiplayerClient
             GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
             GameObject baldur = charmEffects.FindGameObjectInChildren("Blocker Shield").FindGameObjectInChildren("Shell Anim");
             Texture2D tex = baldur.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            tex = tex.DuplicateTexture();
 
             FragmentAndSendTexture(tex, (int) ClientPackets.BaldurTexture, "Baldur");
         }
@@ -112,6 +113,7 @@ namespace MultiplayerClient
             PlayMakerFSM poolFlukes = charmEffects.LocateMyFSM("Pool Flukes");
             GameObject fluke = poolFlukes.GetAction<CreateGameObjectPool>("Pool Normal", 0).prefab.Value;
             Texture2D tex = fluke.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            tex = tex.DuplicateTexture();
             
             FragmentAndSendTexture(tex, (int) ClientPackets.FlukeTexture, "Fluke");
         }
@@ -122,6 +124,7 @@ namespace MultiplayerClient
             PlayMakerFSM spawnGrimmchild = charmEffects.LocateMyFSM("Spawn Grimmchild");
             GameObject grimm = spawnGrimmchild.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
             Texture2D tex = grimm.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            tex = tex.DuplicateTexture();
            
             FragmentAndSendTexture(tex, (int) ClientPackets.GrimmTexture, "Grimm");
         }
@@ -132,14 +135,15 @@ namespace MultiplayerClient
             PlayMakerFSM hatchlingSpawn = charmEffects.LocateMyFSM("Hatchling Spawn");
             GameObject hatchling = hatchlingSpawn.GetAction<SpawnObjectFromGlobalPool>("Hatch", 2).gameObject.Value;
             Texture2D tex = hatchling.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            tex = tex.DuplicateTexture();
             
             FragmentAndSendTexture(tex, (int) ClientPackets.HatchlingTexture, "Hatchling");
         }
         
         public static void KnightTexture()
         {
-            var sprite = HeroController.instance.GetComponent<tk2dSprite>();
-            Texture2D tex = sprite.GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            var anim = HeroController.instance.GetComponent<tk2dSpriteAnimator>();
+            Texture2D tex = anim.GetClipByName("Idle").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
             
             FragmentAndSendTexture(tex, (int) ClientPackets.KnightTexture, "Knight");
         }
@@ -151,6 +155,7 @@ namespace MultiplayerClient
             GameObject orbitShield = spawnOrbitShield.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
             GameObject shield = orbitShield.FindGameObjectInChildren("Shield");
             Texture2D tex = shield.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            tex = tex.DuplicateTexture();
             
             FragmentAndSendTexture(tex, (int) ClientPackets.ShieldTexture, "Shield");
         }
@@ -190,7 +195,6 @@ namespace MultiplayerClient
                 }
             }
             
-            
             FragmentAndSendTexture(tex, (int) ClientPackets.VoidTexture, "Void");
         }
         
@@ -212,30 +216,17 @@ namespace MultiplayerClient
                     }
                 }
             }
-            
-            
+
             FragmentAndSendTexture(tex, (int) ClientPackets.VSTexture, "VS");
         }
         
-        public static void WeaverlingTexture()
+        public static void WeaverTexture()
         {
-            GameObject hc = HeroController.instance.gameObject;
-            Texture2D tex = null;
-            foreach (Transform child in hc.transform)
-            {
-                if (child.name == "Focus Effects")
-                {
-                    foreach (Transform focusChild in child)
-                    {
-                        if (focusChild.name == "Heal Anim")
-                        {
-                            tex = focusChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                            break;
-                        }
-                    }
-                }
-            }
-            
+            GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
+            PlayMakerFSM weaverlingControl = charmEffects.LocateMyFSM("Weaverling Control");
+            GameObject weaver = weaverlingControl.GetAction<SpawnObjectFromGlobalPool>("Spawn", 0).gameObject.Value;
+            Texture2D tex = weaver.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            tex = tex.DuplicateTexture();
             
             FragmentAndSendTexture(tex, (int) ClientPackets.WeaverTexture, "Weaver");
         }

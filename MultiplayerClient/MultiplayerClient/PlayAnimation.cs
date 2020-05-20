@@ -864,7 +864,7 @@ namespace MultiplayerClient
                     GameObject hitR = cycloneSlash.FindGameObjectInChildren("Hit R");
 
                     GameObject cycHitLDamager = Instantiate(new GameObject("Cyclone Hit L"), hitL.transform);
-                    cycHitLDamager.layer = 11;
+                    cycHitLDamager.layer = 22;
                     if (SessionManager.Instance.PvPEnabled)
                     {
                         cycHitLDamager.AddComponent<DamageHero>();
@@ -878,7 +878,7 @@ namespace MultiplayerClient
                     cycHitLDmgPoly.points = hitLPoly.points;
 
                     GameObject cycHitRDamager = Instantiate(new GameObject("Cyclone Hit R"), hitR.transform);
-                    cycHitRDamager.layer = 11;
+                    cycHitRDamager.layer = 22;
                     if (SessionManager.Instance.PvPEnabled)
                     {
                         cycHitRDamager.AddComponent<DamageHero>();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -117,26 +118,29 @@ namespace MultiplayerClient
                 playerManager.SetAttr("equippedCharm_" + charmNum, charmsData[charmNum - 1]);
             }
 
+            Players.Add(id, playerManager);
+            
             if (PlayerTextures[id]["Knight"] != null)
             {
-                Log("Setting Knight Tex on Spawned Player");
+                Log("Knight tex length: " + PlayerTextures[id]["Knight"].EncodeToPNG().Length);
                 var materialPropertyBlock = new MaterialPropertyBlock();
                 player.GetComponent<MeshRenderer>().GetPropertyBlock(materialPropertyBlock);
                 materialPropertyBlock.SetTexture("_MainTex", PlayerTextures[id]["Knight"]);
                 player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock); ;
             }
             
-            Players.Add(id, playerManager);
-            
             GC.Collect();
             
             Log("Done Spawning Player " + id);
         }
 
-        public void CompileByteFragments(byte client, string texName)
+        public IEnumerator CompileByteFragments(byte client, string texName)
         {
             Log("Compiling Texture for client: " + client);
             Log("Texture Name: " + texName);
+
+            yield return new WaitUntil(() => Players[client] != null);
+            
             PlayerManager playerManager = Players[client];
             GameObject player = playerManager.gameObject;
             Dictionary<short, byte[]> dict = playerManager.TexBytes[texName];
