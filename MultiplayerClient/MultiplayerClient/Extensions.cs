@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
@@ -19,7 +21,7 @@ namespace MultiplayerClient
             return copy as T;
         }
 
-        public static string Hash(this Texture2D tex)
+        public static byte[] Hash(this Texture2D tex)
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -29,19 +31,21 @@ namespace MultiplayerClient
             using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
             {
                 byte[] hash = sha1.ComputeHash(texBytes);
-                
-                var stringBuilder = new StringBuilder(hash.Length * 2);
 
-                foreach (byte @byte in hash)
+                // Save texture in cache if not already done
+                if (!MultiplayerClient.textureCache.ContainsKey(hash))
                 {
-                    stringBuilder.Append(@byte.ToString("x2"));
+                    string hashStr = BitConverter.ToString(hash).Replace("-", string.Empty);
+                    string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
+                    string filePath = Path.Combine(cacheDir, hashStr);
+                    File.WriteAllBytes(filePath, texBytes);
+                    MultiplayerClient.textureCache[hash] = filePath;
                 }
 
                 stopwatch.Stop();
-                
                 Modding.Logger.Log("Elapsed Time: " + stopwatch.ElapsedMilliseconds);
-                
-                return stringBuilder.ToString();
+
+                return hash;
             }
         }
         

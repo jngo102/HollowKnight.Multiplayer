@@ -83,6 +83,17 @@ namespace MultiplayerServer
             }
         }
 
+        public static void RequestTexture(byte toClient, byte[] hash)
+        {
+            if (!ServerSettings.CustomKnightIntegration) return;
+
+            using(Packet packet = new Packet((int) ServerPackets.TextureRequest))
+            {
+                packet.Write(hash);
+                SendTCPData(toClient, packet);
+            }
+        }
+
         public static void SpawnPlayer(byte toClient, Player player)
         {
             using (Packet packet = new Packet((int) ServerPackets.SpawnPlayer))
@@ -98,6 +109,11 @@ namespace MultiplayerServer
                 }
                 packet.Write(ServerSettings.PvPEnabled);
 
+                foreach(var hash in player.textureHashes)
+                {
+                    packet.Write(hash);
+                }
+
                 Log($"Spawning Player {player.id} on Client {toClient} with Charms");
                 SendTCPData(toClient, packet);
             }
@@ -105,63 +121,32 @@ namespace MultiplayerServer
 
         #region CustomKnight Integration
 
-        public static void SendTexture(byte fromClient, short order, byte[] texBytes, int serverPacketId)
+        public static void SendTexture(byte fromClient, byte[] hash, byte[] texture)
         {
-            using (Packet packet = new Packet(serverPacketId))
-            {
-                packet.Write(fromClient);
-                packet.Write(order);
-                packet.Write(texBytes);
+            // hash -20, integer -4 = -24
+            int fragment_length = Client.dataBufferSize - 24;
+            int pos = 0;
 
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void FinishedSendingTexBytes(byte fromClient, string texName, bool finishedSending)
-        {
-            using (Packet packet = new Packet((byte) ServerPackets.FinishedSendingTexBytes))
+            for (int remaining = texture.Length; remaining > 0; remaining -= fragment_length)
             {
-                packet.Write(fromClient);
-                packet.Write(texName);
-                packet.Write(finishedSending);
+                if (remaining - fragment_length < 0)
+                {
+                    fragment_length = remaining;
+                }
 
-                Log("Sending Finished From Server to Clients except " + fromClient);
-                SendTCPDataToAll(fromClient, packet);
-            }
-        }
-        
-        public static void RequestTextures(
-            byte toClient,
-            string baldurHash,
-            string flukeHash,
-            string grimmHash,
-            string hatchlingHash,
-            string knightHash,
-            string shieldHash,
-            string sprintHash,
-            string unnHash,
-            string voidHash,
-            string vsHash,
-            string weaverHash,
-            string wraithsHash
-        )
-        {
-            using (Packet packet = new Packet((int) ServerPackets.RequestTextures))
-            {
-                packet.Write(baldurHash);
-                packet.Write(flukeHash);
-                packet.Write(grimmHash);
-                packet.Write(hatchlingHash);
-                packet.Write(knightHash);
-                packet.Write(shieldHash);
-                packet.Write(sprintHash);
-                packet.Write(unnHash);
-                packet.Write(voidHash);
-                packet.Write(vsHash);
-                packet.Write(weaverHash);
-                packet.Write(wraithsHash);
-                
-                SendTCPData(toClient, packet);
+                byte[] fragment = new byte[fragment_length];
+                Array.Copy(texture, pos, fragment, 0, fragment_length);
+                pos += fragment_length;
+
+                using (Packet packet = new Packet((int) ServerPackets.TextureFragment))
+                {
+                    // Since the ordering of TCP packets is guaranteed, we don't have
+                    // to put it in the packet - the client will handle it just fine.
+                    packet.Write(hash);
+                    packet.Write(remaining);
+                    packet.Write(fragment);
+                    SendTCPData(fromClient, packet);
+                }
             }
         }
         

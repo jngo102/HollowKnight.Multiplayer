@@ -6,6 +6,22 @@ using UnityEngine;
 
 namespace MultiplayerClient
 {
+    public enum TextureType
+    {
+        Baldur,
+        Fluke,
+        Grimm,
+        Hatchling,
+        Knight,
+        Shield,
+        Sprint,
+        Unn,
+        Void,
+        VS,
+        Weaver,
+        Wraiths,
+    }
+
     public class PlayerManager : MonoBehaviour
     {
         public static PlayerManager Instance;
@@ -60,33 +76,11 @@ namespace MultiplayerClient
         public int maxHealth;
         public int healthBlue;
 
-        public Dictionary<string, Dictionary<short, byte[]>> TexBytes = new Dictionary<string, Dictionary<short, byte[]>>();
-        
+        public Dictionary<TextureType, Texture2D> textures = new Dictionary<TextureType, Texture2D>();
+
         private void Awake()
         {
             Instance = this;
-
-            List<string> texNames = new List<string>
-            {
-                "Baldur",
-                "Fluke",
-                "Grimm",
-                "Hatchling",
-                "Knight",
-                "Shield",
-                "Sprint",
-                "Unn",
-                "Void",
-                "VS",
-                "Weaver",
-                "Wraiths",
-            };
-
-            foreach (string texName in texNames)
-            {
-                TexBytes[texName] = new Dictionary<short, byte[]>();
-            }
-            
         }
         
         private void Log(object message) => Modding.Logger.Log("[Player Manager] " + message);

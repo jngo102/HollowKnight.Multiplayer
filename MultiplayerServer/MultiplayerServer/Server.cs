@@ -5,11 +5,28 @@ using System.Net.Sockets;
 
 namespace MultiplayerServer
 {
+    public enum TextureType
+    {
+        Baldur,
+        Fluke,
+        Grimm,
+        Hatchling,
+        Knight,
+        Shield,
+        Sprint,
+        Unn,
+        Void,
+        VS,
+        Weaver,
+        Wraiths,
+    }
+
     public class Server
     {
         public static int MaxPlayers { get; private set; }
         public static int Port { get; private set; }
         public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
+        public static List<byte[]> textureHashes = new List<byte[]>();
         public delegate void PacketHandler(byte fromClient, Packet packet);
 
         public static Dictionary<int, PacketHandler> PacketHandlers;
@@ -121,20 +138,8 @@ namespace MultiplayerServer
             PacketHandlers = new Dictionary<int, PacketHandler>
             {
                 { (int) ClientPackets.WelcomeReceived, ServerHandle.WelcomeReceived },
-                { (int) ClientPackets.BaldurTexture, ServerHandle.BaldurTexture },
-                { (int) ClientPackets.FlukeTexture, ServerHandle.FlukeTexture },
-                { (int) ClientPackets.GrimmTexture, ServerHandle.GrimmTexture },
-                { (int) ClientPackets.HatchlingTexture, ServerHandle.HatchlingTexture },
-                { (int) ClientPackets.KnightTexture, ServerHandle.KnightTexture },
-                { (int) ClientPackets.ShieldTexture, ServerHandle.ShieldTexture },
-                { (int) ClientPackets.SprintTexture, ServerHandle.SprintTexture },
-                { (int) ClientPackets.UnnTexture, ServerHandle.UnnTexture },
-                { (int) ClientPackets.VoidTexture, ServerHandle.VoidTexture },
-                { (int) ClientPackets.VSTexture, ServerHandle.VSTexture },
-                { (int) ClientPackets.WeaverTexture, ServerHandle.WeaverTexture },
-                { (int) ClientPackets.WraithsTexture, ServerHandle.WraithsTexture },
-                { (int) ClientPackets.FinishedSendingTexBytes, ServerHandle.FinishedSendingTexBytes },
-                { (int) ClientPackets.ServerHash, ServerHandle.ServerHash },
+                { (int) ClientPackets.TextureFragment, ServerHandle.HandleTextureFragment },
+                { (int) ClientPackets.TextureRequest, ServerHandle.HandleTextureRequest },
                 { (int) ClientPackets.PlayerPosition, ServerHandle.PlayerPosition },
                 { (int) ClientPackets.PlayerScale, ServerHandle.PlayerScale },
                 { (int) ClientPackets.PlayerAnimation, ServerHandle.PlayerAnimation },

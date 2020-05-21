@@ -62,18 +62,7 @@ namespace MultiplayerServer
         public int maxHealth;
         public int healthBlue;
 
-        public string baldurHash;
-        public string flukeHash;
-        public string grimmHash;
-        public string hatchlingHash;
-        public string knightHash;
-        public string shieldHash;
-        public string sprintHash;
-        public string unnHash;
-        public string voidHash;
-        public string vsHash;
-        public string weaverHash;
-        public string wraithsHash;
+        public List<byte[]> textureHashes;
         
         public void Initialize(byte id, string username, string animation, int health, int maxHealth, int healthBlue)
         {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Policy;
 using HutongGames.PlayMaker.Actions;
 using ModCommon;
 using ModCommon.Util;
@@ -28,7 +30,7 @@ namespace MultiplayerClient
         #region Packets
 
         /// <summary>Lets the server know that the welcome message was received.</summary>
-        public static void WelcomeReceived()
+        public static void WelcomeReceived(List<byte[]> textureHashes)
         {
             using (Packet packet = new Packet((int) ClientPackets.WelcomeReceived))
             {
@@ -48,7 +50,12 @@ namespace MultiplayerClient
                 {
                     packet.Write(PlayerData.instance.GetAttr<PlayerData, bool>("equippedCharm_" + charmNum));
                 }
-                
+
+                foreach (var hash in textureHashes)
+                {
+                    packet.Write(hash);
+                }
+
                 Log("Welcome Received Packet Length: " + packet.Length());
 
                 SendTCPData(packet);
@@ -57,212 +64,34 @@ namespace MultiplayerClient
 
         #region CustomKnight Integration
 
-        private static void FragmentAndSendTexture(Texture2D tex, int clientPacketId, string texName)
+        public static void SendTexture(byte[] hash, byte[] texture)
         {
-            byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
-            int length = 16378;
-            byte[] fragment = new byte[length];
-            short order = 0;
-            for (int i = 0; i < texBytes.Length; i += length)
+            // hash -20, integer -4 = -24
+            int fragment_length = Client.dataBufferSize - 24;
+            int pos = 0;
+
+            for(int remaining = texture.Length; remaining > 0; remaining -= fragment_length)
             {
-                if (texBytes.Length - i < length)
+                if(remaining - fragment_length < 0)
                 {
-                    length = texBytes.Length - i;
+                    fragment_length = remaining;
                 }
-                
-                Array.Copy(texBytes, i, fragment, 0,  length);
-                using (Packet packet = new Packet(clientPacketId))
+
+                byte[] fragment = new byte[fragment_length];
+                Array.Copy(texture, pos, fragment, 0, fragment_length);
+                pos += fragment_length;
+
+                using (Packet packet = new Packet((int) ClientPackets.TextureFragment))
                 {
-                    packet.Write(order);
+                    // Since the ordering of TCP packets is guaranteed, we don't have
+                    // to put it in the packet - the server will handle it just fine.
+                    packet.Write(hash);
+                    packet.Write(remaining);
                     packet.Write(fragment);
-
-                    order++;
-
                     SendTCPData(packet);
                 }
             }
-            
-            Log("Sending Finish Sending Texture Bytes");
-            FinishedSendingTexBytes(texName);
         }
-        
-        private static void FinishedSendingTexBytes(string texName, bool finishedSending = true)
-        {
-            using (Packet packet = new Packet((int) ClientPackets.FinishedSendingTexBytes))
-            {
-                packet.Write(texName);
-                packet.Write(finishedSending);
-
-                SendTCPData(packet);
-            }
-        }
-        
-        public static void BaldurTexture()
-        {
-            GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
-            GameObject baldur = charmEffects.FindGameObjectInChildren("Blocker Shield").FindGameObjectInChildren("Shell Anim");
-            Texture2D tex = baldur.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            tex = tex.DuplicateTexture();
-
-            FragmentAndSendTexture(tex, (int) ClientPackets.BaldurTexture, "Baldur");
-        }
-        
-        public static void FlukeTexture()
-        {
-            GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
-            PlayMakerFSM poolFlukes = charmEffects.LocateMyFSM("Pool Flukes");
-            GameObject fluke = poolFlukes.GetAction<CreateGameObjectPool>("Pool Normal", 0).prefab.Value;
-            Texture2D tex = fluke.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            tex = tex.DuplicateTexture();
-            
-            FragmentAndSendTexture(tex, (int) ClientPackets.FlukeTexture, "Fluke");
-        }
-        
-        public static void GrimmTexture()
-        {
-            GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
-            PlayMakerFSM spawnGrimmchild = charmEffects.LocateMyFSM("Spawn Grimmchild");
-            GameObject grimm = spawnGrimmchild.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
-            Texture2D tex = grimm.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            tex = tex.DuplicateTexture();
-           
-            FragmentAndSendTexture(tex, (int) ClientPackets.GrimmTexture, "Grimm");
-        }
-        
-        public static void HatchlingTexture()
-        {
-            GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
-            PlayMakerFSM hatchlingSpawn = charmEffects.LocateMyFSM("Hatchling Spawn");
-            GameObject hatchling = hatchlingSpawn.GetAction<SpawnObjectFromGlobalPool>("Hatch", 2).gameObject.Value;
-            Texture2D tex = hatchling.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            tex = tex.DuplicateTexture();
-            
-            FragmentAndSendTexture(tex, (int) ClientPackets.HatchlingTexture, "Hatchling");
-        }
-        
-        public static void KnightTexture()
-        {
-            var anim = HeroController.instance.GetComponent<tk2dSpriteAnimator>();
-            Texture2D tex = anim.GetClipByName("Idle").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
-            
-            FragmentAndSendTexture(tex, (int) ClientPackets.KnightTexture, "Knight");
-        }
-
-        public static void ShieldTexture()
-        {
-            GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
-            PlayMakerFSM spawnOrbitShield = charmEffects.LocateMyFSM("Spawn Orbit Shield");
-            GameObject orbitShield = spawnOrbitShield.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
-            GameObject shield = orbitShield.FindGameObjectInChildren("Shield");
-            Texture2D tex = shield.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            tex = tex.DuplicateTexture();
-            
-            FragmentAndSendTexture(tex, (int) ClientPackets.ShieldTexture, "Shield");
-        }
-        
-        public static void SprintTexture()
-        {
-            var anim = HeroController.instance.GetComponent<tk2dSpriteAnimator>();
-            Texture2D tex = anim.GetClipByName("Sprint").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
-            
-            FragmentAndSendTexture(tex, (int) ClientPackets.SprintTexture, "Sprint");
-        }
-        
-        public static void UnnTexture()
-        {
-            var anim = HeroController.instance.GetComponent<tk2dSpriteAnimator>();
-            Texture2D tex = anim.GetClipByName("Slug Up").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
-            tex = tex.DuplicateTexture();
-            
-            FragmentAndSendTexture(tex, (int) ClientPackets.UnnTexture, "Unn");
-        }
-        
-        public static void VoidTexture()
-        {
-            GameObject hc = HeroController.instance.gameObject;
-            Texture2D tex = null;
-            foreach (Transform child in hc.transform)
-            {
-                if (child.name == "Spells")
-                {
-                    foreach (Transform spellsChild in child)
-                    {
-                        if (spellsChild.name == "Scr Heads 2")
-                        {
-                            tex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                        }
-                    }
-                }
-            }
-            
-            FragmentAndSendTexture(tex, (int) ClientPackets.VoidTexture, "Void");
-        }
-        
-        public static void VSTexture()
-        {
-            GameObject hc = HeroController.instance.gameObject;
-            Texture2D tex = null;
-            foreach (Transform child in hc.transform)
-            {
-                if (child.name == "Focus Effects")
-                {
-                    foreach (Transform focusChild in child)
-                    {
-                        if (focusChild.name == "Heal Anim")
-                        {
-                            tex = focusChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            FragmentAndSendTexture(tex, (int) ClientPackets.VSTexture, "VS");
-        }
-        
-        public static void WeaverTexture()
-        {
-            GameObject charmEffects = HeroController.instance.gameObject.FindGameObjectInChildren("Charm Effects");
-            PlayMakerFSM weaverlingControl = charmEffects.LocateMyFSM("Weaverling Control");
-            GameObject weaver = weaverlingControl.GetAction<SpawnObjectFromGlobalPool>("Spawn", 0).gameObject.Value;
-            Texture2D tex = weaver.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            tex = tex.DuplicateTexture();
-            
-            FragmentAndSendTexture(tex, (int) ClientPackets.WeaverTexture, "Weaver");
-        }
-
-        public static void WraithsTexture()
-        {
-            GameObject hc = HeroController.instance.gameObject;
-            Texture2D tex = null;
-            foreach (Transform child in hc.transform)
-            {
-                if (child.name == "Spells")
-                {
-                    foreach (Transform spellsChild in child)
-                    {
-                        if (spellsChild.name == "Scr Heads")
-                        {
-                            tex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                        }
-                    }
-                }
-            }
-            
-            
-            FragmentAndSendTexture(tex, (int) ClientPackets.WraithsTexture, "Wraiths");
-        }
-
-        public static void ServerHash(string texName, string hash)
-        {
-            using (Packet packet = new Packet((int) ClientPackets.ServerHash))
-            {
-                packet.Write(texName);
-                packet.Write(hash);
-
-                SendTCPData(packet);
-            }
-    }
         
         #endregion CustomKnight Integration
         

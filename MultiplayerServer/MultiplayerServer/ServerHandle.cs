@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Security.Cryptography;
 using ModCommon.Util;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -25,7 +27,16 @@ namespace MultiplayerServer
             {
                 charmsData.Add(packet.ReadBool());
             }
-            
+
+            for (int i = 0; i < Enum.GetNames(typeof(TextureType)).Length; i++)
+            {
+                byte[] hash = packet.ReadBytes(20);
+                if (!Server.textureHashes.Contains(hash))
+                {
+                    ServerSend.RequestTexture(fromClient, hash);
+                }
+            }
+
             Server.clients[fromClient].SendIntoGame(username, position, scale, currentClip, health, maxHealth, healthBlue, charmsData);
             SceneChanged(fromClient, activeScene);
 
@@ -36,137 +47,67 @@ namespace MultiplayerServer
             }
         }
 
-        #region CustomKnight Integration
+        public static void HandleTextureFragment(byte fromClient, Packet packet)
+        {
+            if (!ServerSettings.CustomKnightIntegration) return;
 
-        private static void HandleTexture(byte fromClient, Packet packet, int serverPacketId)
-        {
-            short order = packet.ReadShort();
-            byte[] texBytes = packet.ReadBytes(16378);
-            
-            ServerSend.SendTexture(fromClient, order, texBytes, serverPacketId);
-        }
-        
-        public static void FinishedSendingTexBytes(byte fromClient, Packet packet)
-        {
-            string texName = packet.ReadString();
-            bool finishedSending = packet.ReadBool();
-            Log("Received Finished Sending Bool: " + finishedSending);
+            // hash -20, integer -4 = -24
+            int fragment_length = Client.dataBufferSize - 24;
 
-            ServerSend.FinishedSendingTexBytes(fromClient, texName, finishedSending);
-        }
-        
-        public static void BaldurTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.BaldurTexture);
-        }
-        
-        public static void FlukeTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.FlukeTexture);
-        }
-        
-        public static void GrimmTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.GrimmTexture);
-        }
-        
-        public static void HatchlingTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.HatchlingTexture);
-        }
+            byte[] hash = packet.ReadBytes(20);
+            int remaining = packet.ReadInt();
+            if (remaining < fragment_length) fragment_length = remaining;
 
-        public static void KnightTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.KnightTexture);
-        }
-
-        public static void ShieldTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.ShieldTexture);
-        }
-        
-        public static void SprintTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.SprintTexture);
-        }
-        
-        public static void UnnTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.UnnTexture);
-        }
-        
-        public static void VoidTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.VoidTexture);
-        }
-        
-        public static void VSTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.VSTexture);
-        }
-        
-        public static void WeaverTexture(byte fromClient, Packet packet)
-        { 
-            HandleTexture(fromClient, packet, (int) ServerPackets.WeaverTexture);
-        }
-        
-        public static void WraithsTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.WraithsTexture);
-        }
-
-        public static void ServerHash(byte fromClient, Packet packet)
-        {
-            string texName = packet.ReadString();
-            string hash = packet.ReadString();
-
-            Player player = Server.clients[fromClient].player;
-            
-            switch (texName)
+            var client = Server.clients[fromClient];
+            byte[] fragment = packet.ReadBytes(fragment_length);
+            if (client.textureFragments.ContainsKey(hash))
             {
-                case "Baldur":
-                    player.baldurHash = hash;
-                    break;
-                case "Fluke":
-                    player.flukeHash = hash;
-                    break;
-                case "Grimm":
-                    player.grimmHash = hash;
-                    break;
-                case "Hatchling":
-                    player.hatchlingHash = hash;
-                    break;
-                case "Knight":
-                    player.knightHash = hash;
-                    break;
-                case "Shield":
-                    player.shieldHash = hash;
-                    break;
-                case "Sprint":
-                    player.sprintHash = hash;
-                    break;
-                case "Unn":
-                    player.unnHash = hash;
-                    break;
-                case "Void":
-                    player.voidHash = hash;
-                    break;
-                case "VS":
-                    player.vsHash = hash;
-                    break;
-                case "Weaver":
-                    player.weaverHash = hash;
-                    break;
-                case "Wraiths":
-                    player.wraithsHash = hash;
-                    break;
-                default:
-                    Log("Invalid texture name!");
-                    break;
+                int cur_tex_len = client.textureFragments[hash].Length;
+                byte[] new_tex = new byte[cur_tex_len + fragment_length];
+                Buffer.BlockCopy(client.textureFragments[hash], 0, new_tex, 0, cur_tex_len);
+                Buffer.BlockCopy(fragment, 0, new_tex, cur_tex_len, fragment_length);
+                client.textureFragments[hash] = new_tex;
+            }
+            else
+            {
+                client.textureFragments[hash] = fragment;
+            }
+
+            // Check hash is valid and save
+            if (remaining - fragment_length == 0)
+            {
+                using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
+                {
+                    byte[] computed_hash = sha1.ComputeHash(client.textureFragments[hash]);
+                    if (hash == computed_hash)
+                    {
+                        string hashStr = BitConverter.ToString(hash).Replace("-", string.Empty);
+                        string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
+                        string filePath = Path.Combine(cacheDir, hashStr);
+                        File.WriteAllBytes(filePath, client.textureFragments[hash]);
+                        client.textureFragments.Remove(hash);
+                        MultiplayerServer.textureCache[hash] = filePath;
+                    }
+                    else
+                    {
+                        Log("Player " + fromClient + "'s texture does not match SHA-1.");
+                    }
+                }
             }
         }
-        
-        #endregion CustomKnight Integration
+
+        public static void HandleTextureRequest(byte fromClient, Packet packet)
+        {
+            if (!ServerSettings.CustomKnightIntegration) return;
+
+            byte[] hash = packet.ReadBytes(20);
+
+            if (MultiplayerServer.textureCache.ContainsKey(hash))
+            {
+                byte[] texture = File.ReadAllBytes(MultiplayerServer.textureCache[hash]);
+                ServerSend.SendTexture(fromClient, hash, texture);
+            }
+        }
         
         public static void PlayerPosition(byte fromClient, Packet packet)
         {
@@ -206,41 +147,6 @@ namespace MultiplayerServer
                         Player fromPlayer = Server.clients[fromClient].player;
                         ServerSend.SpawnPlayer(fromClient, iPlayer);
                         ServerSend.SpawnPlayer(i, fromPlayer);
-                        // CustomKnight integration
-                        if (ServerSettings.CustomKnightIntegration)
-                        {
-                            Log("Requesting Textures");
-                            ServerSend.RequestTextures(
-                                i,
-                                iPlayer.baldurHash,
-                                iPlayer.flukeHash,
-                                iPlayer.grimmHash,
-                                iPlayer.hatchlingHash,
-                                iPlayer.knightHash,
-                                iPlayer.shieldHash,
-                                iPlayer.sprintHash,
-                                iPlayer.unnHash,
-                                iPlayer.voidHash,
-                                iPlayer.vsHash,
-                                iPlayer.weaverHash,
-                                iPlayer.wraithsHash
-                            );
-                            ServerSend.RequestTextures(
-                                fromClient,
-                                fromPlayer.baldurHash,
-                                fromPlayer.flukeHash,
-                                fromPlayer.grimmHash,
-                                fromPlayer.hatchlingHash,
-                                fromPlayer.knightHash,
-                                fromPlayer.shieldHash,
-                                fromPlayer.sprintHash,
-                                fromPlayer.unnHash,
-                                fromPlayer.voidHash,
-                                fromPlayer.vsHash,
-                                fromPlayer.weaverHash,
-                                fromPlayer.wraithsHash
-                            );
-                        }
                     }
                     else
                     {
@@ -272,41 +178,6 @@ namespace MultiplayerServer
                         Player fromPlayer = Server.clients[fromClient].player;
                         ServerSend.SpawnPlayer(fromClient, iPlayer);
                         ServerSend.SpawnPlayer(i, fromPlayer);
-                        // CustomKnight integration
-                        if (ServerSettings.CustomKnightIntegration)
-                        {
-                            Log("Requesting Textures");
-                            ServerSend.RequestTextures(
-                                i,
-                                iPlayer.baldurHash,
-                                iPlayer.flukeHash,
-                                iPlayer.grimmHash,
-                                iPlayer.hatchlingHash,
-                                iPlayer.knightHash,
-                                iPlayer.shieldHash,
-                                iPlayer.sprintHash,
-                                iPlayer.unnHash,
-                                iPlayer.voidHash,
-                                iPlayer.vsHash,
-                                iPlayer.weaverHash,
-                                iPlayer.wraithsHash
-                            );
-                            ServerSend.RequestTextures(
-                                fromClient,
-                                fromPlayer.baldurHash,
-                                fromPlayer.flukeHash,
-                                fromPlayer.grimmHash,
-                                fromPlayer.hatchlingHash,
-                                fromPlayer.knightHash,
-                                fromPlayer.shieldHash,
-                                fromPlayer.sprintHash,
-                                fromPlayer.unnHash,
-                                fromPlayer.voidHash,
-                                fromPlayer.vsHash,
-                                fromPlayer.weaverHash,
-                                fromPlayer.wraithsHash
-                            );
-                        }
                     }
                 }
             }

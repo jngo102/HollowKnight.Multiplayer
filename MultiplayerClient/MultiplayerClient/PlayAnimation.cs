@@ -19,19 +19,18 @@ namespace MultiplayerClient
             var materialPropertyBlock = new MaterialPropertyBlock();
             MeshRenderer mRend;
 
-            Dictionary<string, Texture2D> texDict = SessionManager.Instance.PlayerTextures[id];
-            Texture2D baldurTex = texDict["Baldur"];
-            Texture2D flukeTex = texDict["Fluke"];
-            Texture2D grimmTex = texDict["Grimm"];
-            Texture2D hatchlingTex = texDict["Hatchling"];
-            Texture2D knightTex = texDict["Knight"];
-            Texture2D shieldTex = texDict["Shield"];
-            Texture2D sprintTex = texDict["Sprint"];
-            Texture2D unnTex = texDict["Unn"];
-            Texture2D voidTex = texDict["Void"];
-            Texture2D vsTex = texDict["VS"];
-            Texture2D weaverTex = texDict["Weaver"];
-            Texture2D wraithsTex = texDict["Wraiths"];
+            Texture2D baldurTex = playerManager.textures[TextureType.Baldur];
+            Texture2D flukeTex = playerManager.textures[TextureType.Fluke];
+            Texture2D grimmTex = playerManager.textures[TextureType.Grimm];
+            Texture2D hatchlingTex = playerManager.textures[TextureType.Hatchling];
+            Texture2D knightTex = playerManager.textures[TextureType.Knight];
+            Texture2D shieldTex = playerManager.textures[TextureType.Shield];
+            Texture2D sprintTex = playerManager.textures[TextureType.Sprint];
+            Texture2D unnTex = playerManager.textures[TextureType.Unn];
+            Texture2D voidTex = playerManager.textures[TextureType.Void];
+            Texture2D vsTex = playerManager.textures[TextureType.VS];
+            Texture2D weaverTex = playerManager.textures[TextureType.Weaver];
+            Texture2D wraithsTex = playerManager.textures[TextureType.Wraiths];
             
             GameObject playerAttacks = player.FindGameObjectInChildren("Attacks");
             GameObject playerEffects = player.FindGameObjectInChildren("Effects");

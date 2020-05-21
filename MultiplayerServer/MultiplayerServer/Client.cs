@@ -16,6 +16,7 @@ namespace MultiplayerServer
         public Player player;
         public TCP tcp;
         public UDP udp;
+        public Dictionary<byte[], byte[]> textureFragments;
 
         public Client(byte clientID)
         {

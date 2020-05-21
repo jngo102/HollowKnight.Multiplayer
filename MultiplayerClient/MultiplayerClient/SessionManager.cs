@@ -17,8 +17,6 @@ namespace MultiplayerClient
 
         public Dictionary<int, PlayerManager> Players = new Dictionary<int, PlayerManager>();
 
-        public Dictionary<byte, Dictionary<string, Texture2D>> PlayerTextures = new Dictionary<byte, Dictionary<string, Texture2D>>();
-
         public byte MaxPlayers = 50;
         
         public GameObject playerPrefab;
@@ -33,29 +31,6 @@ namespace MultiplayerClient
             {
                 Log("Instance already exists, destroying object.");
                 Destroy(this);
-            }
-        }
-
-        private void Start()
-        {
-            Dictionary<string, Texture2D> textureDict = new Dictionary<string, Texture2D>
-            {
-                { "Baldur", null },
-                { "Fluke", null },
-                { "Grimm", null },
-                { "Hatchling", null },
-                { "Knight", null },
-                { "Shield", null },
-                { "Sprint", null },
-                { "Unn", null },
-                { "Void", null },
-                { "VS", null },
-                { "Weaver", null },
-                { "Wraiths", null },
-            };    
-            for (int client = 1; client <= MaxPlayers; client++)
-            {
-                PlayerTextures.Add((byte) client, textureDict);
             }
         }
         
@@ -120,53 +95,44 @@ namespace MultiplayerClient
 
             Players.Add(id, playerManager);
             
-            if (PlayerTextures[id]["Knight"] != null)
+            if(playerManager.textures.ContainsKey(TextureType.Knight))
             {
-                Log("Knight tex length: " + PlayerTextures[id]["Knight"].EncodeToPNG().Length);
+                Log("Knight tex length: " + playerManager.textures[TextureType.Knight].EncodeToPNG().Length);
                 var materialPropertyBlock = new MaterialPropertyBlock();
                 player.GetComponent<MeshRenderer>().GetPropertyBlock(materialPropertyBlock);
-                materialPropertyBlock.SetTexture("_MainTex", PlayerTextures[id]["Knight"]);
+                materialPropertyBlock.SetTexture("_MainTex", playerManager.textures[TextureType.Knight]);
                 player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock); ;
             }
 
             Log("Done Spawning Player " + id);
         }
 
-        public IEnumerator CompileByteFragments(byte client, string texName)
+        public IEnumerator CompileByteFragments(byte client, byte[] texBytes, TextureType texType)
         {
             Log("Compiling Texture for client: " + client);
-            Log("Texture Name: " + texName);
+            Log("Texture Name: " + texType.ToString());
 
             yield return new WaitUntil(() => Players[client] != null);
             
             PlayerManager playerManager = Players[client];
             GameObject player = playerManager.gameObject;
-            Dictionary<short, byte[]> dict = playerManager.TexBytes[texName];
-            Log("Creating texBytes");
-            int length = 16378;
-            byte[] texBytes = new byte[length * dict.Count];
-            Log("Loop");
-            for (short i = 0; i < dict.Count; i++)
-            {
-                Array.Copy(dict[i], 0, texBytes, i * length, length);
-            }
             
             Log("Loading tex");
-            PlayerTextures[client][texName] = new Texture2D(1, 1);
-            PlayerTextures[client][texName].LoadImage(texBytes);
+            playerManager.textures[texType] = new Texture2D(1, 1);
+            playerManager.textures[texType].LoadImage(texBytes);
 
-            if (texName == "Knight")
+            if (texType == TextureType.Knight)
             {
                 Log("Changing Knight Tex");
                 var materialPropertyBlock = new MaterialPropertyBlock();
                 var mRend = player.GetComponent<MeshRenderer>();
                 mRend.GetPropertyBlock(materialPropertyBlock);
-                materialPropertyBlock.SetTexture("_MainTex", PlayerTextures[client][texName]);
+                materialPropertyBlock.SetTexture("_MainTex", playerManager.textures[texType]);
                 mRend.SetPropertyBlock(materialPropertyBlock);
                 materialPropertyBlock.Clear();
             }
 
-            playerManager.TexBytes[texName] = new Dictionary<short, byte[]>();
+            GC.Collect();
 
             //File.WriteAllBytes(Path.Combine(Application.streamingAssetsPath, texName + ".png"), texBytes);
         }
@@ -184,9 +150,16 @@ namespace MultiplayerClient
 
         public void DestroyPlayer(int playerId)
         {
-            Log("Destroying Player " + playerId);
-            Destroy(Players[playerId].gameObject);
-            Players.Remove(playerId);
+            if(Players.ContainsKey(playerId))
+            {
+                Log("Destroying Player " + playerId);
+                Destroy(Players[playerId].gameObject);
+                Players.Remove(playerId);
+            }
+            else
+            {
+                Log("Was asked to destroy player " + playerId + " even though we don't have it. Ignoring.");
+            }
         }
 
         public void DestroyAllPlayers()
