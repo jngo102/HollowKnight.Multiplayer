@@ -51,6 +51,7 @@ namespace MultiplayerServer
         WeaverTexture,
         WraithsTexture,
         FinishedSendingTexBytes,
+        ServerHash,
         PlayerPosition,
         PlayerScale,
         PlayerAnimation,

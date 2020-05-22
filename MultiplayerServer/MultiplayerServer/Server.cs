@@ -134,6 +134,7 @@ namespace MultiplayerServer
                 { (int) ClientPackets.WeaverTexture, ServerHandle.WeaverTexture },
                 { (int) ClientPackets.WraithsTexture, ServerHandle.WraithsTexture },
                 { (int) ClientPackets.FinishedSendingTexBytes, ServerHandle.FinishedSendingTexBytes },
+                { (int) ClientPackets.ServerHash, ServerHandle.ServerHash },
                 { (int) ClientPackets.PlayerPosition, ServerHandle.PlayerPosition },
                 { (int) ClientPackets.PlayerScale, ServerHandle.PlayerScale },
                 { (int) ClientPackets.PlayerAnimation, ServerHandle.PlayerAnimation },

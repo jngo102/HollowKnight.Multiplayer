@@ -656,6 +656,8 @@ namespace MultiplayerClient
                     GameObject qFlashStart = Instantiate(heroSpells.FindGameObjectInChildren("Q Flash Start"), playerSpells.transform);
                     GameObject sdSharpFlash = Instantiate(heroEffects.FindGameObjectInChildren("SD Sharp Flash"), playerEffects.transform);
                     qTrail2 = Instantiate(heroSpells.FindGameObjectInChildren("Q Trail 2"), playerSpells.transform);
+                    qTrail2.name = "Q Trail 2 " + id;
+
 
                     qFlashStart.SetActive(true);
                     sdSharpFlash.SetActive(true);
@@ -681,21 +683,15 @@ namespace MultiplayerClient
 
                     Destroy(qFlashStart, 1);
                     Destroy(sdSharpFlash, 1);
-                    if (qCharge != null)
-                    {
-                        Destroy(qCharge);
-                    }
-                    
+                    Destroy(GameObject.Find("Q Charge " + id));
+
                     break;
                 case "Quake Land 2":
                     AudioClip q2LandClip = (AudioClip) _spellControl.GetAction<AudioPlay>("Q2 Land", 1).oneShotClip.Value;
                     audioPlayer = audioPlayerObj.Spawn(player.transform);
                     audioPlayer.GetComponent<AudioSource>().PlayOneShot(q2LandClip);
-                    
-                    if (qTrail2 != null)
-                    {
-                        Destroy(qTrail2);
-                    }
+
+                    GameObject.Find("Q Trail 2 " + id);
                     
                     GameObject qSlamObj = heroSpells.FindGameObjectInChildren("Q Slam 2");
                     GameObject quakeSlam = Instantiate(qSlamObj, playerSpells.transform);

@@ -51,6 +51,7 @@ namespace MultiplayerClient
         WeaverTexture,
         WraithsTexture,
         FinishedSendingTexBytes,
+        ServerHash,
         PlayerPosition,
         PlayerScale,
         PlayerAnimation,
@@ -59,7 +60,7 @@ namespace MultiplayerClient
         CharmsUpdated,
         PlayerDisconnected,
     }
-
+    
     public class Packet : IDisposable
     {
         private List<byte> buffer;

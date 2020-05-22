@@ -114,6 +114,7 @@
     <Exec Command="@echo on" />
     <Exec Command="echo Copying mod" />
     <Exec Command="copy &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Hollow Knight\hollow_knight_Data\Managed\Mods\&quot;" />
+    <Exec Command="copy &quot;$(TargetPath)&quot; &quot;C:\Users\Jason\OneDrive\Documents\&quot;" />
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -4,11 +4,14 @@
     <list default="true" id="02be8a13-bf6a-4497-a8dc-655f3cdc1254" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientHandle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientHandle.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientSend.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientSend.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/PlayAnimation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/PlayAnimation.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Extensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Packet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Packet.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/SessionManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/SessionManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MultiplayerServer/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MultiplayerServer/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MultiplayerServer/Packet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Packet.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MultiplayerServer/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Player.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MultiplayerServer/Server.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Server.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" afterDir="false" />
     </list>
@@ -22,6 +25,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Extensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/BD415012-12DE-46CB-994F-F5FEA298D08A/20/cb023079/AudioPlayerOneShot.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MPClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientHandle.cs" root0="SKIP_HIGHLIGHTING" />
@@ -84,9 +88,9 @@
         <option value="$PROJECT_DIR$/MultiplayerServer/Client.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Packet.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Server.cs" />
-        <option value="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" />
-        <option value="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Player.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" />
       </list>
     </option>
   </component>

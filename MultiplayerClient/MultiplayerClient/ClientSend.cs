@@ -59,7 +59,7 @@ namespace MultiplayerClient
 
         private static void FragmentAndSendTexture(Texture2D tex, int clientPacketId, string texName)
         {
-            byte[] texBytes = tex.EncodeToPNG();
+            byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
             int length = 16378;
             byte[] fragment = new byte[length];
             short order = 0;
@@ -252,6 +252,17 @@ namespace MultiplayerClient
             
             FragmentAndSendTexture(tex, (int) ClientPackets.WraithsTexture, "Wraiths");
         }
+
+        public static void ServerHash(string texName, string hash)
+        {
+            using (Packet packet = new Packet((int) ClientPackets.ServerHash))
+            {
+                packet.Write(texName);
+                packet.Write(hash);
+
+                SendTCPData(packet);
+            }
+    }
         
         #endregion CustomKnight Integration
         

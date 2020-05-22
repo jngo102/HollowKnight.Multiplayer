@@ -62,95 +62,18 @@ namespace MultiplayerServer
         public int maxHealth;
         public int healthBlue;
 
-        public int baldurHash;
-        public int flukeHash;
-        public int grimmHash;
-        public int hatchlingHash;
-        public int knightHash;
-        public int shieldHash;
-        public int sprintHash;
-        public int unnHash;
-        public int voidHash;
-        public int vsHash;
-        public int weaverHash;
-        public int wraithsHash;
-
-        private IEnumerator Start()
-        {
-            yield return new WaitUntil(() => HeroController.instance != null);
-            
-            GameObject hc = HeroController.instance.gameObject;
-            GameObject charmEffects = hc.FindGameObjectInChildren("Charm Effects");
-            
-            GameObject baldur = charmEffects.FindGameObjectInChildren("Blocker Shield").FindGameObjectInChildren("Shell Anim");
-            Texture2D baldurTex = baldur.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            baldurHash = baldurTex.GetHashCode();
-
-            PlayMakerFSM poolFlukes = charmEffects.LocateMyFSM("Pool Flukes");
-            GameObject fluke = poolFlukes.GetAction<CreateGameObjectPool>("Pool Normal", 0).prefab.Value;
-            Texture2D flukeTex = fluke.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            flukeHash = flukeTex.GetHashCode();
-            
-            PlayMakerFSM spawnGrimmchild = charmEffects.LocateMyFSM("Spawn Grimmchild");
-            GameObject grimm = spawnGrimmchild.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
-            Texture2D grimmTex = grimm.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            grimmHash = grimmTex.GetHashCode();
-            
-            PlayMakerFSM hatchlingSpawn = charmEffects.LocateMyFSM("Hatchling Spawn");
-            GameObject hatchling = hatchlingSpawn.GetAction<SpawnObjectFromGlobalPool>("Hatch", 2).gameObject.Value;
-            Texture2D hatchlingTex = hatchling.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            hatchlingHash = hatchlingTex.GetHashCode();
-
-            PlayMakerFSM spawnOrbitShield = charmEffects.LocateMyFSM("Spawn Orbit Shield");
-            GameObject orbitShield = spawnOrbitShield.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
-            GameObject shield = orbitShield.FindGameObjectInChildren("Shield");
-            Texture2D shieldTex = shield.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            shieldHash = shieldTex.GetHashCode();
-            
-            PlayMakerFSM weaverlingControl = charmEffects.LocateMyFSM("Weaverling Control");
-            GameObject weaver = weaverlingControl.GetAction<SpawnObjectFromGlobalPool>("Spawn", 0).gameObject.Value;
-            Texture2D weaverTex = weaver.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            weaverHash = weaverTex.GetHashCode();
-            
-            var anim = hc.GetComponent<tk2dSpriteAnimator>();
-            Texture2D knightTex = anim.GetClipByName("Idle").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
-            Texture2D sprintTex = anim.GetClipByName("Sprint").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
-            Texture2D unnTex = anim.GetClipByName("Slug Up").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
-            knightHash = knightTex.GetHashCode();
-            sprintHash = sprintTex.GetHashCode();
-            unnHash = unnTex.GetHashCode();
-            foreach (Transform child in hc.transform)
-            {
-                if (child.name == "Spells")
-                {
-                    foreach (Transform spellsChild in child)
-                    {
-                        if (spellsChild.name == "Scr Heads")
-                        {
-                            Texture2D wraithsTex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                            wraithsHash = wraithsTex.GetHashCode();
-                        }
-                        else if (spellsChild.name == "Scr Heads 2")
-                        {
-                            Texture2D voidTex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                            voidHash = voidTex.GetHashCode();
-                        }
-                    }
-                }
-                else if (child.name == "Focus Effects")
-                {
-                    foreach (Transform focusChild in child)
-                    {
-                        if (focusChild.name == "Heal Anim")
-                        {
-                            Texture2D vsTex = focusChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                            vsHash = vsTex.GetHashCode();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        public string baldurHash;
+        public string flukeHash;
+        public string grimmHash;
+        public string hatchlingHash;
+        public string knightHash;
+        public string shieldHash;
+        public string sprintHash;
+        public string unnHash;
+        public string voidHash;
+        public string vsHash;
+        public string weaverHash;
+        public string wraithsHash;
         
         public void Initialize(byte id, string username, string animation, int health, int maxHealth, int healthBlue)
         {

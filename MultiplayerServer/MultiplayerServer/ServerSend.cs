@@ -132,18 +132,18 @@ namespace MultiplayerServer
         
         public static void RequestTextures(
             byte toClient,
-            int baldurHash,
-            int flukeHash,
-            int grimmHash,
-            int hatchlingHash,
-            int knightHash,
-            int shieldHash,
-            int sprintHash,
-            int unnHash,
-            int voidHash,
-            int vsHash,
-            int weaverHash,
-            int wraithsHash
+            string baldurHash,
+            string flukeHash,
+            string grimmHash,
+            string hatchlingHash,
+            string knightHash,
+            string shieldHash,
+            string sprintHash,
+            string unnHash,
+            string voidHash,
+            string vsHash,
+            string weaverHash,
+            string wraithsHash
         )
         {
             using (Packet packet = new Packet((int) ServerPackets.RequestTextures))

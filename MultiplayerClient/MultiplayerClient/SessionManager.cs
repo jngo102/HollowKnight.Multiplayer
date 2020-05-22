@@ -128,9 +128,7 @@ namespace MultiplayerClient
                 materialPropertyBlock.SetTexture("_MainTex", PlayerTextures[id]["Knight"]);
                 player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock); ;
             }
-            
-            GC.Collect();
-            
+
             Log("Done Spawning Player " + id);
         }
 
@@ -169,11 +167,7 @@ namespace MultiplayerClient
             }
 
             playerManager.TexBytes[texName] = new Dictionary<short, byte[]>();
-            
-            texBytes = null;
 
-            GC.Collect();
-            
             //File.WriteAllBytes(Path.Combine(Application.streamingAssetsPath, texName + ".png"), texBytes);
         }
         

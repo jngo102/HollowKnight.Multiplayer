@@ -114,6 +114,57 @@ namespace MultiplayerServer
         {
             HandleTexture(fromClient, packet, (int) ServerPackets.WraithsTexture);
         }
+
+        public static void ServerHash(byte fromClient, Packet packet)
+        {
+            string texName = packet.ReadString();
+            string hash = packet.ReadString();
+
+            Player player = Server.clients[fromClient].player;
+            
+            switch (texName)
+            {
+                case "Baldur":
+                    player.baldurHash = hash;
+                    break;
+                case "Fluke":
+                    player.flukeHash = hash;
+                    break;
+                case "Grimm":
+                    player.grimmHash = hash;
+                    break;
+                case "Hatchling":
+                    player.hatchlingHash = hash;
+                    break;
+                case "Knight":
+                    player.knightHash = hash;
+                    break;
+                case "Shield":
+                    player.shieldHash = hash;
+                    break;
+                case "Sprint":
+                    player.sprintHash = hash;
+                    break;
+                case "Unn":
+                    player.unnHash = hash;
+                    break;
+                case "Void":
+                    player.voidHash = hash;
+                    break;
+                case "VS":
+                    player.vsHash = hash;
+                    break;
+                case "Weaver":
+                    player.weaverHash = hash;
+                    break;
+                case "Wraiths":
+                    player.wraithsHash = hash;
+                    break;
+                default:
+                    Log("Invalid texture name!");
+                    break;
+            }
+        }
         
         #endregion CustomKnight Integration
         

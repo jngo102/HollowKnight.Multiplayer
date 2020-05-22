@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
+using UnityEngine;
 
 namespace MultiplayerClient
 {
@@ -14,6 +17,32 @@ namespace MultiplayerClient
                 field.SetValue(copy, field.GetValue(original));
             }
             return copy as T;
+        }
+
+        public static string Hash(this Texture2D tex)
+        {
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+            
+            byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
+            
+            using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
+            {
+                byte[] hash = sha1.ComputeHash(texBytes);
+                
+                var stringBuilder = new StringBuilder(hash.Length * 2);
+
+                foreach (byte @byte in hash)
+                {
+                    stringBuilder.Append(@byte.ToString("x2"));
+                }
+
+                stopwatch.Stop();
+                
+                Modding.Logger.Log("Elapsed Time: " + stopwatch.ElapsedMilliseconds);
+                
+                return stringBuilder.ToString();
+            }
         }
         
         public static Texture2D DuplicateTexture(this Texture2D source)
