@@ -64,12 +64,13 @@ namespace MultiplayerClient
         public static void HandleTextureRequest(Packet packet)
         {
             byte[] hash = packet.ReadBytes(20);
-            Log("Received texture request for hash " + BitConverter.ToString(hash));
 
-            if(MultiplayerClient.textureCache.ContainsKey(hash))
+            Log("Received request for hash " + BitConverter.ToString(hash));
+            if (MultiplayerClient.textureCache.ContainsKey(hash))
             {
                 byte[] texture = File.ReadAllBytes(MultiplayerClient.textureCache[hash]);
-                ClientSend.SendTexture(hash, texture);
+                Log("Sending texture for hash " + BitConverter.ToString(hash));
+                ClientSend.SendTexture(texture);
             }
         }
 

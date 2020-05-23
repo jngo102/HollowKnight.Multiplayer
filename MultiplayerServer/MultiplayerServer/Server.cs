@@ -26,7 +26,6 @@ namespace MultiplayerServer
         public static int MaxPlayers { get; private set; }
         public static int Port { get; private set; }
         public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
-        public static List<byte[]> textureHashes = new List<byte[]>();
         public delegate void PacketHandler(byte fromClient, Packet packet);
 
         public static Dictionary<int, PacketHandler> PacketHandlers;

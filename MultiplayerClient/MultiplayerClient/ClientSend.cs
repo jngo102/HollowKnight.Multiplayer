@@ -64,32 +64,14 @@ namespace MultiplayerClient
 
         #region CustomKnight Integration
 
-        public static void SendTexture(byte[] hash, byte[] texture)
+        public static void SendTexture(byte[] texture)
         {
-            // hash -20, integer -4 = -24
-            int fragment_length = Client.dataBufferSize - 24;
-            int pos = 0;
-
-            for(int remaining = texture.Length; remaining > 0; remaining -= fragment_length)
+            using (Packet packet = new Packet((int) ClientPackets.TextureFragment))
             {
-                if(remaining - fragment_length < 0)
-                {
-                    fragment_length = remaining;
-                }
-
-                byte[] fragment = new byte[fragment_length];
-                Array.Copy(texture, pos, fragment, 0, fragment_length);
-                pos += fragment_length;
-
-                using (Packet packet = new Packet((int) ClientPackets.TextureFragment))
-                {
-                    // Since the ordering of TCP packets is guaranteed, we don't have
-                    // to put it in the packet - the server will handle it just fine.
-                    packet.Write(hash);
-                    packet.Write(remaining);
-                    packet.Write(fragment);
-                    SendTCPData(packet);
-                }
+                // It's really that easy
+                packet.Write(texture.Length);
+                packet.Write(texture);
+                SendTCPData(packet);
             }
         }
         

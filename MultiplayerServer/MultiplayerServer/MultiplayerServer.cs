@@ -20,12 +20,15 @@ namespace MultiplayerServer
         {
             // Initialize texture cache
             // This will allow us to easily send textures to the server when asked to.
+            Log("Listing saved textures :");
             string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
             Directory.CreateDirectory(cacheDir);
             string[] files = Directory.GetFiles(cacheDir);
             foreach (string filePath in files)
             {
                 string filename = Path.GetFileName(filePath);
+                Log(filename);
+
                 byte[] hash = new byte[20];
                 for (int i = 0; i < 40; i += 2)
                 {

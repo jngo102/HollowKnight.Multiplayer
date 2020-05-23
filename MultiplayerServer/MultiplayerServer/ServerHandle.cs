@@ -35,7 +35,7 @@ namespace MultiplayerServer
             for (int i = 0; i < Enum.GetNames(typeof(TextureType)).Length; i++)
             {
                 byte[] hash = packet.ReadBytes(20);
-                if (!Server.textureHashes.Contains(hash))
+                if (!MultiplayerServer.textureCache.ContainsKey(hash))
                 {
                     ServerSend.RequestTexture(fromClient, hash);
                 }
@@ -52,50 +52,26 @@ namespace MultiplayerServer
         {
             if (!ServerSettings.CustomKnightIntegration) return;
 
-            // hash -20, integer -4 = -24
-            int fragment_length = Client.dataBufferSize - 24;
-
-            byte[] hash = packet.ReadBytes(20);
-            if (MultiplayerServer.textureCache.ContainsKey(hash)) return;
-
-            int remaining = packet.ReadInt();
-            if (remaining < fragment_length) fragment_length = remaining;
-
-            var client = Server.clients[fromClient];
-            byte[] fragment = packet.ReadBytes(fragment_length);
-            if (client.textureFragments.ContainsKey(hash))
+            int texture_length = packet.ReadInt();
+            if(texture_length > 20_000_000)
             {
-                int cur_tex_len = client.textureFragments[hash].Length;
-                byte[] new_tex = new byte[cur_tex_len + fragment_length];
-                Buffer.BlockCopy(client.textureFragments[hash], 0, new_tex, 0, cur_tex_len);
-                Buffer.BlockCopy(fragment, 0, new_tex, cur_tex_len, fragment_length);
-                client.textureFragments[hash] = new_tex;
-            }
-            else
-            {
-                client.textureFragments[hash] = fragment;
+                Log("Over 20mb really ? That's going to be a 'no from me'.");
+                return;
             }
 
-            // Check hash is valid and save
-            if (remaining - fragment_length == 0)
+            byte[] texture = packet.ReadBytes(texture_length);
+
+            using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
             {
-                using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
-                {
-                    byte[] computed_hash = sha1.ComputeHash(client.textureFragments[hash]);
-                    if (hash.SequenceEqual(computed_hash))
-                    {
-                        string hashStr = BitConverter.ToString(hash).Replace("-", string.Empty);
-                        string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
-                        string filePath = Path.Combine(cacheDir, hashStr);
-                        File.WriteAllBytes(filePath, client.textureFragments[hash]);
-                        client.textureFragments.Remove(hash);
-                        MultiplayerServer.textureCache[hash] = filePath;
-                    }
-                    else
-                    {
-                        Log("Texture hash " + BitConverter.ToString(computed_hash) + " does not match send hash " + BitConverter.ToString(hash));
-                    }
-                }
+                byte[] computed_hash = sha1.ComputeHash(texture);
+                string hashStr = BitConverter.ToString(computed_hash).Replace("-", string.Empty);
+                string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
+                string filePath = Path.Combine(cacheDir, hashStr);
+
+                if (MultiplayerServer.textureCache.ContainsKey(computed_hash)) return;
+
+                File.WriteAllBytes(filePath, texture);
+                MultiplayerServer.textureCache[computed_hash] = filePath;
             }
         }
 
