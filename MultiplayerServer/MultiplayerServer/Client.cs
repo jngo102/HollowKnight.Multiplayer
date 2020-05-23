@@ -16,7 +16,7 @@ namespace MultiplayerServer
         public Player player;
         public TCP tcp;
         public UDP udp;
-        public Dictionary<byte[], byte[]> textureFragments;
+        public Dictionary<byte[], byte[]> textureFragments = new Dictionary<byte[], byte[]>(new ByteArrayComparer());
 
         public Client(byte clientID)
         {
@@ -130,7 +130,14 @@ namespace MultiplayerServer
                         using (Packet packet = new Packet(packetBytes))
                         {
                             int packetId = packet.ReadInt();
-                            Server.PacketHandlers[packetId](id, packet);
+                            try
+                            {
+                                Server.PacketHandlers[packetId](id, packet);
+                            }
+                            catch(KeyNotFoundException)
+                            {
+                                Log("Packet ID " + id + " not handled. Ignoring.");
+                            }
                         }
                     });
 

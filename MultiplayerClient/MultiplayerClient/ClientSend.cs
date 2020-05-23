@@ -143,7 +143,6 @@ namespace MultiplayerClient
                 packet.Write(currentMaxHealth);
                 packet.Write(currentHealthBlue);
 
-                Log("Sending Health Data to Server");
                 SendTCPData(packet);
             }
         }
@@ -157,8 +156,6 @@ namespace MultiplayerClient
                     packet.Write(pd.GetBool("equippedCharm_" + i));
                 }
 
-                Log("Packet Length: " + packet.Length());
-                Log("Sending CharmsUpdated Packet from Client");
                 SendTCPData(packet);
             }
         }

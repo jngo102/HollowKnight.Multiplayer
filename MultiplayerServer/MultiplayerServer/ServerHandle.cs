@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using ModCommon.Util;
 using UnityEngine;
@@ -28,6 +29,9 @@ namespace MultiplayerServer
                 charmsData.Add(packet.ReadBool());
             }
 
+            Server.clients[fromClient].SendIntoGame(username, position, scale, currentClip, health, maxHealth, healthBlue, charmsData);
+            SceneChanged(fromClient, activeScene);
+
             for (int i = 0; i < Enum.GetNames(typeof(TextureType)).Length; i++)
             {
                 byte[] hash = packet.ReadBytes(20);
@@ -36,9 +40,6 @@ namespace MultiplayerServer
                     ServerSend.RequestTexture(fromClient, hash);
                 }
             }
-
-            Server.clients[fromClient].SendIntoGame(username, position, scale, currentClip, health, maxHealth, healthBlue, charmsData);
-            SceneChanged(fromClient, activeScene);
 
             Log($"{username} connected successfully and is now player {fromClient}.");
             if (fromClient != clientIdCheck)
@@ -55,6 +56,8 @@ namespace MultiplayerServer
             int fragment_length = Client.dataBufferSize - 24;
 
             byte[] hash = packet.ReadBytes(20);
+            if (MultiplayerServer.textureCache.ContainsKey(hash)) return;
+
             int remaining = packet.ReadInt();
             if (remaining < fragment_length) fragment_length = remaining;
 
@@ -79,7 +82,7 @@ namespace MultiplayerServer
                 using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
                 {
                     byte[] computed_hash = sha1.ComputeHash(client.textureFragments[hash]);
-                    if (hash == computed_hash)
+                    if (hash.SequenceEqual(computed_hash))
                     {
                         string hashStr = BitConverter.ToString(hash).Replace("-", string.Empty);
                         string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
@@ -90,7 +93,7 @@ namespace MultiplayerServer
                     }
                     else
                     {
-                        Log("Player " + fromClient + "'s texture does not match SHA-1.");
+                        Log("Texture hash " + BitConverter.ToString(computed_hash) + " does not match send hash " + BitConverter.ToString(hash));
                     }
                 }
             }

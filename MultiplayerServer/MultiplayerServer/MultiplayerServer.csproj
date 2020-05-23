@@ -95,6 +95,7 @@
     <Compile Include="ServerHandle.cs" />
     <Compile Include="ServerSend.cs" />
     <Compile Include="ThreadManager.cs" />
+    <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Images\Checkmark.png" />

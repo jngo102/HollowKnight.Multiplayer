@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using HutongGames.PlayMaker.Actions;
@@ -63,6 +64,7 @@ namespace MultiplayerClient
         public static void HandleTextureRequest(Packet packet)
         {
             byte[] hash = packet.ReadBytes(20);
+            Log("Received texture request for hash " + BitConverter.ToString(hash));
 
             if(MultiplayerClient.textureCache.ContainsKey(hash))
             {

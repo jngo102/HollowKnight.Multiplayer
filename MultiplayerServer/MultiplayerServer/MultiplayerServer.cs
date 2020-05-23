@@ -9,7 +9,7 @@ namespace MultiplayerServer
 {
     public class MultiplayerServer : Mod
     {
-        public static Dictionary<byte[], string> textureCache;
+        public static Dictionary<byte[], string> textureCache = new Dictionary<byte[], string>(new ByteArrayComparer());
 
         public override string GetVersion()
         {
