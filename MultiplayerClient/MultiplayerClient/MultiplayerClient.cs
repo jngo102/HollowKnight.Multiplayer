@@ -13,7 +13,7 @@ namespace MultiplayerClient
         public static readonly Dictionary<string, GameObject> GameObjects = new Dictionary<string, GameObject>();
         internal static GlobalSettings settings;
 
-        public static Dictionary<byte[], string> textureCache;
+        public static Dictionary<byte[], string> textureCache = new Dictionary<byte[], string>();
 
         public override string GetVersion()
         {
