@@ -1,9 +1,9 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
-namespace MultiplayerClient
+namespace MultiplayerServer
 {
     public static class Extensions
     {
@@ -19,24 +19,6 @@ namespace MultiplayerClient
             return copy as T;
         }
 
-        public static string Hash(this Texture2D tex)
-        {
-            byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
-            
-            using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
-            {
-                byte[] hash = sha1.ComputeHash(texBytes);
-                
-                var stringBuilder = new StringBuilder(hash.Length * 2);
-
-                foreach (byte @byte in hash)
-                {
-                    stringBuilder.Append(@byte.ToString("x2"));
-                }
-                return stringBuilder.ToString();
-            }
-        }
-        
         public static string Hash(this byte[] texBytes)
         {
             using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
@@ -49,6 +31,7 @@ namespace MultiplayerClient
                 {
                     stringBuilder.Append(@byte.ToString("x2"));
                 }
+       
                 return stringBuilder.ToString();
             }
         }

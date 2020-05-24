@@ -49,25 +49,11 @@ namespace MultiplayerClient
         private static void HandleTexture(Packet packet, string texName)
         {
             byte client = packet.ReadByte();
-            short order = packet.ReadShort();
-            byte[] texBytes = packet.ReadBytes(16378);
+            int byteLength = packet.ReadInt();
+            byte[] texBytes = packet.ReadBytes(byteLength);
 
-            if (SessionManager.Instance.Players.ContainsKey(client))
-            {
-                SessionManager.Instance.Players[client].TexBytes[texName].Add(order, texBytes);
-            }
-        }
-        
-        public static void FinishedSendingTexBytes(Packet packet)
-        {
-            byte client = packet.ReadByte();
-            string texName = packet.ReadString();
-            bool finishedSending = packet.ReadBool();
-            
-            if (finishedSending)
-            {
-                GameManager.instance.StartCoroutine(SessionManager.Instance.CompileByteFragments(client, texName));
-            }
+            SessionManager.Instance.PlayerTextures[client][texName] = new Texture2D(2, 2);
+            SessionManager.Instance.PlayerTextures[client][texName].LoadImage(texBytes);
         }
 
         public static void BaldurTexture(Packet packet)
@@ -130,10 +116,9 @@ namespace MultiplayerClient
         {
             HandleTexture(packet, "Wraiths");
         }
-        
-        public static void RequestTextures(Packet packet)
+
+        public static void CheckHashes(Packet packet)
         {
-            GameObject hc = HeroController.instance.gameObject;
             string receivedBaldurHash = packet.ReadString();
             string receivedFlukeHash = packet.ReadString();
             string receivedGrimmHash = packet.ReadString();
@@ -146,163 +131,116 @@ namespace MultiplayerClient
             string receivedVSHash = packet.ReadString();
             string receivedWeaverHash = packet.ReadString();
             string receivedWraithsHash = packet.ReadString();
-            
-            GameObject charmEffects = hc.FindGameObjectInChildren("Charm Effects");
-            
-            GameObject baldur = charmEffects.FindGameObjectInChildren("Blocker Shield").FindGameObjectInChildren("Shell Anim");
-            Texture2D baldurTex = baldur.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            string baldurHash = baldurTex.Hash();
 
-            PlayMakerFSM poolFlukes = charmEffects.LocateMyFSM("Pool Flukes");
-            GameObject fluke = poolFlukes.GetAction<CreateGameObjectPool>("Pool Normal", 0).prefab.Value;
-            Texture2D flukeTex = fluke.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            string flukeHash = flukeTex.Hash();
+            Dictionary<string, string> texHashes = Client.Instance.texHashes;
+            Dictionary<string, byte[]> texBytes = Client.Instance.texBytes;
             
-            PlayMakerFSM spawnGrimmchild = charmEffects.LocateMyFSM("Spawn Grimmchild");
-            GameObject grimm = spawnGrimmchild.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
-            Texture2D grimmTex = grimm.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            string grimmHash = grimmTex.Hash();
-            
-            PlayMakerFSM hatchlingSpawn = charmEffects.LocateMyFSM("Hatchling Spawn");
-            GameObject hatchling = hatchlingSpawn.GetAction<SpawnObjectFromGlobalPool>("Hatch", 2).gameObject.Value;
-            Texture2D hatchlingTex = hatchling.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            string hatchlingHash = hatchlingTex.Hash();
-
-            PlayMakerFSM spawnOrbitShield = charmEffects.LocateMyFSM("Spawn Orbit Shield");
-            GameObject orbitShield = spawnOrbitShield.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
-            GameObject shield = orbitShield.FindGameObjectInChildren("Shield");
-            Texture2D shieldTex = shield.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            string shieldHash = shieldTex.Hash();
-            
-            PlayMakerFSM weaverlingControl = charmEffects.LocateMyFSM("Weaverling Control");
-            GameObject weaver = weaverlingControl.GetAction<SpawnObjectFromGlobalPool>("Spawn", 0).gameObject.Value;
-            Texture2D weaverTex = weaver.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-            string weaverHash = weaverTex.Hash();
-            
-            var anim = hc.GetComponent<tk2dSpriteAnimator>();
-            Texture2D knightTex = anim.GetClipByName("Idle").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
-            Texture2D sprintTex = anim.GetClipByName("Sprint").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
-            Texture2D unnTex = anim.GetClipByName("Slug Up").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
-            string knightHash = knightTex.Hash();
-            string sprintHash = sprintTex.Hash();
-            string unnHash = unnTex.Hash();
-            string voidHash = "";
-            string vsHash = "";
-            string wraithsHash = "";
-            foreach (Transform child in hc.transform)
+            if (texHashes["Baldur"] != receivedBaldurHash)
             {
-                if (child.name == "Spells")
-                {
-                    foreach (Transform spellsChild in child)
-                    {
-                        if (spellsChild.name == "Scr Heads")
-                        {
-                            Texture2D wraithsTex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                            wraithsHash = wraithsTex.Hash();
-                        }
-                        else if (spellsChild.name == "Scr Heads 2")
-                        {
-                            Texture2D voidTex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                            voidHash = voidTex.Hash();
-                        }
-                    }
-                }
-                else if (child.name == "Focus Effects")
-                {
-                    foreach (Transform focusChild in child)
-                    {
-                        if (focusChild.name == "Heal Anim")
-                        {
-                            Texture2D vsTex = focusChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-                            vsHash = vsTex.Hash();
-                            break;
-                        }
-                    }
-                }
+                ClientSend.SendTexture(texBytes["Baldur"], (int) ClientPackets.BaldurTexture);
             }
-
-            if (baldurHash != receivedBaldurHash)
+            else
             {
-                Log("Sending updated Baldur Texture");
-                ClientSend.BaldurTexture();
-                ClientSend.ServerHash("Baldur", baldurHash);
+                ClientSend.SendTextureUpToDate((int) ClientPackets.BaldurTextureUpToDate);
             }
             
-            if (flukeHash != receivedFlukeHash)
+            if (texHashes["Fluke"] != receivedFlukeHash)
             {
-                Log("Sending updated Fluke Texture");
-                ClientSend.FlukeTexture();
-                ClientSend.ServerHash("Fluke", flukeHash);
+                ClientSend.SendTexture(texBytes["Fluke"], (int) ClientPackets.FlukeTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.FlukeTextureUpToDate);
             }
             
-            if (grimmHash != receivedGrimmHash)
+            if (texHashes["Grimm"] != receivedGrimmHash)
             {
-                Log("Sending updated Grimm Texture");
-                ClientSend.GrimmTexture();
-                ClientSend.ServerHash("Grimm", grimmHash);
+                ClientSend.SendTexture(texBytes["Grimm"], (int) ClientPackets.GrimmTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.GrimmTextureUpToDate);
             }
             
-            if (hatchlingHash != receivedHatchlingHash)
+            if (texHashes["Hatchling"] != receivedHatchlingHash)
             {
-                Log("Sending updated Hatchling Texture");
-                ClientSend.HatchlingTexture();
-                ClientSend.ServerHash("Hatchling", hatchlingHash);
+                ClientSend.SendTexture(texBytes["Hatchling"], (int) ClientPackets.HatchlingTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.HatchlingTextureUpToDate);
             }
             
-            if (knightHash != receivedKnightHash)
+            if (texHashes["Knight"] != receivedKnightHash)
             {
-                Log("Sending updated Knight Texture");
-                ClientSend.KnightTexture();
-                ClientSend.ServerHash("Knight", knightHash);
+                ClientSend.SendTexture(texBytes["Knight"], (int) ClientPackets.KnightTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.KnightTextureUpToDate);
             }
             
-            if (shieldHash != receivedShieldHash)
+            if (texHashes["Shield"] != receivedShieldHash)
             {
-                Log("Sending updated Shield Texture");
-                ClientSend.ShieldTexture();
-                ClientSend.ServerHash("Shield", shieldHash);
+                ClientSend.SendTexture(texBytes["Shield"], (int) ClientPackets.ShieldTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.ShieldTextureUpToDate);
             }
             
-            if (sprintHash != receivedSprintHash)
+            if (texHashes["Sprint"] != receivedSprintHash)
             {
-                Log("Sending updated Sprint Texture");
-                ClientSend.SprintTexture();
-                ClientSend.ServerHash("Sprint", sprintHash);
+                ClientSend.SendTexture(texBytes["Sprint"], (int) ClientPackets.SprintTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.SprintTextureUpToDate);
             }
             
-            if (unnHash != receivedUnnHash)
+            if (texHashes["Unn"] != receivedUnnHash)
             {
-                Log("Sending updated Unn Texture");
-                ClientSend.UnnTexture();
-                ClientSend.ServerHash("Unn", unnHash);
+                ClientSend.SendTexture(texBytes["Unn"], (int) ClientPackets.UnnTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.UnnTextureUpToDate);
             }
             
-            if (voidHash != receivedVoidHash)
+            if (texHashes["Void"] != receivedVoidHash)
             {
-                Log("Sending updated Void Texture");
-                ClientSend.VoidTexture();
-                ClientSend.ServerHash("Void", voidHash);
+                ClientSend.SendTexture(texBytes["Void"], (int) ClientPackets.VoidTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.VoidTextureUpToDate);
             }
             
-            if (vsHash != receivedVSHash)
+            if (texHashes["VS"] != receivedVSHash)
             {
-                Log("Sending updated VS Texture");
-                ClientSend.VSTexture();
-                ClientSend.ServerHash("VS", vsHash);
+                ClientSend.SendTexture(texBytes["VS"], (int) ClientPackets.VSTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.VSTextureUpToDate);
             }
             
-            if (weaverHash != receivedWeaverHash)
+            if (texHashes["Weaver"] != receivedWeaverHash)
             {
-                Log("Sending updated Weaver Texture");
-                ClientSend.WeaverTexture();
-                ClientSend.ServerHash("Weaver", weaverHash);
+                ClientSend.SendTexture(texBytes["Weaver"], (int) ClientPackets.WeaverTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.WeaverTextureUpToDate);
             }
             
-            if (wraithsHash != receivedWraithsHash)
+            if (texHashes["Wraiths"] != receivedWraithsHash)
             {
-                Log("Sending updated Wraiths Texture");
-                ClientSend.WraithsTexture();
-                ClientSend.ServerHash("Wraiths", wraithsHash);
+                ClientSend.SendTexture(texBytes["Wraiths"], (int) ClientPackets.WraithsTexture);
+            }
+            else
+            {
+                ClientSend.SendTextureUpToDate((int) ClientPackets.WraithsTextureUpToDate);
             }
         }
         

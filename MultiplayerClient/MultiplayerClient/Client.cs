@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using HutongGames.PlayMaker.Actions;
+using ModCommon;
+using ModCommon.Util;
 using UnityEngine;
 
 namespace MultiplayerClient
@@ -9,13 +12,16 @@ namespace MultiplayerClient
     public class Client : MonoBehaviour
     {
         public static Client Instance;
-        public static int dataBufferSize = 16384;
+        public static int dataBufferSize = (int) Mathf.Pow(2, 20);
         
         public byte myId;
         public TCP tcp;
         public UDP udp;
 
         public bool isConnected;
+        
+        public Dictionary<string, string> texHashes = new Dictionary<string, string>();
+        public Dictionary<string, byte[]> texBytes = new Dictionary<string, byte[]>();
         
         private delegate void PacketHandler(Packet packet);
 
@@ -319,8 +325,7 @@ namespace MultiplayerClient
                 { (int) ServerPackets.VSTexture, ClientHandle.VSTexture },
                 { (int) ServerPackets.WeaverTexture, ClientHandle.WeaverTexture },
                 { (int) ServerPackets.WraithsTexture, ClientHandle.WraithsTexture },
-                { (int) ServerPackets.RequestTextures, ClientHandle.RequestTextures },
-                { (int) ServerPackets.FinishedSendingTexBytes, ClientHandle.FinishedSendingTexBytes },
+                { (int) ServerPackets.CheckHashes, ClientHandle.CheckHashes },
                 { (int) ServerPackets.DestroyPlayer, ClientHandle.DestroyPlayer },
                 { (int) ServerPackets.PvPEnabled, ClientHandle.PvPEnabled },
                 { (int) ServerPackets.PlayerPosition, ClientHandle.PlayerPosition },
@@ -330,7 +335,128 @@ namespace MultiplayerClient
                 { (int) ServerPackets.CharmsUpdated, ClientHandle.CharmsUpdated },
                 { (int) ServerPackets.PlayerDisconnected, ClientHandle.PlayerDisconnected },
             };
+            
             Log("Initialized Packets.");
+            
+            GameObject hc = HeroController.instance.gameObject;
+            var anim = hc.GetComponent<tk2dSpriteAnimator>();
+            
+            GameObject charmEffects = hc.FindGameObjectInChildren("Charm Effects");
+            
+            GameObject baldur = charmEffects.FindGameObjectInChildren("Blocker Shield").FindGameObjectInChildren("Shell Anim");
+            Texture2D baldurTex = baldur.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            byte[] baldurBytes = baldurTex.DuplicateTexture().EncodeToPNG();
+            string baldurHash = baldurBytes.Hash();
+            
+            PlayMakerFSM poolFlukes = charmEffects.LocateMyFSM("Pool Flukes");
+            GameObject fluke = poolFlukes.GetAction<CreateGameObjectPool>("Pool Normal", 0).prefab.Value;
+            Texture2D flukeTex = fluke.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            byte[] flukeBytes = flukeTex.DuplicateTexture().EncodeToPNG();
+            string flukeHash = flukeBytes.Hash();
+            
+            PlayMakerFSM spawnGrimmchild = charmEffects.LocateMyFSM("Spawn Grimmchild");
+            GameObject grimm = spawnGrimmchild.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
+            Texture2D grimmTex = grimm.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            byte[] grimmBytes = grimmTex.DuplicateTexture().EncodeToPNG();
+            string grimmHash = grimmBytes.Hash();
+            
+            PlayMakerFSM hatchlingSpawn = charmEffects.LocateMyFSM("Hatchling Spawn");
+            GameObject hatchling = hatchlingSpawn.GetAction<SpawnObjectFromGlobalPool>("Hatch", 2).gameObject.Value;
+            Texture2D hatchlingTex = hatchling.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            byte[] hatchlingBytes = hatchlingTex.DuplicateTexture().EncodeToPNG();
+            string hatchlingHash = hatchlingBytes.Hash();
+            
+            Texture2D knightTex = anim.GetClipByName("Idle").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
+            byte[] knightBytes = knightTex.DuplicateTexture().EncodeToPNG();
+            string knightHash = knightTex.Hash();
+            
+            PlayMakerFSM spawnOrbitShield = charmEffects.LocateMyFSM("Spawn Orbit Shield");
+            GameObject orbitShield = spawnOrbitShield.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
+            GameObject shield = orbitShield.FindGameObjectInChildren("Shield");
+            Texture2D shieldTex = shield.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            byte[] shieldBytes = shieldTex.DuplicateTexture().EncodeToPNG();
+            string shieldHash = shieldBytes.Hash();
+            
+            Texture2D sprintTex = anim.GetClipByName("Sprint").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
+            byte[] sprintBytes = sprintTex.DuplicateTexture().EncodeToPNG();
+            string sprintHash = sprintBytes.Hash();
+            
+            Texture2D unnTex = anim.GetClipByName("Slug Up").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
+            byte[] unnBytes = unnTex.DuplicateTexture().EncodeToPNG();
+            string unnHash = unnBytes.Hash();
+            
+            PlayMakerFSM weaverlingControl = charmEffects.LocateMyFSM("Weaverling Control");
+            GameObject weaver = weaverlingControl.GetAction<SpawnObjectFromGlobalPool>("Spawn", 0).gameObject.Value;
+            Texture2D weaverTex = weaver.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            byte[] weaverBytes = weaverTex.DuplicateTexture().EncodeToPNG();
+            string weaverHash = weaverBytes.Hash();
+
+            string voidHash = null;
+            string vsHash = null;
+            string wraithsHash = null;
+            byte[] voidBytes = null;
+            byte[] vsBytes= null;
+            byte[] wraithsBytes = null;
+            foreach (Transform child in hc.transform)
+            {
+                if (child.name == "Spells")
+                {
+                    foreach (Transform spellsChild in child)
+                    {
+                        if (spellsChild.name == "Scr Heads 2")
+                        {
+                            Texture2D voidTex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                            voidBytes = voidTex.DuplicateTexture().EncodeToPNG();
+                            voidHash = voidBytes.Hash();
+                        }
+                        else if (spellsChild.name == "Scr Heads")
+                        {
+                            Texture2D vsTex = spellsChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                            vsBytes = vsTex.DuplicateTexture().EncodeToPNG();
+                            vsHash = vsBytes.Hash();
+                        }
+                    }
+                }
+                else if (child.name == "Focus Effects")
+                {
+                    foreach (Transform focusChild in child)
+                    {
+                        if (focusChild.name == "Heal Anim")
+                        {
+                            Texture2D wraithsTex = focusChild.gameObject.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                            wraithsBytes = wraithsTex.DuplicateTexture().EncodeToPNG();
+                            wraithsHash = wraithsBytes.Hash();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            texHashes["Baldur"] = baldurHash;
+            texHashes["Fluke"] = flukeHash;
+            texHashes["Grimm"] = grimmHash;
+            texHashes["Hatchling"] = hatchlingHash;
+            texHashes["Knight"] = knightHash;
+            texHashes["Shield"] = shieldHash;
+            texHashes["Sprint"] = sprintHash;
+            texHashes["Unn"] = unnHash;
+            texHashes["Void"] = voidHash;
+            texHashes["VS"] = vsHash;
+            texHashes["Weaver"] = weaverHash;
+            texHashes["Wraiths"] = wraithsHash;
+
+            texBytes["Baldur"] = baldurBytes;
+            texBytes["Fluke"] = flukeBytes;
+            texBytes["Grimm"] = grimmBytes;
+            texBytes["Hatchling"] = hatchlingBytes;
+            texBytes["Knight"] = knightBytes;
+            texBytes["Shield"] = shieldBytes;
+            texBytes["Sprint"] = sprintBytes;
+            texBytes["Unn"] = unnBytes;
+            texBytes["Void"] = voidBytes;
+            texBytes["VS"] = vsBytes;
+            texBytes["Weaver"] = weaverBytes;
+            texBytes["Wraiths"] = wraithsBytes;
         }
 
         /// <summary>Disconnects from the server and stops all network traffic.</summary>
