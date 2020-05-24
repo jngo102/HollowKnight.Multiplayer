@@ -1,11 +1,9 @@
-﻿using System;
 using System.Diagnostics;
-using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
 
-namespace MultiplayerClient
+namespace MultiplayerServer
 {
     public static class Extensions
     {
@@ -21,25 +19,20 @@ namespace MultiplayerClient
             return copy as T;
         }
 
-        public static byte[] Hash(this Texture2D tex)
+        public static string Hash(this byte[] texBytes)
         {
-            byte[] texBytes = tex.DuplicateTexture().EncodeToPNG();
-            
             using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
             {
                 byte[] hash = sha1.ComputeHash(texBytes);
+                
+                var stringBuilder = new StringBuilder(hash.Length * 2);
 
-                // Save texture in cache if not already done
-                if (!MultiplayerClient.textureCache.ContainsKey(hash))
+                foreach (byte @byte in hash)
                 {
-                    string hashStr = BitConverter.ToString(hash).Replace("-", string.Empty);
-                    string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
-                    string filePath = Path.Combine(cacheDir, hashStr);
-                    File.WriteAllBytes(filePath, texBytes);
-                    MultiplayerClient.textureCache[hash] = filePath;
+                    stringBuilder.Append(@byte.ToString("x2"));
                 }
-
-                return hash;
+       
+                return stringBuilder.ToString();
             }
         }
         

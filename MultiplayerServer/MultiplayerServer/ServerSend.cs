@@ -123,30 +123,14 @@ namespace MultiplayerServer
 
         public static void SendTexture(byte fromClient, byte[] hash, byte[] texture)
         {
-            // hash -20, integer -4 = -24
-            int fragment_length = Client.dataBufferSize - 24;
-            int pos = 0;
-
-            for (int remaining = texture.Length; remaining > 0; remaining -= fragment_length)
+            using (Packet packet = new Packet((int) ServerPackets.TextureFragment))
             {
-                if (remaining - fragment_length < 0)
-                {
-                    fragment_length = remaining;
-                }
-
-                byte[] fragment = new byte[fragment_length];
-                Array.Copy(texture, pos, fragment, 0, fragment_length);
-                pos += fragment_length;
-
-                using (Packet packet = new Packet((int) ServerPackets.TextureFragment))
-                {
-                    // Since the ordering of TCP packets is guaranteed, we don't have
-                    // to put it in the packet - the client will handle it just fine.
-                    packet.Write(hash);
-                    packet.Write(remaining);
-                    packet.Write(fragment);
-                    SendTCPData(fromClient, packet);
-                }
+                // Since the ordering of TCP packets is guaranteed, we don't have
+                // to put it in the packet - the client will handle it just fine.
+                packet.Write(hash);
+                packet.Write(texture.Length);
+                packet.Write(texture);
+                SendTCPData(fromClient, packet);
             }
         }
         

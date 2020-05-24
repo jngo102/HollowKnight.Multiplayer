@@ -18,6 +18,7 @@
         </e>
         <e p="Client.cs" t="Include" />
         <e p="Constants.cs" t="Include" />
+        <e p="Extensions.cs" t="Include" />
         <e p="Images" t="Include">
           <e p="Checkmark.png" t="Include" />
           <e p="Panel_BG.png" t="Include" />

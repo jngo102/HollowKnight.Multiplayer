@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using HutongGames.PlayMaker.Actions;
+using ModCommon;
+using ModCommon.Util;
 using UnityEngine;
 
 namespace MultiplayerClient
@@ -9,7 +12,7 @@ namespace MultiplayerClient
     public class Client : MonoBehaviour
     {
         public static Client Instance;
-        public static int dataBufferSize = 16384;
+        public static int dataBufferSize = (int) Mathf.Pow(2, 20);
         
         public byte myId;
         public TCP tcp;
@@ -325,6 +328,7 @@ namespace MultiplayerClient
                 { (int) ServerPackets.CharmsUpdated, ClientHandle.CharmsUpdated },
                 { (int) ServerPackets.PlayerDisconnected, ClientHandle.PlayerDisconnected },
             };
+            
             Log("Initialized Packets.");
         }
 

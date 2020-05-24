@@ -26,16 +26,16 @@ namespace MultiplayerClient
             packet.WriteLength();
             Client.Instance.udp.SendData(packet);
         }
-        
+
         #region Packets
 
         /// <summary>Lets the server know that the welcome message was received.</summary>
         public static void WelcomeReceived(List<byte[]> textureHashes)
         {
-            using (Packet packet = new Packet((int) ClientPackets.WelcomeReceived))
+            using (Packet packet = new Packet((int)ClientPackets.WelcomeReceived))
             {
                 Transform heroTransform = HeroController.instance.gameObject.transform;
-                
+
                 packet.Write(Client.Instance.myId);
                 packet.Write(MultiplayerClient.settings.username);
                 packet.Write(HeroController.instance.GetComponent<tk2dSpriteAnimator>().CurrentClip.name);
@@ -62,7 +62,14 @@ namespace MultiplayerClient
             }
         }
 
-        #region CustomKnight Integration
+        public static void RequestTexture(byte[] hash)
+        {
+            using (Packet packet = new Packet((int)ClientPackets.TextureRequest))
+            {
+                packet.Write(hash);
+                SendTCPData(packet);
+            }
+        }
 
         public static void SendTexture(byte[] texture)
         {
@@ -74,8 +81,6 @@ namespace MultiplayerClient
                 SendTCPData(packet);
             }
         }
-        
-        #endregion CustomKnight Integration
         
         public static void PlayerPosition(Vector3 position)
         {

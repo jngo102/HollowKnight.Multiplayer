@@ -127,22 +127,26 @@ namespace MultiplayerClient.Canvas
 
             _connectionInfo.SetActive(false);
             Panel.SetActive(false, true);
-            
-            On.GameManager.PauseGameToggle += OnGamePause;
+
+            On.HeroController.Pause += OnPause;
+            On.HeroController.UnPause += OnUnPause;
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChange;
         }
 
-        private static IEnumerator OnGamePause(On.GameManager.orig_PauseGameToggle orig, global::GameManager self)
-        { 
-            global::GameManager.instance.StartCoroutine(orig(self));
-
-            bool paused = global::GameManager.instance.IsGamePaused();
-            _connectionInfo.SetActive(paused);
-            Panel.SetActive(paused, !paused);
+        private static void OnPause(On.HeroController.orig_Pause orig, HeroController hc)
+        {
+            Panel.SetActive(true, false);
             
-            yield return null;
+            orig(hc);
         }
-
+        
+        private static void OnUnPause(On.HeroController.orig_UnPause orig, HeroController hc)
+        {
+            Panel.SetActive(false, true);
+            
+            orig(hc);
+        }
+        
         private static void OnSceneChange(Scene prevScene, Scene nextScene)
         {
             if (nextScene.name == "Menu_Title")

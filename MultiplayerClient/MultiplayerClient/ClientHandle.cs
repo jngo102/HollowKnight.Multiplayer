@@ -45,8 +45,16 @@ namespace MultiplayerClient
 
                 bool pvpEnabled = packet.ReadBool();
                 SessionManager.Instance.EnablePvP(pvpEnabled);
-                
                 SessionManager.Instance.SpawnPlayer(id, username, position, scale, animation, charmsData);
+
+                var player = SessionManager.Instance.Players[id];
+                foreach (TextureType tt in Enum.GetValues(typeof(TextureType)))
+                {
+                    var hash = packet.ReadBytes(20);
+                    player.texHashes[hash] = tt;
+                }
+
+                SessionManager.Instance.ReloadPlayerTextures(player);
             }
         }
 
@@ -54,11 +62,26 @@ namespace MultiplayerClient
 
         public static void LoadTexture(Packet packet)
         {
-            byte client = packet.ReadByte();
-            var texType = (TextureType)packet.ReadByte();
+            byte[] hash = packet.ReadBytes(20);
+            if (SessionManager.Instance.loadedTextures.ContainsKey(hash)) return;
+
             int texLen = packet.ReadInt();
             byte[] texBytes = packet.ReadBytes(texLen);
-            GameManager.instance.StartCoroutine(SessionManager.Instance.CompileByteFragments(client, texBytes, texType));
+
+            Texture2D texture = new Texture2D(2, 2);
+            texture.LoadImage(texBytes);
+
+            // Save reference to texture for easy reuse
+            SessionManager.Instance.loadedTextures[hash] = texture;
+
+            foreach (var player in SessionManager.Instance.Players.Values)
+            {
+                if(player.texHashes.ContainsKey(hash))
+                {
+                    TextureType tt = player.texHashes[hash];
+                    player.textures[tt] = texture;
+                }
+            }
         }
 
         public static void HandleTextureRequest(Packet packet)

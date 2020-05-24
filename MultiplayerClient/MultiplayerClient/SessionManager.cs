@@ -17,6 +17,9 @@ namespace MultiplayerClient
 
         public Dictionary<int, PlayerManager> Players = new Dictionary<int, PlayerManager>();
 
+        // Loaded texture list, indexed by their hash. A texture can be shared by multiple players.
+        public Dictionary<byte[], Texture2D> loadedTextures = new Dictionary<byte[], Texture2D>(new ByteArrayComparer());
+
         public byte MaxPlayers = 50;
         
         public GameObject playerPrefab;
@@ -94,47 +97,49 @@ namespace MultiplayerClient
             }
 
             Players.Add(id, playerManager);
-            
-            if(playerManager.textures.ContainsKey(TextureType.Knight))
-            {
-                Log("Knight tex length: " + playerManager.textures[TextureType.Knight].EncodeToPNG().Length);
-                var materialPropertyBlock = new MaterialPropertyBlock();
-                player.GetComponent<MeshRenderer>().GetPropertyBlock(materialPropertyBlock);
-                materialPropertyBlock.SetTexture("_MainTex", playerManager.textures[TextureType.Knight]);
-                player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock); ;
-            }
 
             Log("Done Spawning Player " + id);
         }
 
-        public IEnumerator CompileByteFragments(byte client, byte[] texBytes, TextureType texType)
+        public void ReloadPlayerTextures(PlayerManager player)
         {
-            Log("Compiling Texture for client: " + client);
-            Log("Texture Name: " + texType.ToString());
+            foreach(var row in player.texHashes) {
+                var hash = row.Key;
+                var tt = row.Value;
 
-            yield return new WaitUntil(() => Players[client] != null);
-            
-            PlayerManager playerManager = Players[client];
-            GameObject player = playerManager.gameObject;
-            
-            Log("Loading tex");
-            playerManager.textures[texType] = new Texture2D(1, 1);
-            playerManager.textures[texType].LoadImage(texBytes);
+                if(loadedTextures.ContainsKey(hash))
+                {
+                    // Texture already loaded : ezpz
+                    player.textures[tt] = loadedTextures[hash];
+                }
+                else
+                {
+                    if(MultiplayerClient.textureCache.ContainsKey(hash))
+                    {
+                        // Texture not loaded but on disk : also ezpz
+                        byte[] texBytes = File.ReadAllBytes(MultiplayerClient.textureCache[hash]);
+                        Texture2D texture = new Texture2D(2, 2);
+                        texture.LoadImage(texBytes);
 
-            if (texType == TextureType.Knight)
-            {
-                Log("Changing Knight Tex");
-                var materialPropertyBlock = new MaterialPropertyBlock();
-                var mRend = player.GetComponent<MeshRenderer>();
-                mRend.GetPropertyBlock(materialPropertyBlock);
-                materialPropertyBlock.SetTexture("_MainTex", playerManager.textures[texType]);
-                mRend.SetPropertyBlock(materialPropertyBlock);
-                materialPropertyBlock.Clear();
+                        loadedTextures[hash] = texture;
+                        player.textures[tt] = texture;
+                    }
+                    else
+                    {
+                        // Ask the server for the texture and load it later...
+                        ClientSend.RequestTexture(hash);
+                    }
+                }
             }
 
-            GC.Collect();
-
-            //File.WriteAllBytes(Path.Combine(Application.streamingAssetsPath, texName + ".png"), texBytes);
+            if (player.textures.ContainsKey(TextureType.Knight))
+            {
+                Log("Knight tex length: " + player.textures[TextureType.Knight].EncodeToPNG().Length);
+                var materialPropertyBlock = new MaterialPropertyBlock();
+                player.GetComponent<MeshRenderer>().GetPropertyBlock(materialPropertyBlock);
+                materialPropertyBlock.SetTexture("_MainTex", player.textures[TextureType.Knight]);
+                player.GetComponent<MeshRenderer>().SetPropertyBlock(materialPropertyBlock); ;
+            }
         }
         
         public void EnablePvP(bool enable)

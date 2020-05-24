@@ -19,19 +19,13 @@ namespace MultiplayerClient
             var materialPropertyBlock = new MaterialPropertyBlock();
             MeshRenderer mRend;
 
-            Texture2D baldurTex = playerManager.textures[TextureType.Baldur];
-            Texture2D flukeTex = playerManager.textures[TextureType.Fluke];
-            Texture2D grimmTex = playerManager.textures[TextureType.Grimm];
-            Texture2D hatchlingTex = playerManager.textures[TextureType.Hatchling];
-            Texture2D knightTex = playerManager.textures[TextureType.Knight];
-            Texture2D shieldTex = playerManager.textures[TextureType.Shield];
-            Texture2D sprintTex = playerManager.textures[TextureType.Sprint];
-            Texture2D unnTex = playerManager.textures[TextureType.Unn];
-            Texture2D voidTex = playerManager.textures[TextureType.Void];
-            Texture2D vsTex = playerManager.textures[TextureType.VS];
-            Texture2D weaverTex = playerManager.textures[TextureType.Weaver];
-            Texture2D wraithsTex = playerManager.textures[TextureType.Wraiths];
-            
+            // Get Texture2D objects or set them to null
+            playerManager.textures.TryGetValue(TextureType.Knight, out Texture2D knightTex);
+            playerManager.textures.TryGetValue(TextureType.Sprint, out Texture2D sprintTex);
+            playerManager.textures.TryGetValue(TextureType.Unn, out Texture2D unnTex);
+            playerManager.textures.TryGetValue(TextureType.Void, out Texture2D voidTex);
+            playerManager.textures.TryGetValue(TextureType.VS, out Texture2D vsTex);
+
             GameObject playerAttacks = player.FindGameObjectInChildren("Attacks");
             GameObject playerEffects = player.FindGameObjectInChildren("Effects");
             GameObject playerSpells = player.FindGameObjectInChildren("Spells");

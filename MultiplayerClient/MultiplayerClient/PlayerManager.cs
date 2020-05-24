@@ -76,6 +76,7 @@ namespace MultiplayerClient
         public int maxHealth;
         public int healthBlue;
 
+        public Dictionary<byte[], TextureType> texHashes = new Dictionary<byte[], TextureType>(new ByteArrayComparer());
         public Dictionary<TextureType, Texture2D> textures = new Dictionary<TextureType, Texture2D>();
 
         private void Awake()
