@@ -19,20 +19,13 @@ namespace MultiplayerClient
             var materialPropertyBlock = new MaterialPropertyBlock();
             MeshRenderer mRend;
 
-            Dictionary<string, Texture2D> texDict = SessionManager.Instance.PlayerTextures[id];
-            Texture2D baldurTex = texDict["Baldur"];
-            Texture2D flukeTex = texDict["Fluke"];
-            Texture2D grimmTex = texDict["Grimm"];
-            Texture2D hatchlingTex = texDict["Hatchling"];
-            Texture2D knightTex = texDict["Knight"];
-            Texture2D shieldTex = texDict["Shield"];
-            Texture2D sprintTex = texDict["Sprint"];
-            Texture2D unnTex = texDict["Unn"];
-            Texture2D voidTex = texDict["Void"];
-            Texture2D vsTex = texDict["VS"];
-            Texture2D weaverTex = texDict["Weaver"];
-            Texture2D wraithsTex = texDict["Wraiths"];
-            
+            // Get Texture2D objects or set them to null
+            playerManager.textures.TryGetValue(TextureType.Knight, out Texture2D knightTex);
+            playerManager.textures.TryGetValue(TextureType.Sprint, out Texture2D sprintTex);
+            playerManager.textures.TryGetValue(TextureType.Unn, out Texture2D unnTex);
+            playerManager.textures.TryGetValue(TextureType.Void, out Texture2D voidTex);
+            playerManager.textures.TryGetValue(TextureType.VS, out Texture2D vsTex);
+
             GameObject playerAttacks = player.FindGameObjectInChildren("Attacks");
             GameObject playerEffects = player.FindGameObjectInChildren("Effects");
             GameObject playerSpells = player.FindGameObjectInChildren("Spells");

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using HutongGames.PlayMaker.Actions;
 using ModCommon.Util;
 
@@ -84,6 +83,17 @@ namespace MultiplayerServer
             }
         }
 
+        public static void RequestTexture(byte toClient, byte[] hash)
+        {
+            if (!ServerSettings.CustomKnightIntegration) return;
+
+            using(Packet packet = new Packet((int) ServerPackets.TextureRequest))
+            {
+                packet.Write(hash);
+                SendTCPData(toClient, packet);
+            }
+        }
+
         public static void SpawnPlayer(byte toClient, Player player)
         {
             using (Packet packet = new Packet((int) ServerPackets.SpawnPlayer))
@@ -99,6 +109,11 @@ namespace MultiplayerServer
                 }
                 packet.Write(ServerSettings.PvPEnabled);
 
+                foreach(var hash in player.textureHashes)
+                {
+                    packet.Write(hash);
+                }
+
                 Log($"Spawning Player {player.id} on Client {toClient} with Charms");
                 SendTCPData(toClient, packet);
             }
@@ -106,42 +121,20 @@ namespace MultiplayerServer
 
         #region CustomKnight Integration
 
-        public static void SendTexture(byte fromClient, byte[] texBytes, int serverPacketId)
+        public static void SendTexture(byte fromClient, byte[] hash, byte[] texture)
         {
-            using (Packet packet = new Packet(serverPacketId))
+            using (Packet packet = new Packet((int) ServerPackets.TextureFragment))
             {
-                packet.Write(fromClient);
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
-                SendTCPDataToAll(fromClient, packet);
+                // Since the ordering of TCP packets is guaranteed, we don't have
+                // to put it in the packet - the client will handle it just fine.
+                packet.Write(hash);
+                packet.Write(texture.Length);
+                packet.Write(texture);
+                SendTCPData(fromClient, packet);
             }
         }
-
-        public static void CheckHashes(byte toClient)
-        {
-            using (Packet packet = new Packet((int) ServerPackets.CheckHashes))
-            {
-                Dictionary<string, string> texHashes = Server.clients[toClient].player.texHashes;
-                
-                packet.Write(texHashes["Baldur"]);
-                packet.Write(texHashes["Fluke"]);
-                packet.Write(texHashes["Grimm"]);
-                packet.Write(texHashes["Hatchling"]);
-                packet.Write(texHashes["Knight"]);
-                packet.Write(texHashes["Shield"]);
-                packet.Write(texHashes["Sprint"]);
-                packet.Write(texHashes["Unn"]);
-                packet.Write(texHashes["Void"]);
-                packet.Write(texHashes["VS"]);
-                packet.Write(texHashes["Weaver"]);
-                packet.Write(texHashes["Wraiths"]);
-                
-                SendTCPData(toClient, packet);
-            }
-        }
-
-        #endregion CustomKnight Integrationz
+        
+        #endregion CustomKnight Integration
         
         public static void DestroyPlayer(byte toClient, int clientToDestroy)
         {

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Policy;
 using HutongGames.PlayMaker.Actions;
 using ModCommon;
 using ModCommon.Util;
@@ -24,16 +26,16 @@ namespace MultiplayerClient
             packet.WriteLength();
             Client.Instance.udp.SendData(packet);
         }
-        
+
         #region Packets
 
         /// <summary>Lets the server know that the welcome message was received.</summary>
-        public static void WelcomeReceived()
+        public static void WelcomeReceived(List<byte[]> textureHashes)
         {
-            using (Packet packet = new Packet((int) ClientPackets.WelcomeReceived))
+            using (Packet packet = new Packet((int)ClientPackets.WelcomeReceived))
             {
                 Transform heroTransform = HeroController.instance.gameObject.transform;
-                
+
                 packet.Write(Client.Instance.myId);
                 packet.Write(MultiplayerClient.settings.username);
                 packet.Write(HeroController.instance.GetComponent<tk2dSpriteAnimator>().CurrentClip.name);
@@ -48,35 +50,37 @@ namespace MultiplayerClient
                 {
                     packet.Write(PlayerData.instance.GetAttr<PlayerData, bool>("equippedCharm_" + charmNum));
                 }
-                
+
+                foreach (var hash in textureHashes)
+                {
+                    packet.Write(hash);
+                }
+
                 Log("Welcome Received Packet Length: " + packet.Length());
 
                 SendTCPData(packet);
             }
         }
 
-        #region CustomKnight Integration
-
-        public static void SendTexture(byte[] texBytes, int clientPacketId)
+        public static void RequestTexture(byte[] hash)
         {
-            using (Packet packet = new Packet(clientPacketId))
+            using (Packet packet = new Packet((int)ClientPackets.TextureRequest))
             {
-                packet.Write(texBytes.Length);
-                packet.Write(texBytes);
-
+                packet.Write(hash);
                 SendTCPData(packet);
             }
         }
 
-        public static void SendTextureUpToDate(int clientPacketId)
+        public static void SendTexture(byte[] texture)
         {
-            using (Packet packet = new Packet(clientPacketId))
+            using (Packet packet = new Packet((int) ClientPackets.TextureFragment))
             {
+                // It's really that easy
+                packet.Write(texture.Length);
+                packet.Write(texture);
                 SendTCPData(packet);
             }
         }
-
-        #endregion CustomKnight Integration
         
         public static void PlayerPosition(Vector3 position)
         {
@@ -126,7 +130,6 @@ namespace MultiplayerClient
                 packet.Write(currentMaxHealth);
                 packet.Write(currentHealthBlue);
 
-                Log("Sending Health Data to Server");
                 SendTCPData(packet);
             }
         }
@@ -140,8 +143,6 @@ namespace MultiplayerClient
                     packet.Write(pd.GetBool("equippedCharm_" + i));
                 }
 
-                Log("Packet Length: " + packet.Length());
-                Log("Sending CharmsUpdated Packet from Client");
                 SendTCPData(packet);
             }
         }

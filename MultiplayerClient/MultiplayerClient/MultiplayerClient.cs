@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections;
+using System.IO;
 using System.Collections.Generic;
-using ModCommon;
 using Modding;
 using MultiplayerClient.Canvas;
 using UnityEngine;
@@ -13,6 +12,8 @@ namespace MultiplayerClient
     {
         public static readonly Dictionary<string, GameObject> GameObjects = new Dictionary<string, GameObject>();
         internal static GlobalSettings settings;
+
+        public static Dictionary<byte[], string> textureCache = new Dictionary<byte[], string>(new ByteArrayComparer());
 
         public override string GetVersion()
         {
@@ -31,6 +32,23 @@ namespace MultiplayerClient
         public override void Initialize(Dictionary<string, Dictionary<string, GameObject>> preloadedObjects)
         {
             settings = GlobalSettings;
+
+            // Initialize texture cache
+            // This will allow us to easily send textures to the server when asked to.
+            string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
+            Directory.CreateDirectory(cacheDir);
+            string[] files = Directory.GetFiles(cacheDir);
+            foreach(string filePath in files)
+            {
+                string filename = Path.GetFileName(filePath);
+                byte[] hash = new byte[20];
+                for (int i = 0; i < 40; i += 2)
+                {
+                    hash[i / 2] = Convert.ToByte(filename.Substring(i, 2), 16);
+                }
+
+                textureCache[hash] = filePath;
+            }
 
             GameObjects.Add("Glob", preloadedObjects["GG_Hive_Knight"]["Battle Scene/Globs/Hive Knight Glob"]);
             GameObjects.Add("Slash", preloadedObjects["GG_Hive_Knight"]["Battle Scene/Hive Knight/Slash 1"]);

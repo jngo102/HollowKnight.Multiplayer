@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
 using ModCommon.Util;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -25,9 +28,18 @@ namespace MultiplayerServer
             {
                 charmsData.Add(packet.ReadBool());
             }
-            
+
             Server.clients[fromClient].SendIntoGame(username, position, scale, currentClip, health, maxHealth, healthBlue, charmsData);
             SceneChanged(fromClient, activeScene);
+
+            for (int i = 0; i < Enum.GetNames(typeof(TextureType)).Length; i++)
+            {
+                byte[] hash = packet.ReadBytes(20);
+                if (!MultiplayerServer.textureCache.ContainsKey(hash))
+                {
+                    ServerSend.RequestTexture(fromClient, hash);
+                }
+            }
 
             Log($"{username} connected successfully and is now player {fromClient}.");
             if (fromClient != clientIdCheck)
@@ -36,148 +48,45 @@ namespace MultiplayerServer
             }
         }
 
-        #region CustomKnight Integration
+        public static void HandleTextureFragment(byte fromClient, Packet packet)
+        {
+            if (!ServerSettings.CustomKnightIntegration) return;
 
-        private static void HandleTexture(byte fromClient, Packet packet, int serverPacketId, string texName)
-        {
-            int texLength = packet.ReadInt();
-            byte[] texBytes = packet.ReadBytes(texLength);
+            int texture_length = packet.ReadInt();
+            if(texture_length > 20_000_000)
+            {
+                Log("Over 20mb really ? That's going to be a 'no from me'.");
+                return;
+            }
 
-            Player player = Server.clients[fromClient].player;
+            byte[] texture = packet.ReadBytes(texture_length);
 
-            player.texBytes[texName] = texBytes;
-            player.texHashes[texName] = texBytes.Hash();
-            
-            ServerSend.SendTexture(fromClient, texBytes, serverPacketId);
-        }
+            using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
+            {
+                byte[] computed_hash = sha1.ComputeHash(texture);
+                string hashStr = BitConverter.ToString(computed_hash).Replace("-", string.Empty);
+                string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
+                string filePath = Path.Combine(cacheDir, hashStr);
 
-        private static void HandleTextureUpToDate(byte fromClient, Packet packet, int serverPacketId, string texName)
-        {
-            byte[] texBytes = Server.clients[fromClient].player.texBytes[texName];
-            ServerSend.SendTexture(fromClient, texBytes, serverPacketId);
-        }
-        
-        public static void BaldurTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.BaldurTexture, "Baldur");
-        }
-        
-        public static void FlukeTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.FlukeTexture, "Fluke");
-        }
-        
-        public static void GrimmTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.GrimmTexture, "Grimm");
-        }
-        
-        public static void HatchlingTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.HatchlingTexture, "Hatchling");
+                if (MultiplayerServer.textureCache.ContainsKey(computed_hash)) return;
+
+                File.WriteAllBytes(filePath, texture);
+                MultiplayerServer.textureCache[computed_hash] = filePath;
+            }
         }
 
-        public static void KnightTexture(byte fromClient, Packet packet)
+        public static void HandleTextureRequest(byte fromClient, Packet packet)
         {
-            HandleTexture(fromClient, packet, (int) ServerPackets.KnightTexture, "Knight");
-        }
+            if (!ServerSettings.CustomKnightIntegration) return;
 
-        public static void ShieldTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.ShieldTexture, "Shield");
-        }
-        
-        public static void SprintTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.SprintTexture, "Sprint");
-        }
-        
-        public static void UnnTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.UnnTexture, "Unn");
-        }
-        
-        public static void VoidTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.VoidTexture, "Void");
-        }
-        
-        public static void VSTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.VSTexture, "VS");
-        }
-        
-        public static void WeaverTexture(byte fromClient, Packet packet)
-        { 
-            HandleTexture(fromClient, packet, (int) ServerPackets.WeaverTexture, "Weaver");
-        }
-        
-        public static void WraithsTexture(byte fromClient, Packet packet)
-        {
-            HandleTexture(fromClient, packet, (int) ServerPackets.WraithsTexture, "Wraiths");
-        }
-        
-        public static void BaldurTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.BaldurTexture, "Baldur");
-        }
-        
-        public static void FlukeTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.FlukeTexture, "Fluke");
-        }
-        
-        public static void GrimmTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.GrimmTexture, "Grimm");
-        }
-        
-        public static void HatchlingTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.HatchlingTexture, "Hatchling");
-        }
+            byte[] hash = packet.ReadBytes(20);
 
-        public static void KnightTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.KnightTexture, "Knight");
+            if (MultiplayerServer.textureCache.ContainsKey(hash))
+            {
+                byte[] texture = File.ReadAllBytes(MultiplayerServer.textureCache[hash]);
+                ServerSend.SendTexture(fromClient, hash, texture);
+            }
         }
-
-        public static void ShieldTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.ShieldTexture, "Shield");
-        }
-        
-        public static void SprintTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.SprintTexture, "Sprint");
-        }
-        
-        public static void UnnTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.UnnTexture, "Unn");
-        }
-        
-        public static void VoidTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.VoidTexture, "Void");
-        }
-        
-        public static void VSTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.VSTexture, "VS");
-        }
-        
-        public static void WeaverTextureUpToDate(byte fromClient, Packet packet)
-        { 
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.WeaverTexture, "Weaver");
-        }
-        
-        public static void WraithsTextureUpToDate(byte fromClient, Packet packet)
-        {
-            HandleTextureUpToDate(fromClient, packet, (int) ServerPackets.WraithsTexture, "Wraiths");
-        }
-        
-        #endregion CustomKnight Integration
         
         public static void PlayerPosition(byte fromClient, Packet packet)
         {
@@ -244,19 +153,10 @@ namespace MultiplayerServer
                         Log("Same Scene, Spawning Players First Pass");
                         ServerSend.SpawnPlayer(fromClient, Server.clients[i].player);
                         ServerSend.SpawnPlayer(Server.clients[i].player.id, Server.clients[fromClient].player);
-                    }
-                    
-                    Player iPlayer = Server.clients[i].player;
-                    Player fromPlayer = Server.clients[fromClient].player;
-                    ServerSend.SpawnPlayer(fromClient, iPlayer);
-                    ServerSend.SpawnPlayer(i, fromPlayer);
-                    
-                    // CustomKnight integration
-                    if (ServerSettings.CustomKnightIntegration)
-                    {
-                        Log("Checking Hashes");
-                        ServerSend.CheckHashes(i);
-                        ServerSend.CheckHashes(fromClient);
+                        Player iPlayer = Server.clients[i].player;
+                        Player fromPlayer = Server.clients[fromClient].player;
+                        ServerSend.SpawnPlayer(fromClient, iPlayer);
+                        ServerSend.SpawnPlayer(i, fromPlayer);
                     }
                 }
             }

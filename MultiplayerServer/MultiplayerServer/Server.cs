@@ -5,6 +5,22 @@ using System.Net.Sockets;
 
 namespace MultiplayerServer
 {
+    public enum TextureType
+    {
+        Baldur,
+        Fluke,
+        Grimm,
+        Hatchling,
+        Knight,
+        Shield,
+        Sprint,
+        Unn,
+        Void,
+        VS,
+        Weaver,
+        Wraiths,
+    }
+
     public class Server
     {
         public static int MaxPlayers { get; private set; }
@@ -121,30 +137,8 @@ namespace MultiplayerServer
             PacketHandlers = new Dictionary<int, PacketHandler>
             {
                 { (int) ClientPackets.WelcomeReceived, ServerHandle.WelcomeReceived },
-                { (int) ClientPackets.BaldurTexture, ServerHandle.BaldurTexture },
-                { (int) ClientPackets.FlukeTexture, ServerHandle.FlukeTexture },
-                { (int) ClientPackets.GrimmTexture, ServerHandle.GrimmTexture },
-                { (int) ClientPackets.HatchlingTexture, ServerHandle.HatchlingTexture },
-                { (int) ClientPackets.KnightTexture, ServerHandle.KnightTexture },
-                { (int) ClientPackets.ShieldTexture, ServerHandle.ShieldTexture },
-                { (int) ClientPackets.SprintTexture, ServerHandle.SprintTexture },
-                { (int) ClientPackets.UnnTexture, ServerHandle.UnnTexture },
-                { (int) ClientPackets.VoidTexture, ServerHandle.VoidTexture },
-                { (int) ClientPackets.VSTexture, ServerHandle.VSTexture },
-                { (int) ClientPackets.WeaverTexture, ServerHandle.WeaverTexture },
-                { (int) ClientPackets.WraithsTexture, ServerHandle.WraithsTexture },
-                { (int) ClientPackets.BaldurTextureUpToDate, ServerHandle.BaldurTextureUpToDate },
-                { (int) ClientPackets.FlukeTextureUpToDate, ServerHandle.FlukeTextureUpToDate },
-                { (int) ClientPackets.GrimmTextureUpToDate, ServerHandle.GrimmTextureUpToDate },
-                { (int) ClientPackets.HatchlingTextureUpToDate, ServerHandle.HatchlingTextureUpToDate },
-                { (int) ClientPackets.KnightTextureUpToDate, ServerHandle.KnightTextureUpToDate },
-                { (int) ClientPackets.ShieldTextureUpToDate, ServerHandle.ShieldTextureUpToDate },
-                { (int) ClientPackets.SprintTextureUpToDate, ServerHandle.SprintTextureUpToDate },
-                { (int) ClientPackets.UnnTextureUpToDate, ServerHandle.UnnTextureUpToDate },
-                { (int) ClientPackets.VoidTextureUpToDate, ServerHandle.VoidTextureUpToDate },
-                { (int) ClientPackets.VSTextureUpToDate, ServerHandle.VSTextureUpToDate },
-                { (int) ClientPackets.WeaverTextureUpToDate, ServerHandle.WeaverTextureUpToDate },
-                { (int) ClientPackets.WraithsTextureUpToDate, ServerHandle.WraithsTextureUpToDate },
+                { (int) ClientPackets.TextureFragment, ServerHandle.HandleTextureFragment },
+                { (int) ClientPackets.TextureRequest, ServerHandle.HandleTextureRequest },
                 { (int) ClientPackets.PlayerPosition, ServerHandle.PlayerPosition },
                 { (int) ClientPackets.PlayerScale, ServerHandle.PlayerScale },
                 { (int) ClientPackets.PlayerAnimation, ServerHandle.PlayerAnimation },
