@@ -119,7 +119,7 @@ namespace MultiplayerClient
                         // Texture not loaded but on disk : also ezpz
                         byte[] texBytes = File.ReadAllBytes(MultiplayerClient.textureCache[hash]);
                         Texture2D texture = new Texture2D(2, 2);
-                        texture.LoadImage(texBytes);
+                        texture.LoadImage(texBytes, true);
 
                         loadedTextures[hash] = texture;
                         player.textures[tt] = texture;

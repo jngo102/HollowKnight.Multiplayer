@@ -51,7 +51,7 @@ namespace MultiplayerClient
                 foreach (TextureType tt in Enum.GetValues(typeof(TextureType)))
                 {
                     var hash = packet.ReadBytes(20);
-                    player.texHashes[hash] = tt;
+                    player.texHashes.Add(hash, tt);
                 }
 
                 SessionManager.Instance.ReloadPlayerTextures(player);
@@ -69,7 +69,7 @@ namespace MultiplayerClient
             byte[] texBytes = packet.ReadBytes(texLen);
 
             Texture2D texture = new Texture2D(2, 2);
-            texture.LoadImage(texBytes);
+            texture.LoadImage(texBytes, true);
 
             // Save reference to texture for easy reuse
             SessionManager.Instance.loadedTextures[hash] = texture;

@@ -35,6 +35,13 @@ namespace MultiplayerServer
             for (int i = 0; i < Enum.GetNames(typeof(TextureType)).Length; i++)
             {
                 byte[] hash = packet.ReadBytes(20);
+                
+                Player player = Server.clients[fromClient].player;
+                if (!player.textureHashes.Contains(hash))
+                {
+                    player.textureHashes.Add(hash);
+                }
+                
                 if (!MultiplayerServer.textureCache.ContainsKey(hash))
                 {
                     ServerSend.RequestTexture(fromClient, hash);
@@ -60,7 +67,7 @@ namespace MultiplayerServer
             }
 
             byte[] texture = packet.ReadBytes(texture_length);
-
+            
             using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
             {
                 byte[] computed_hash = sha1.ComputeHash(texture);
@@ -81,6 +88,12 @@ namespace MultiplayerServer
 
             byte[] hash = packet.ReadBytes(20);
 
+            Player player = Server.clients[fromClient].player;
+            if (!player.textureHashes.Contains(hash))
+            {
+                player.textureHashes.Add(hash);
+            }    
+            
             if (MultiplayerServer.textureCache.ContainsKey(hash))
             {
                 byte[] texture = File.ReadAllBytes(MultiplayerServer.textureCache[hash]);

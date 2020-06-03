@@ -104,7 +104,7 @@ namespace MultiplayerClient.Canvas
                         imageStream.Read(buffer, 0, buffer.Length);
 
                         Texture2D tex = new Texture2D(1, 1);
-                        tex.LoadImage(buffer.ToArray());
+                        tex.LoadImage(buffer.ToArray(), true);
 
                         string[] split = res.Split('.');
                         string internalName = split[split.Length - 2];

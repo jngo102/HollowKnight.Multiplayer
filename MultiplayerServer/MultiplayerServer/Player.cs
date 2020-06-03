@@ -62,7 +62,7 @@ namespace MultiplayerServer
         public int maxHealth;
         public int healthBlue;
 
-        public List<byte[]> textureHashes;
+        public List<byte[]> textureHashes = new List<byte[]>();
         
         public void Initialize(byte id, string username, string animation, int health, int maxHealth, int healthBlue)
         {

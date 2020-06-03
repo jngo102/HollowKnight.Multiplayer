@@ -85,8 +85,7 @@ namespace MultiplayerClient
                         materialPropertyBlock.SetTexture("_MainTex", knightTex);
                         mRend.SetPropertyBlock(materialPropertyBlock);
                     }
-                    
-                    
+
                     break;
                 case "Air Cancel":
                     GameObject sdBreak = Instantiate(heroEffects.FindGameObjectInChildren("SD Break"), playerEffects.transform);
