@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using ModCommon.Util;
-using On.HutongGames.PlayMaker.Actions;
 using UnityEngine;
 
 namespace MultiplayerServer
@@ -231,16 +230,16 @@ namespace MultiplayerServer
         /// <param name="maxHealth">The maximum health of the new player.</param>
         /// <param name="healthBlue">The blue health of the new player.</param>
         /// <param name="charmsData">The equipped charms of the new player.</param>
-        public void SendIntoGame(string username, Vector3 position, Vector3 scale, string animation, int health, int maxHealth, int healthBlue, List<bool> charmsData)
+        public void SendIntoGame(string username, Vector3 position, Vector3 scale, string animation, int health, int maxHealth, int healthBlue, List<bool> charmsData, bool isHost)
         {
             player = NetworkManager.Instance.InstantiatePlayer(position, scale);
-            player.Initialize(id, username, animation, health, maxHealth, healthBlue);
+            player.Initialize(id, username, animation, health, maxHealth, healthBlue, isHost);
 
             for (int charmNum = 1; charmNum <= 40; charmNum++)
             {
                 player.SetAttr("equippedCharm_" + charmNum, charmsData[charmNum - 1]);
             }
-            
+
             UnityEngine.Object.DontDestroyOnLoad(player);
         }
 

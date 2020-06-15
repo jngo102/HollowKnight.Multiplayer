@@ -20,6 +20,7 @@ namespace MultiplayerClient
         HealthUpdated,
         CharmsUpdated,
         PlayerDisconnected,
+        DisconnectPlayer,
     }
 
     /// <summary>Sent from client to server.</summary>
@@ -35,6 +36,10 @@ namespace MultiplayerClient
         HealthUpdated,
         CharmsUpdated,
         PlayerDisconnected,
+        SyncEnemy,
+        EnemyPosition,
+        EnemyScale,
+        EnemyAnimation,
     }
     
     public class Packet : IDisposable

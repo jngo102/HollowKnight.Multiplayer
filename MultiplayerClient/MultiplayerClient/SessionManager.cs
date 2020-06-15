@@ -14,8 +14,9 @@ namespace MultiplayerClient
     {
         public static SessionManager Instance;
         public bool PvPEnabled;
+        public bool SpectatorMode;
 
-        public Dictionary<int, PlayerManager> Players = new Dictionary<int, PlayerManager>();
+        public Dictionary<byte, PlayerManager> Players = new Dictionary<byte, PlayerManager>();
 
         // Loaded texture list, indexed by their hash. A texture can be shared by multiple players.
         public Dictionary<byte[], Texture2D> loadedTextures = new Dictionary<byte[], Texture2D>(new ByteArrayComparer());
@@ -119,7 +120,7 @@ namespace MultiplayerClient
                         // Texture not loaded but on disk : also ezpz
                         byte[] texBytes = File.ReadAllBytes(MultiplayerClient.textureCache[hash]);
                         Texture2D texture = new Texture2D(2, 2);
-                        texture.LoadImage(texBytes, true);
+                        texture.LoadImage(texBytes);
 
                         loadedTextures[hash] = texture;
                         player.textures[tt] = texture;
@@ -145,15 +146,14 @@ namespace MultiplayerClient
         public void EnablePvP(bool enable)
         {
             Instance.PvPEnabled = enable;
-            foreach (KeyValuePair<int, PlayerManager> pair in Players)
+            foreach (PlayerManager player in Players.Values)
             {
-                GameObject player = pair.Value.gameObject;
-                player.layer = enable ? 11 : 9;
-                player.GetComponent<DamageHero>().enabled = enable;
+                player.gameObject.layer = enable ? 11 : 9;
+                player.gameObject.GetComponent<DamageHero>().enabled = enable;
             }
         }
 
-        public void DestroyPlayer(int playerId)
+        public void DestroyPlayer(byte playerId)
         {
             if(Players.ContainsKey(playerId))
             {
@@ -169,8 +169,8 @@ namespace MultiplayerClient
 
         public void DestroyAllPlayers()
         {
-            List<int> playerIds = new List<int>(Players.Keys);
-            foreach (int playerId in playerIds)
+            List<byte> playerIds = new List<byte>(Players.Keys);
+            foreach (byte playerId in playerIds)
             {
                 DestroyPlayer(playerId);
             }

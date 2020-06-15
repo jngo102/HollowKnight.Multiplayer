@@ -8,18 +8,21 @@ namespace MultiplayerClient
         private Vector3 _storedScale = Vector3.zero;
         private void FixedUpdate()
         {
-            Vector3 heroPos = transform.position;
-            if (heroPos != _storedPosition)
+            if (Client.Instance.isConnected)
             {
-                ClientSend.PlayerPosition(heroPos);
-                _storedPosition = heroPos;
-            }
+                Vector3 heroPos = transform.position;
+                if (heroPos != _storedPosition)
+                {
+                    ClientSend.PlayerPosition(heroPos);
+                    _storedPosition = heroPos;
+                }
 
-            Vector3 heroScale = transform.localScale;
-            if (heroScale != _storedScale)
-            {
-                ClientSend.PlayerScale(heroScale);
-                _storedScale = heroScale;
+                Vector3 heroScale = transform.localScale;
+                if (heroScale != _storedScale)
+                {
+                    ClientSend.PlayerScale(heroScale);
+                    _storedScale = heroScale;
+                }   
             }
         }
 

@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using HutongGames.PlayMaker.Actions;
 using ModCommon;
 using ModCommon.Util;
+using MultiplayerClient.Canvas;
 using UnityEngine;
 
 namespace MultiplayerClient
@@ -14,6 +15,7 @@ namespace MultiplayerClient
         public static Client Instance;
         public static int dataBufferSize = (int) Mathf.Pow(2, 20);
         
+        public bool isHost;
         public byte myId;
         public TCP tcp;
         public UDP udp;
@@ -327,6 +329,7 @@ namespace MultiplayerClient
                 { (int) ServerPackets.HealthUpdated, ClientHandle.HealthUpdated },
                 { (int) ServerPackets.CharmsUpdated, ClientHandle.CharmsUpdated },
                 { (int) ServerPackets.PlayerDisconnected, ClientHandle.PlayerDisconnected },
+                { (int) ServerPackets.DisconnectPlayer, ClientHandle.DisconnectSelf },
             };
             
             Log("Initialized Packets.");
@@ -344,7 +347,12 @@ namespace MultiplayerClient
                 Log("You have been disconnected from the server.");
             }
             
+            udp.Disconnect();
+            
             SessionManager.Instance.DestroyAllPlayers();
+            
+            ConnectionPanel.ConnectButton.UpdateText("Connect");
+            ConnectionPanel.ConnectionInfo.UpdateText("Disconnected.");
         }
 
         private static void Log(object message) => Modding.Logger.Log("[Client] (Client) " + message);

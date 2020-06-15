@@ -16,7 +16,8 @@ namespace MultiplayerServer
         public string activeScene;
         public Vector3 position;
         public Vector3 scale;
-
+        public bool isHost;
+        
         public bool equippedCharm_1;
         public bool equippedCharm_2;
         public bool equippedCharm_3;
@@ -64,7 +65,7 @@ namespace MultiplayerServer
 
         public List<byte[]> textureHashes = new List<byte[]>();
         
-        public void Initialize(byte id, string username, string animation, int health, int maxHealth, int healthBlue)
+        public void Initialize(byte id, string username, string animation, int health, int maxHealth, int healthBlue, bool isHost)
         {
             this.id = id;
             this.username = username;
@@ -72,6 +73,7 @@ namespace MultiplayerServer
             this.health = health;
             this.maxHealth = maxHealth;
             this.healthBlue = healthBlue;
+            this.isHost = isHost;
         }
 
         public void SetPosition(Vector3 position)
@@ -91,7 +93,7 @@ namespace MultiplayerServer
         public void SetAnimation(string animation)
         {
             this.animation = animation;
-
+            
             ServerSend.PlayerAnimation(this);
         }
 

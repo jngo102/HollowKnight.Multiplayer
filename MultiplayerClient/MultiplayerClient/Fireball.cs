@@ -5,7 +5,7 @@ namespace MultiplayerClient
     public class Fireball : MonoBehaviour
     {
         public float xDir;
-        public int playerId;
+        public byte playerId;
         
         private const float FireballSpeed = 45;
         

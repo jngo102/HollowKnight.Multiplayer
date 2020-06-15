@@ -20,6 +20,7 @@
         <e p="ClientHandle.cs" t="Include" />
         <e p="ClientSend.cs" t="Include" />
         <e p="DungFluke.cs" t="Include" />
+        <e p="EnemyTracker.cs" t="Include" />
         <e p="Extensions.cs" t="Include" />
         <e p="Fireball.cs" t="Include" />
         <e p="GetKnightAttacks.cs" t="Include" />
@@ -45,6 +46,7 @@
         <e p="SessionManager.cs" t="Include" />
         <e p="ThreadManager.cs" t="Include" />
         <e p="TinkSound.cs" t="Include" />
+        <e p="Util.cs" t="Include" />
       </e>
       <e p="MultiplayerClient.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />

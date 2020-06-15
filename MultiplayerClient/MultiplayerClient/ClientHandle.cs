@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Security.Cryptography;
 using HutongGames.PlayMaker.Actions;
 using ModCommon;
 using ModCommon.Util;
@@ -21,10 +22,10 @@ namespace MultiplayerClient
 
             // Ideally you would do this on skin change.
             // For now we only do it when joining the server.
-            var hashes = GetTextureHashes();
-
-            ClientSend.WelcomeReceived(hashes);
+            //var hashes = GetTextureHashes();
             
+            ClientSend.WelcomeReceived(/*hashes, */Client.Instance.isHost);
+
             Client.Instance.udp.Connect(((IPEndPoint) Client.Instance.tcp.socket.Client.LocalEndPoint).Port);
         }
 
@@ -39,20 +40,21 @@ namespace MultiplayerClient
                 string animation = packet.ReadString();
                 List<bool> charmsData = new List<bool>();
                 for (int charmNum = 1; charmNum <= 40; charmNum++)
-                {
+                {    
                     charmsData.Add(packet.ReadBool());
                 }
 
                 bool pvpEnabled = packet.ReadBool();
                 SessionManager.Instance.EnablePvP(pvpEnabled);
                 SessionManager.Instance.SpawnPlayer(id, username, position, scale, animation, charmsData);
-
+                    
                 var player = SessionManager.Instance.Players[id];
-                foreach (TextureType tt in Enum.GetValues(typeof(TextureType)))
+                /*foreach (TextureType tt in Enum.GetValues(typeof(TextureType)))
                 {
                     var hash = packet.ReadBytes(20);
+                    Log("Hash null? " + (hash == null));
                     player.texHashes.Add(hash, tt);
-                }
+                }*/
 
                 SessionManager.Instance.ReloadPlayerTextures(player);
             }
@@ -69,7 +71,7 @@ namespace MultiplayerClient
             byte[] texBytes = packet.ReadBytes(texLen);
 
             Texture2D texture = new Texture2D(2, 2);
-            texture.LoadImage(texBytes, true);
+            texture.LoadImage(texBytes);
 
             // Save reference to texture for easy reuse
             SessionManager.Instance.loadedTextures[hash] = texture;
@@ -105,43 +107,31 @@ namespace MultiplayerClient
             Directory.CreateDirectory(cacheDir);
             
             GameObject hc = HeroController.instance.gameObject;
-            GameObject charmEffects = hc.FindGameObjectInChildren("Charm Effects");
-            
-            GameObject baldur = charmEffects.FindGameObjectInChildren("Blocker Shield").FindGameObjectInChildren("Shell Anim");
-            Texture2D baldurTex = baldur.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
 
-            PlayMakerFSM poolFlukes = charmEffects.LocateMyFSM("Pool Flukes");
-            GameObject fluke = poolFlukes.GetAction<CreateGameObjectPool>("Pool Normal", 0).prefab.Value;
-            Texture2D flukeTex = fluke.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-
-            PlayMakerFSM spawnGrimmchild = charmEffects.LocateMyFSM("Spawn Grimmchild");
-            GameObject grimm = spawnGrimmchild.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
-            Texture2D grimmTex = grimm.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-
-            PlayMakerFSM hatchlingSpawn = charmEffects.LocateMyFSM("Hatchling Spawn");
-            GameObject hatchling = hatchlingSpawn.GetAction<SpawnObjectFromGlobalPool>("Hatch", 2).gameObject.Value;
-            Texture2D hatchlingTex = hatchling.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+            // SHA-1 hashes are 20 bytes, or 160 bits long.
+            const int HASH_LENGTH = 20;
+            byte[] baldurHash = new byte[HASH_LENGTH];
+            byte[] flukeHash = new byte[HASH_LENGTH];
+            byte[] grimmHash = new byte[HASH_LENGTH];
+            byte[] hatchlingHash = new byte[HASH_LENGTH];
+            byte[] knightHash = new byte[HASH_LENGTH];    
+            byte[] shieldHash = new byte[HASH_LENGTH];
+            byte[] sprintHash = new byte[HASH_LENGTH];
+            byte[] unnHash = new byte[HASH_LENGTH];
+            byte[] voidHash = new byte[HASH_LENGTH];
+            byte[] vsHash = new byte[HASH_LENGTH];
+            byte[] weaverHash = new byte[HASH_LENGTH];
+            byte[] wraithsHash = new byte[HASH_LENGTH];
 
             var anim = hc.GetComponent<tk2dSpriteAnimator>();
             Texture2D knightTex = anim.GetClipByName("Idle").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
             Texture2D sprintTex = anim.GetClipByName("Sprint").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
             Texture2D unnTex = anim.GetClipByName("Slug Up").frames[0].spriteCollection.spriteDefinitions[0].material.mainTexture as Texture2D;
 
-            PlayMakerFSM spawnOrbitShield = charmEffects.LocateMyFSM("Spawn Orbit Shield");
-            GameObject orbitShield = spawnOrbitShield.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
-            GameObject shield = orbitShield.FindGameObjectInChildren("Shield");
-            Texture2D shieldTex = shield.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-
-            PlayMakerFSM weaverlingControl = charmEffects.LocateMyFSM("Weaverling Control");
-            GameObject weaver = weaverlingControl.GetAction<SpawnObjectFromGlobalPool>("Spawn", 0).gameObject.Value;
-            Texture2D weaverTex = weaver.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
-
-            // SHA-1 hashes are 20 bytes, or 160 bits long.
-            const int HASH_LENGTH = 20;
-            byte[] voidHash = new byte[HASH_LENGTH];
-            byte[] vsHash = new byte[HASH_LENGTH];
-            byte[] wraithsHash = new byte[HASH_LENGTH];
-
+            knightHash = knightTex.Hash();
+            sprintHash = sprintTex.Hash();
+            unnHash = unnTex.Hash();
+            
             foreach (Transform child in hc.transform)
             {
                 if (child.name == "Spells")
@@ -172,22 +162,62 @@ namespace MultiplayerClient
                         }
                     }
                 }
+                else if (child.name == "Charm Effects")
+                {
+                    foreach (Transform charmChild in child)
+                    {
+                        if (charmChild.name == "Blocker Shield")
+                        {
+                            GameObject shellAnim = charmChild.GetChild(0).gameObject;
+                            Texture2D baldurTex = shellAnim.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                            baldurHash = baldurTex.Hash();
+                            break;            
+                        }
+                    }
+                    
+                    PlayMakerFSM poolFlukes = child.gameObject.LocateMyFSM("Pool Flukes");
+                    GameObject fluke = poolFlukes.GetAction<CreateGameObjectPool>("Pool Normal", 0).prefab.Value;
+                    Texture2D flukeTex = fluke.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                    flukeHash = flukeTex.Hash();
+
+                    PlayMakerFSM spawnGrimmchild = child.gameObject.LocateMyFSM("Spawn Grimmchild");
+                    GameObject grimm = spawnGrimmchild.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
+                    Texture2D grimmTex = grimm.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                    grimmHash = grimmTex.Hash();
+
+                    PlayMakerFSM hatchlingSpawn = child.gameObject.LocateMyFSM("Hatchling Spawn");
+                    GameObject hatchling = hatchlingSpawn.GetAction<SpawnObjectFromGlobalPool>("Hatch", 2).gameObject.Value;
+                    Texture2D hatchlingTex = hatchling.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                    hatchlingHash = hatchlingTex.Hash();
+
+                    PlayMakerFSM spawnOrbitShield = child.gameObject.LocateMyFSM("Spawn Orbit Shield");
+                    GameObject orbitShield = spawnOrbitShield.GetAction<SpawnObjectFromGlobalPool>("Spawn", 2).gameObject.Value;
+                    GameObject shield = orbitShield.FindGameObjectInChildren("Shield");
+                    Texture2D shieldTex = shield.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                    shieldHash = shieldTex.Hash();
+
+                    PlayMakerFSM weaverlingControl = child.gameObject.LocateMyFSM("Weaverling Control");
+                    GameObject weaver = weaverlingControl.GetAction<SpawnObjectFromGlobalPool>("Spawn", 0).gameObject.Value;
+                    Texture2D weaverTex = weaver.GetComponent<tk2dSprite>().GetCurrentSpriteDef().material.mainTexture as Texture2D;
+                    weaverHash = weaverTex.Hash();
+                }
             }
 
             // Ordered according to the TextureType enum
             var hashes = new List<byte[]>();
-            hashes.Add(baldurTex.Hash());
-            hashes.Add(flukeTex.Hash());
-            hashes.Add(grimmTex.Hash());
-            hashes.Add(hatchlingTex.Hash());
-            hashes.Add(knightTex.Hash());
-            hashes.Add(shieldTex.Hash());
-            hashes.Add(sprintTex.Hash());
-            hashes.Add(unnTex.Hash());
+            hashes.Add(baldurHash);
+            hashes.Add(flukeHash);
+            hashes.Add(grimmHash);
+            hashes.Add(hatchlingHash);
+            hashes.Add(knightHash);
+            hashes.Add(shieldHash);
+            hashes.Add(sprintHash);
+            hashes.Add(unnHash);
             hashes.Add(voidHash);
             hashes.Add(vsHash);
-            hashes.Add(weaverTex.Hash());
+            hashes.Add(weaverHash);
             hashes.Add(wraithsHash);
+            
             return hashes;
         }
         
@@ -275,6 +305,12 @@ namespace MultiplayerClient
             Log($"Player {id} has disconnected from the server.");
     
             SessionManager.Instance.DestroyPlayer(id);
+        }
+
+        public static void DisconnectSelf(Packet packet)
+        {
+            Log("Disconnecting Self");
+            Client.Instance.Disconnect();
         }
         
         private static void Log(object message) => Modding.Logger.Log("[Client Handle] " + message);

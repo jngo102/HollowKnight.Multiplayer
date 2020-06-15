@@ -13,13 +13,13 @@ namespace MultiplayerServer
 
         public override string GetVersion()
         {
-            return "0.0.1";
+            return "0.0.2";
         } 
 
         public override void Initialize()
         {
             // Initialize texture cache
-            // This will allow us to easily send textures to the server when asked to.
+            // This will allow us to easily send textures to th    e server when asked to.
             Log("Listing saved textures :");
             string cacheDir = Path.Combine(Application.dataPath, "SkinCache");
             Directory.CreateDirectory(cacheDir);

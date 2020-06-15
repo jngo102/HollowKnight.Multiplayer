@@ -39,6 +39,7 @@
         <e p="ServerSend.cs" t="Include" />
         <e p="ServerSettings.cs" t="Include" />
         <e p="ThreadManager.cs" t="Include" />
+        <e p="Util.cs" t="Include" />
       </e>
       <e p="MultiplayerServer.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />

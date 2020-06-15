@@ -35,10 +35,6 @@ namespace MultiplayerClient
             GameObject heroSpells = _hero.FindGameObjectInChildren("Spells");
 
             BoxCollider2D collider;
-            
-            GameObject sdTrail = null;
-            GameObject qCharge = null;
-            GameObject qTrail2 = null;
 
             GameObject fireballParent = _spellControl.GetAction<SpawnObjectFromGlobalPool>("Fireball 2", 3).gameObject.Value;
             PlayMakerFSM fireballCast = fireballParent.LocateMyFSM("Fireball Cast");
@@ -54,7 +50,7 @@ namespace MultiplayerClient
 
                     sdBurst.LocateMyFSM("FSM").InsertMethod("Destroy", 1, () => Destroy(sdBurst));
                     
-                    sdTrail = Instantiate(heroEffects.FindGameObjectInChildren("SD Trail"), playerEffects.transform);
+                    GameObject sdTrail = Instantiate(heroEffects.FindGameObjectInChildren("SD Trail"), playerEffects.transform);
                     sdTrail.SetActive(true);
 
                     sdTrail.name = "SD Trail " + id;
@@ -99,11 +95,11 @@ namespace MultiplayerClient
                         mRend.SetPropertyBlock(materialPropertyBlock);
                     }
 
-                    sdTrail.GetComponent<tk2dSpriteAnimator>().Play("SD Trail End");
+                    playerEffects.FindGameObjectInChildren("SD Trail " + id).GetComponent<tk2dSpriteAnimator>().Play("SD Trail End");
 
                     break;
                 case "SD Hit Wall":
-                    sdTrail.GetComponent<tk2dSpriteAnimator>().Play("SD Trail End");
+                    playerEffects.FindGameObjectInChildren("SD Trail " + id).GetComponent<tk2dSpriteAnimator>().Play("SD Trail End");
                     
                     GameObject wallHitEffect = Instantiate(heroEffects.FindGameObjectInChildren("Wall Hit Effect"), playerEffects.transform);
 
@@ -629,7 +625,7 @@ namespace MultiplayerClient
                     audioPlayer = audioPlayerObj.Spawn(player.transform);
                     audioPlayer.GetComponent<AudioSource>().PlayOneShot(quakeAnticClip);
                     
-                    qCharge = Instantiate(heroSpells.FindGameObjectInChildren("Q Charge"), playerSpells.transform);
+                    GameObject qCharge = Instantiate(heroSpells.FindGameObjectInChildren("Q Charge"), playerSpells.transform);
                     qCharge.SetActive(true);
                     qCharge.name = "Q Charge " + id;
 
@@ -647,9 +643,8 @@ namespace MultiplayerClient
                 case "Quake Fall 2":
                     GameObject qFlashStart = Instantiate(heroSpells.FindGameObjectInChildren("Q Flash Start"), playerSpells.transform);
                     GameObject sdSharpFlash = Instantiate(heroEffects.FindGameObjectInChildren("SD Sharp Flash"), playerEffects.transform);
-                    qTrail2 = Instantiate(heroSpells.FindGameObjectInChildren("Q Trail 2"), playerSpells.transform);
+                    GameObject qTrail2 = Instantiate(heroSpells.FindGameObjectInChildren("Q Trail 2"), playerSpells.transform);
                     qTrail2.name = "Q Trail 2 " + id;
-
 
                     qFlashStart.SetActive(true);
                     sdSharpFlash.SetActive(true);
@@ -675,7 +670,7 @@ namespace MultiplayerClient
 
                     Destroy(qFlashStart, 1);
                     Destroy(sdSharpFlash, 1);
-                    Destroy(GameObject.Find("Q Charge " + id));
+                    Destroy(playerSpells.FindGameObjectInChildren("Q Charge " + id));
 
                     break;
                 case "Quake Land 2":
@@ -683,7 +678,7 @@ namespace MultiplayerClient
                     audioPlayer = audioPlayerObj.Spawn(player.transform);
                     audioPlayer.GetComponent<AudioSource>().PlayOneShot(q2LandClip);
 
-                    GameObject.Find("Q Trail 2 " + id);
+                    Destroy(playerSpells.FindGameObjectInChildren("Q Trail 2 " + id));
                     
                     GameObject qSlamObj = heroSpells.FindGameObjectInChildren("Q Slam 2");
                     GameObject quakeSlam = Instantiate(qSlamObj, playerSpells.transform);
@@ -1048,8 +1043,6 @@ namespace MultiplayerClient
                         mRend.SetPropertyBlock(materialPropertyBlock);
                     }
 
-                    GC.Collect();
-                    
                     break;
             }
         }

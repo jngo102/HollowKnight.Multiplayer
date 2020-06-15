@@ -7,6 +7,6 @@ namespace MultiplayerClient
     {
         public string host { get => GetString("127.0.0.1"); set => SetString(value); }
         public int port { get => GetInt(26950); set => SetInt(value); }
-        public string username { get => GetString("Newbie"); set => SetString(value); }
+        public string username { get => GetString("Player"); set => SetString(value); }
     }
 }

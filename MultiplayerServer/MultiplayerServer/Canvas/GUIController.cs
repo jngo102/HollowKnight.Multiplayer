@@ -102,11 +102,10 @@ namespace MultiplayerServer.Canvas
                 {
                     using (Stream imageStream = asm.GetManifestResourceStream(res))
                     {
-
                         byte[] buffer = new byte[imageStream.Length];
                         imageStream.Read(buffer, 0, buffer.Length);
 
-                        Texture2D tex = new Texture2D(1, 1);
+                        Texture2D tex = new Texture2D(2, 2);
                         tex.LoadImage(buffer.ToArray(), true);
 
                         string[] split = res.Split('.');

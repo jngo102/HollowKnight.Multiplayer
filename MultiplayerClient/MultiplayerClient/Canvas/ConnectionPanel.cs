@@ -12,12 +12,12 @@ namespace MultiplayerClient.Canvas
     public class ConnectionPanel
     {
         public static CanvasPanel Panel;
+        public static CanvasButton ConnectButton;
+        public static CanvasText ConnectionInfo;
 
         private static CanvasInput _ipInput;
         private static CanvasInput _portInput;
         private static CanvasInput _usernameInput;
-        private static CanvasButton _connectButton;
-        private static CanvasText _connectionInfo;
 
         public static void BuildMenu(GameObject canvas)
         {
@@ -98,7 +98,7 @@ namespace MultiplayerClient.Canvas
             );
             y += inputImg.height + 5;
             
-            _connectButton = Panel.AddButton(
+            ConnectButton = Panel.AddButton(
                 "Connect Button",
                 buttonImg,
                 new Vector2(x, y),
@@ -112,7 +112,7 @@ namespace MultiplayerClient.Canvas
             y += buttonImg.height;
 
 
-            _connectionInfo = new CanvasText(
+            ConnectionInfo = new CanvasText(
                 canvas,
                 new Vector2(Screen.width / 2 - 500, Screen.height - 70),
                 new Vector2(1000.0f, 50.0f),
@@ -125,7 +125,7 @@ namespace MultiplayerClient.Canvas
                 eventSystem.firstSelectedGameObject = _ipInput.InputObject;
             }
 
-            _connectionInfo.SetActive(false);
+            ConnectionInfo.SetActive(false);
             Panel.SetActive(false, true);
 
             On.HeroController.Pause += OnPause;
@@ -162,12 +162,10 @@ namespace MultiplayerClient.Canvas
             if(Client.Instance.isConnected)
             {
                 DisconnectFromServer();
-                _connectButton.UpdateText("Connect");
             }
             else
             {
                 ConnectToServer();
-                _connectButton.UpdateText("Disconnect");
             }
         }
 
@@ -176,7 +174,7 @@ namespace MultiplayerClient.Canvas
             if (!Client.Instance.isConnected)
             {
                 Log("Connecting to Server...");
-                _connectionInfo.UpdateText("Connecting to server...");
+                ConnectionInfo.UpdateText("Connecting to server...");
                 
                 if (_ipInput.GetText() != "") MultiplayerClient.settings.host = _ipInput.GetText();
                 if (_portInput.GetText() != "") MultiplayerClient.settings.port = int.Parse(_portInput.GetText());
@@ -187,7 +185,8 @@ namespace MultiplayerClient.Canvas
                 _connectRoutine = Client.Instance.StartCoroutine(Connect());
 
                 Log("Connected to Server!");
-                _connectionInfo.UpdateText("Connected to server.");
+                ConnectionInfo.UpdateText("Connected to server.");
+                ConnectButton.UpdateText("Disconnect");
             }
             else
             {
@@ -231,7 +230,6 @@ namespace MultiplayerClient.Canvas
             Log("Disconnecting from Server...");
             Client.Instance.StopCoroutine(_connectRoutine);
             Client.Instance.Disconnect();
-            _connectionInfo.UpdateText("Disconnected.");
         }
 
         private static void Log(object message) => Modding.Logger.Log("[Connection Panel] " + message);

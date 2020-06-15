@@ -146,6 +146,10 @@ namespace MultiplayerServer
                 { (int) ClientPackets.HealthUpdated, ServerHandle.HealthUpdated },
                 { (int) ClientPackets.CharmsUpdated, ServerHandle.CharmsUpdated },
                 { (int) ClientPackets.PlayerDisconnected, ServerHandle.PlayerDisconnected },
+                { (int) ClientPackets.SyncEnemy, ServerHandle.SyncEnemy },
+                { (int) ClientPackets.EnemyPosition, ServerHandle.EnemyPosition },
+                { (int) ClientPackets.EnemyScale, ServerHandle.EnemyScale },
+                { (int) ClientPackets.EnemyAnimation, ServerHandle.EnemyAnimation },
             };
             
             Log("Initialized Packets.");

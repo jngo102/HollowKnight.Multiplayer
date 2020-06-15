@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using Modding;
 using MultiplayerClient.Canvas;
 using UnityEngine;
@@ -13,8 +14,12 @@ namespace MultiplayerClient
         public static readonly Dictionary<string, GameObject> GameObjects = new Dictionary<string, GameObject>();
         internal static GlobalSettings settings;
 
+        public static MultiplayerClient Instance;
+        
         public static Dictionary<byte[], string> textureCache = new Dictionary<byte[], string>(new ByteArrayComparer());
 
+        public static string CustomKnightDir;
+        
         public override string GetVersion()
         {
             return "0.0.2";
@@ -49,17 +54,28 @@ namespace MultiplayerClient
 
                 textureCache[hash] = filePath;
             }
+            
+            switch (SystemInfo.operatingSystemFamily)
+            {
+                case OperatingSystemFamily.MacOSX:
+                    CustomKnightDir = Path.GetFullPath(Application.dataPath + "/Resources/Data/Managed/Mods/CustomKnight");
+                    break;
+                default:
+                    CustomKnightDir = Path.GetFullPath(Application.dataPath + "/Managed/Mods/CustomKnight");
+                    break;
+            }
 
             GameObjects.Add("Glob", preloadedObjects["GG_Hive_Knight"]["Battle Scene/Globs/Hive Knight Glob"]);
             GameObjects.Add("Slash", preloadedObjects["GG_Hive_Knight"]["Battle Scene/Hive Knight/Slash 1"]);
 
+            Instance = this;
+            
             GUIController.Instance.BuildMenus();
 
             GameManager.instance.gameObject.AddComponent<MPClient>();
 
             Unload();
             
-            ModHooks.Instance.BeforeSavegameSaveHook += RespawnFix;
             ModHooks.Instance.CharmUpdateHook += OnCharmUpdate;
             ModHooks.Instance.ApplicationQuitHook += OnApplicationQuit;
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged += OnSceneChanged;
@@ -75,23 +91,6 @@ namespace MultiplayerClient
             }
         }
 
-        private void RespawnFix(SaveGameData data)
-        {
-            PlayerData playerData = data.playerData;
-            foreach (GameObject go in GameObject.FindObjectsOfType<GameObject>())
-            {
-                if (go.name.Contains("RestBench") || 
-                    go.name.Contains("WhiteBench") ||
-                    go.name.Contains("Death Respawn"))
-                {
-                    playerData.respawnScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-                    playerData.respawnMarkerName = go.name;
-
-                    break;
-                }
-            }
-        }
-        
         private void OnCharmUpdate(PlayerData pd, HeroController hc)
         {
             if (Client.Instance != null && Client.Instance.isConnected && pd != null && hc != null)
@@ -102,7 +101,6 @@ namespace MultiplayerClient
 
         private void Unload()
         {
-            ModHooks.Instance.BeforeSavegameSaveHook -= RespawnFix;
             ModHooks.Instance.CharmUpdateHook -= OnCharmUpdate;
             UnityEngine.SceneManagement.SceneManager.activeSceneChanged -= OnSceneChanged;
         }
@@ -142,6 +140,18 @@ namespace MultiplayerClient
                 if (!NonGameplayScenes.Contains(nextScene.name))
                 {
                     ClientSend.SceneChanged(nextScene.name);
+                }
+
+                if (Client.Instance.isHost && SessionManager.Instance.Players.Count > 0)
+                {
+                    GameObject[] enemies = UnityEngine.Object.FindObjectsOfType<GameObject>().Where(go => go.layer == 11 || go.layer == 17) as GameObject[];
+                    if (enemies != null)
+                    {
+                        foreach (GameObject enemy in enemies)
+                        {
+                            enemy.AddComponent<EnemyTracker>();
+                        }
+                    }
                 }
             }
             

@@ -35,6 +35,17 @@ namespace MultiplayerServer
 
         private void OnApplicationQuit()
         {
+            for (byte id = 1; id <= MaxPlayers; id++)
+            {
+                if (Server.clients[id].player != null)
+                {
+                    Log($"Calling ServerSend.DisconnectPlayer({id})");
+                    ServerSend.DisconnectPlayer(id);
+                }
+            }
+
+            Log("Disconnected All Players");
+            
             Server.Stop();
         }
 

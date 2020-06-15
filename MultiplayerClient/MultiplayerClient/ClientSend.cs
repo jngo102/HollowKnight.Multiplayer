@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Policy;
-using HutongGames.PlayMaker.Actions;
-using ModCommon;
-using ModCommon.Util;
-using MultiplayerClient.Canvas;
+﻿using ModCommon.Util;
 using UnityEngine;
 
 namespace MultiplayerClient
@@ -27,10 +21,10 @@ namespace MultiplayerClient
             Client.Instance.udp.SendData(packet);
         }
 
-        #region Packets
+        #region Player Packets
 
         /// <summary>Lets the server know that the welcome message was received.</summary>
-        public static void WelcomeReceived(List<byte[]> textureHashes)
+        public static void WelcomeReceived(/*List<byte[]> textureHashes, */bool isHost)
         {
             using (Packet packet = new Packet((int)ClientPackets.WelcomeReceived))
             {
@@ -38,6 +32,7 @@ namespace MultiplayerClient
 
                 packet.Write(Client.Instance.myId);
                 packet.Write(MultiplayerClient.settings.username);
+                packet.Write(isHost);
                 packet.Write(HeroController.instance.GetComponent<tk2dSpriteAnimator>().CurrentClip.name);
                 packet.Write(PlayerManager.activeScene);
                 packet.Write(heroTransform.position);
@@ -51,10 +46,10 @@ namespace MultiplayerClient
                     packet.Write(PlayerData.instance.GetAttr<PlayerData, bool>("equippedCharm_" + charmNum));
                 }
 
-                foreach (var hash in textureHashes)
+                /*foreach (var hash in textureHashes)
                 {
                     packet.Write(hash);
-                }
+                }*/
 
                 Log("Welcome Received Packet Length: " + packet.Length());
 
@@ -157,8 +152,53 @@ namespace MultiplayerClient
             }
         }
         
-        #endregion
+        #endregion Player Packets
 
+        # region Enemy Packets
+
+        public static void SyncEnemy(byte toClient, string goName)
+        {
+            using (Packet packet = new Packet((int) ClientPackets.SyncEnemy))
+            {
+                packet.Write(toClient);
+                packet.Write(goName);
+
+                SendTCPData(packet);
+            }
+        }
+        
+        public static void EnemyPosition(Vector3 position)
+        {
+            using (Packet packet = new Packet((int) ClientPackets.EnemyPosition))
+            {
+                packet.Write(position);
+                
+                SendUDPData(packet);
+            }
+        }
+        
+        public static void EnemyScale(Vector3 scale)
+        {
+            using (Packet packet = new Packet((int) ClientPackets.EnemyScale))
+            {
+                packet.Write(scale);
+                
+                SendUDPData(packet);
+            }
+        }
+        
+        public static void EnemyAnimation(string clipName)
+        {
+            using (Packet packet = new Packet((int) ClientPackets.EnemyAnimation))
+            {
+                packet.Write(clipName);
+                
+                SendUDPData(packet);
+            }
+        }
+        
+        # endregion Enemy Packets
+        
         private static void Log(object message) => Modding.Logger.Log("[Client Send] " + message);
     }
 }

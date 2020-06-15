@@ -109,6 +109,7 @@ namespace MultiplayerServer
                 }
                 packet.Write(ServerSettings.PvPEnabled);
 
+                Log("Player texture hashes length: " + player.textureHashes.Count);
                 foreach(var hash in player.textureHashes)
                 {
                     packet.Write(hash);
@@ -184,7 +185,7 @@ namespace MultiplayerServer
             {
                 packet.Write(player.id);
                 packet.Write(player.animation);
-                
+             
                 SendUDPDataToAll(player.id, packet);
             }
         }
@@ -225,6 +226,15 @@ namespace MultiplayerServer
 
                 Log("Sending Disconnect Packet to all clients but " + playerId);
                 SendTCPDataToAll(playerId, packet); 
+            }
+        }
+
+        public static void DisconnectPlayer(byte playerId)
+        {
+            Log("Sending Disconnect Packet to everyone");
+            using (Packet packet = new Packet((int) ServerPackets.DisconnectPlayer))
+            { 
+                SendTCPData(playerId, packet);
             }
         }
 
