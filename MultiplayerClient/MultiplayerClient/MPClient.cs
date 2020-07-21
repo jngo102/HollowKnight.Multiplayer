@@ -143,6 +143,7 @@ namespace MultiplayerClient
             // And it is called a LOT, so to avoid spamming the server, we check if the health changed before sending.
             if(PlayerData.instance.health != oldHealth)
             {
+                gameObject.AddComponent<>()
                 Log("Took Damage: " + PlayerData.instance.health + " " + PlayerData.instance.maxHealth);
                 ClientSend.HealthUpdated(PlayerData.instance.health, PlayerData.instance.maxHealth, PlayerData.instance.healthBlue);
             }

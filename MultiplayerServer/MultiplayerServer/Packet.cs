@@ -21,6 +21,10 @@ namespace MultiplayerServer
         CharmsUpdated,
         PlayerDisconnected,
         DisconnectPlayer,
+        SyncEnemy,
+        EnemyPosition,
+        EnemyScale,
+        EnemyAnimation,
     }
 
     /// <summary>Sent from client to server.</summary>

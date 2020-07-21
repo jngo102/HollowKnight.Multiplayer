@@ -312,7 +312,7 @@ namespace MultiplayerClient
             Log("Disconnecting Self");
             Client.Instance.Disconnect();
         }
-        
+
         private static void Log(object message) => Modding.Logger.Log("[Client Handle] " + message);
     }
 }

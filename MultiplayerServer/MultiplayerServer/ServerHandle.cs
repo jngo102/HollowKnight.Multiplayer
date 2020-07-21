@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
+using IL.HutongGames.PlayMaker.Actions;
 using ModCommon.Util;
 using UnityEngine;
-using Object = UnityEngine.Object;
+using UnityEngine.SceneManagement;
+using UObject = UnityEngine.Object;
+using USceneManager = UnityEngine.SceneManagement.SceneManager;
 
 namespace MultiplayerServer
 {
@@ -222,44 +226,123 @@ namespace MultiplayerServer
         {
             int id = packet.ReadInt();
 
-            Object.Destroy(Server.clients[id].player.gameObject);
+            UObject.Destroy(Server.clients[id].player.gameObject);
             Server.clients[id].player = null;
             Server.clients[id].Disconnect();
         }
 
+        public static void LoadServerScene(byte fromClient, Packet packet)
+        {
+            string sceneName = packet.ReadString();
+
+            GameManager.instance.StartCoroutine(LoadSceneRoutine());
+
+            IEnumerator LoadSceneRoutine()
+            {
+                Scene scene = USceneManager.GetSceneByName(sceneName); 
+                if (!scene.isLoaded)
+                {
+                    AsyncOperation operation = USceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+                
+                    yield return new WaitWhile(() => !operation.isDone);    
+                }
+                
+                Scene loadedScene = USceneManager.GetSceneByName(sceneName);
+                GameObject[] rootGOs = loadedScene.GetRootGameObjects();
+                if (rootGOs != null)
+                {
+                    List<GameObject> enemies = new List<GameObject>();
+                    foreach (GameObject rootGO in rootGOs)
+                    {
+                        List<GameObject> childEnemies = rootGO.FindChildEnemies();
+
+                        foreach (GameObject enemy in childEnemies)
+                        {
+                            enemies.Add(enemy);
+                        }
+                    }
+
+                    foreach (GameObject enemy in enemies)
+                    {
+                        var tracker = enemy.GetComponent<EnemyTracker>();
+                        if (tracker)
+                        {
+                            tracker.playerIds.Add(fromClient);
+                        }
+                        else
+                        {
+                            tracker = enemy.AddComponent<EnemyTracker>();
+                            ServerSend.SyncEnemy(fromClient, enemy.name);
+                            tracker.playerIds.Add(fromClient);
+                        }
+
+                        bool foundUnusedKey = false;
+                        for (int i = 0; i <= Server.Enemies.Count; i++)
+                        {
+                            if (!Server.Enemies.Keys.Contains(i))
+                            {
+                                tracker.enemyId = i;
+                                Server.Enemies.Add(i, tracker);
+                                foundUnusedKey = true;
+                                break;
+                            }
+                        }
+
+                        if (!foundUnusedKey)
+                        {
+                            for (int i = Server.Enemies.Count + 1; i <= 99999; i++)
+                            {
+                                if (!Server.Enemies.Keys.Contains(i))
+                                {
+                                    tracker.enemyId = i;
+                                    Server.Enemies.Add(i, tracker);
+                                    break;
+                                }
+                            }
+                        }   
+                    }
+                }
+            }
+        }
+        
         public static void SyncEnemy(byte fromClient, Packet packet)
         {
             if (!Server.clients[fromClient].player.isHost) return;
 
             byte toClient = packet.ReadByte();
             string goName = packet.ReadString();
+
+            ServerSend.SyncEnemy(toClient, goName);
         }
         
         public static void EnemyPosition(byte fromClient, Packet packet)
         {
             if (!Server.clients[fromClient].player.isHost) return;
-            
+
+            byte toClient = packet.ReadByte();
             Vector3 position = packet.ReadVector3();
 
-            Server.clients[fromClient].player.SetPosition(position);
+            ServerSend.EnemyPosition(toClient, position);
         }
 
         public static void EnemyScale(byte fromClient, Packet packet)
         {
             if (!Server.clients[fromClient].player.isHost) return;
             
+            byte toClient = packet.ReadByte();
             Vector3 scale = packet.ReadVector3();
-            
-            Server.clients[fromClient].player.SetScale(scale);
+
+            ServerSend.EnemyScale(toClient, scale);
         }
         
         public static void EnemyAnimation(byte fromClient, Packet packet)
         {
             if (!Server.clients[fromClient].player.isHost) return;
             
-            string animation = packet.ReadString();
-            
-            Server.clients[fromClient].player.SetAnimation(animation);
+            byte toClient = packet.ReadByte();
+            string clipName = packet.ReadString();
+
+            ServerSend.EnemyAnimation(toClient, clipName);
         }
         
         private static void Log(object message) => Modding.Logger.Log("[Server Handle] " + message);

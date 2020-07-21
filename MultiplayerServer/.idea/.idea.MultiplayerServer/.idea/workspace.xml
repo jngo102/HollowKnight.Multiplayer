@@ -1,36 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BuildServerSettings">
+    <option name="LOGIN" value="" />
+    <option name="SERVER_URL" value="" />
+    <option name="COMMIT_PATTERN" value="{message}" />
+    <option name="REMEMBER_ME" value="true" />
+    <option name="USE_IDEA_PROXY_SETTINGS" value="true" />
+    <option name="INSPECTIONS_BUILD_TYPE_IDS" />
+    <option name="DUPLICATES_BUILD_TYPE_IDS" />
+    <option name="ENABLE_SUITABLE_CONFIGURATION_CACHING" value="true" />
+    <option name="COVERAGE_SETTINGS" />
+    <option name="TEST_STATUS_ENABLED" value="true" />
+    <option name="TEST_STATUS_SHOW_SUCCESSFUL" value="false" />
+    <option name="POSTPONE_SUITABLE_CONFIGURATIONS_SEARCH" value="false" />
+    <option name="ARTIFACTS_BUILD_TYPE_IDS" />
+    <option name="PERFORM_COMMIT_IF_SUCCESSFUL" value="true" />
+    <option name="PERFORM_COMMIT_IF_NO_NEW_FAILED_TESTS" value="false" />
+    <option name="REQUEST_CONFIRMATON" value="false" />
+    <option name="PRE_TESTED_COMMIT" value="true" />
+    <option name="FILTER_BY_STATUS" value="false" />
+    <option name="FILTER_MARKED_AS_FIXED" value="false" />
+    <option name="TOOL_WINDOW_SELECTED_CONTENT_INDEX" value="0" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="02be8a13-bf6a-4497-a8dc-655f3cdc1254" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/EnemyTracker.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/.idea/.idea.MultiplayerClient/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/.idea/.idea.MultiplayerClient/.idea/contentModel.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Canvas/ConnectionPanel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Canvas/ConnectionPanel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Canvas/GUIController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Canvas/GUIController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MultiplayerServer/EnemyTracker.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Client.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Client.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientHandle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientHandle.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientSend.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/ClientSend.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Extensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/EnemyTracker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/EnemyTracker.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Fireball.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Fireball.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/HeroTracker.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/HeroTracker.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MPClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MPClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerClient.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerSettings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/MultiplayerSettings.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Packet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/Packet.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/PlayAnimation.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/PlayAnimation.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/SessionManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../MultiplayerClient/MultiplayerClient/SessionManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MultiplayerServer/.idea/contentModel.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MultiplayerServer/.idea/contentModel.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.MultiplayerServer/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.MultiplayerServer/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MultiplayerServer/Canvas/GUIController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Canvas/GUIController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MultiplayerServer/Client.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Client.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MultiplayerServer/MultiplayerServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/MultiplayerServer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MultiplayerServer/NetworkManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/NetworkManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MultiplayerServer/Extensions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Extensions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MultiplayerServer/MultiplayerServer.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/MultiplayerServer.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MultiplayerServer/Packet.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Packet.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MultiplayerServer/Player.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Player.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MultiplayerServer/Server.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Server.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MultiplayerServer/Util.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MultiplayerServer/Util.cs" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -60,6 +67,7 @@
     <setting file="file://$PROJECT_DIR$/MultiplayerServer/Util.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MultiplayerServer/Player.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasImage.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/MultiplayerServer/EnemyTracker.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasPanel.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MultiplayerServer/NetworkManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasButton.cs" root0="FORCE_HIGHLIGHTING" />
@@ -102,20 +110,21 @@
         <option value="$PROJECT_DIR$/MultiplayerServer/GlobalSettings.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/CanvasPanel.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/ServerSettings.cs" />
-        <option value="$PROJECT_DIR$/MultiplayerServer/Extensions.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/OptionsPanel.cs" />
         <option value="$USER_HOME$/AppData/LocalLow/Team Cherry/Hollow Knight/MultiplayerClient.GlobalSettings.json" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Util.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Canvas/GUIController.cs" />
         <option value="$USER_HOME$/AppData/LocalLow/Team Cherry/Hollow Knight/ModdingApi.GlobalSettings.json" />
         <option value="$PROJECT_DIR$/MultiplayerServer/MultiplayerServer.cs" />
-        <option value="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/NetworkManager.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Player.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Client.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Packet.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/ServerSend.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/Server.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/Extensions.cs" />
         <option value="$PROJECT_DIR$/MultiplayerServer/ServerHandle.cs" />
+        <option value="$PROJECT_DIR$/MultiplayerServer/EnemyTracker.cs" />
       </list>
     </option>
   </component>
@@ -133,7 +142,9 @@
     <auto-save>true</auto-save>
   </component>
   <component name="ProjectId" id="1abBDvdUXtSsT8G0Ptyk0ZFc2um" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="PropertiesComponent">
     <property name="Rider.DefaultBreakpoints.AreToggled" value="true" />
     <property name="Rider.ProjectViewActivator.IsNotFirstRun" value="true" />
@@ -210,7 +221,8 @@
       <workItem from="1587512507740" duration="111849000" />
       <workItem from="1588981128432" duration="26717000" />
       <workItem from="1589497888386" duration="19921000" />
-      <workItem from="1591985704088" duration="25474000" />
+      <workItem from="1591985704088" duration="34159000" />
+      <workItem from="1592960721649" duration="188000" />
     </task>
     <servers />
   </component>

@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace MultiplayerClient
+namespace MultiplayerServer
 {
     public class EnemyTracker : MonoBehaviour
     {
+        public List<byte> playerIds;
+        public int enemyId;
+        
         private tk2dSpriteAnimator _anim;
         private HealthManager _hm;
         
@@ -15,11 +19,6 @@ namespace MultiplayerClient
 
         private void Start()
         {
-            foreach (byte toClient in SessionManager.Instance.Players.Keys)
-            {
-                ClientSend.SyncEnemy(toClient, gameObject.name);
-            }
-
             if (_anim != null)
             {
                 foreach (tk2dSpriteAnimationClip clip in _anim.Library.clips)
@@ -46,18 +45,17 @@ namespace MultiplayerClient
         private Vector3 _storedScale = Vector3.zero;
         private void FixedUpdate()
         {
-            
             Vector3 pos = transform.position;
             if (pos != _storedPosition)
             {
-                ClientSend.EnemyPosition(pos);
+                ServerSend.EnemyPosition(pos);
                 _storedPosition = pos;
             }
 
             Vector3 scale = transform.localScale;
             if (scale != _storedScale)
             {
-                ClientSend.EnemyScale(scale);
+                ServerSend.EnemyScale(scale);
                 _storedScale = scale;
             }
         }
@@ -65,7 +63,6 @@ namespace MultiplayerClient
         private string _storedClip;
         private void AnimationEventDelegate(tk2dSpriteAnimator anim, tk2dSpriteAnimationClip clip, int frameNum)
         {
-            
             if (clip.wrapMode == tk2dSpriteAnimationClip.WrapMode.Loop && clip.name != _storedClip ||
                 clip.wrapMode == tk2dSpriteAnimationClip.WrapMode.LoopSection && clip.name != _storedClip ||
                 clip.wrapMode == tk2dSpriteAnimationClip.WrapMode.Once)
@@ -74,7 +71,7 @@ namespace MultiplayerClient
                 tk2dSpriteAnimationFrame frame = clip.GetFrame(frameNum);
 
                 string clipName = frame.eventInfo;
-                ClientSend.EnemyAnimation(clipName);
+                ServerSend.EnemyAnimation(clipName);
             }
         }
     }

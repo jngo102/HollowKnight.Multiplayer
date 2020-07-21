@@ -1,4 +1,4 @@
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
@@ -54,6 +54,35 @@ namespace MultiplayerServer
             RenderTexture.active = previous;
             RenderTexture.ReleaseTemporary(renderTex);
             return readableText;
+        }
+
+        public static List<GameObject> FindChildEnemies(this GameObject gameObject)
+        {
+            List<GameObject> enemies = new List<GameObject>();
+
+            if (gameObject.layer == 11 || gameObject.layer == 17)
+            {
+                enemies.Add(gameObject);
+            }
+            
+            foreach (Transform childTransform in gameObject.transform)
+            {
+                GameObject child = childTransform.gameObject;
+                if (child.layer == 11 || gameObject.layer == 17)
+                {
+                    Modding.Logger.Log("Enemy Name: " + child.name);
+                    enemies.Add(child);
+                }
+
+                List<GameObject> childEnemies = FindChildEnemies(child);
+
+                foreach (GameObject descendant in childEnemies)
+                {
+                    enemies.Add(descendant);
+                }
+            }
+            
+            return enemies;
         }
     }
 }

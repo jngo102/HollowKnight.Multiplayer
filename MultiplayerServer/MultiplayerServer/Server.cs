@@ -27,6 +27,8 @@ namespace MultiplayerServer
         public static int Port { get; private set; }
         public static Dictionary<int, Client> clients = new Dictionary<int, Client>();
         public delegate void PacketHandler(byte fromClient, Packet packet);
+        
+        public static Dictionary<int, EnemyTracker> Enemies = new Dictionary<int, EnemyTracker>();
 
         public static Dictionary<int, PacketHandler> PacketHandlers;
 

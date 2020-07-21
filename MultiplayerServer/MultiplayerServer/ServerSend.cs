@@ -1,6 +1,7 @@
 ﻿using System;
 using HutongGames.PlayMaker.Actions;
 using ModCommon.Util;
+using UnityEngine;
 
 namespace MultiplayerServer
 {
@@ -235,6 +236,46 @@ namespace MultiplayerServer
             using (Packet packet = new Packet((int) ServerPackets.DisconnectPlayer))
             { 
                 SendTCPData(playerId, packet);
+            }
+        }
+
+        public static void SyncEnemy(byte toClient, string goName)
+        {
+            using (Packet packet = new Packet((int) ServerPackets.SyncEnemy))
+            {
+                packet.Write(goName);
+
+                SendTCPData(toClient, packet);
+            }
+        }
+        
+        public static void EnemyPosition(byte toClient, Vector3 position)
+        {
+            using (Packet packet = new Packet((int) ServerPackets.EnemyPosition))
+            {
+                packet.Write(position);
+
+                SendTCPData(toClient, packet);
+            }
+        }
+        
+        public static void EnemyScale(byte toClient, Vector3 scale)
+        {
+            using (Packet packet = new Packet((int) ServerPackets.EnemyScale))
+            {
+                packet.Write(scale);
+
+                SendTCPData(toClient, packet);
+            }
+        }
+        
+        public static void EnemyAnimation(byte toClient, string clipName)
+        {
+            using (Packet packet = new Packet((int) ServerPackets.EnemyAnimation))
+            {
+                packet.Write(clipName);
+
+                SendTCPData(toClient, packet);
             }
         }
 

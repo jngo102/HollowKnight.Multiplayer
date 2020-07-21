@@ -8,7 +8,7 @@ namespace MultiplayerClient
         public byte playerId;
         
         private const float FireballSpeed = 45;
-        
+            
         private tk2dSpriteAnimator _anim;
         private Rigidbody2D _rb;
 

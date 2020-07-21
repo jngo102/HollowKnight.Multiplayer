@@ -330,6 +330,10 @@ namespace MultiplayerClient
                 { (int) ServerPackets.CharmsUpdated, ClientHandle.CharmsUpdated },
                 { (int) ServerPackets.PlayerDisconnected, ClientHandle.PlayerDisconnected },
                 { (int) ServerPackets.DisconnectPlayer, ClientHandle.DisconnectSelf },
+                /*{ (int) ServerPackets.SyncEnemy, ClientHandle.SyncEnemy },
+                { (int) ServerPackets.EnemyPosition, ClientHandle.EnemyPosition },
+                { (int) ServerPackets.EnemyScale, ClientHandle.EnemyScale },
+                { (int) ServerPackets.EnemyAnimation, ClientHandle.EnemyAnimation },*/
             };
             
             Log("Initialized Packets.");
